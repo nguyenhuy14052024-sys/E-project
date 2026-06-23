@@ -1,0 +1,45 @@
+{
+  "units": [
+    {
+      "book_level": "B2",
+      "unit_number": 1,
+      "title": "Present Tenses",
+      "type": "grammar",
+      "description": "Tổng quan về các thì hiện tại trong tiếng Anh",
+      "content_html": "<h3>Present Simple</h3><p>Dùng cho thói quen, sự thật hiển nhiên.</p><h3>Present Continuous</h3><p>Dùng cho hành động đang diễn ra.</p>",
+      "questions": [
+        {
+          "question_type": "multiple_choice",
+          "content": "She ___ to school every day.",
+          "options": ["go", "goes", "going"],
+          "correct_answer": "goes",
+          "explanation": "Chủ ngữ số ít 'She' nên động từ thêm 'es'"
+        },
+        {
+          "question_type": "gap_filling",
+          "content": "They (play) ___ football now.",
+          "options": null,
+          "correct_answer": "are playing",
+          "explanation": "Hành động đang diễn ra, dùng Present Continuous"
+        }
+      ]
+    },
+    {
+      "book_level": "B2",
+      "unit_number": 2,
+      "title": "Past Tenses",
+      "type": "grammar",
+      "description": "Tổng quan về các thì quá khứ trong tiếng Anh",
+      "content_html": "<h3>Past Simple</h3><p>Dùng cho hành động đã kết thúc trong quá khứ.</p>",
+      "questions": [
+        {
+          "question_type": "multiple_choice",
+          "content": "I ___ a movie yesterday.",
+          "options": ["watch", "watched", "watching"],
+          "correct_answer": "watched",
+          "explanation": "Hành động đã kết thúc trong quá khứ"
+        }
+      ]
+    }
+  ]
+}

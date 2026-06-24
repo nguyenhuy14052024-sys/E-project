@@ -16,17 +16,32 @@ const Question = sequelize.define('Question', {
         }
     },
     question_type: {
-        type: DataTypes.ENUM('multiple_choice', 'gap_filling', 'word_formation', 'sentence_transformation'),
-        allowNull: false
-    },
+    type: DataTypes.ENUM(
+        'multiple_choice',
+        'gap_filling',
+        'word_formation',
+        'sentence_transformation',
+        'error_correction',
+        'collocation'
+    ),
+    allowNull: false
+},
     content: {
         type: DataTypes.TEXT,
         allowNull: false
     },
     options: {
-        type: DataTypes.JSON,
-        allowNull: true
-    },
+    type: DataTypes.JSON,
+    allowNull: true
+},
+difficulty: {
+    type: DataTypes.INTEGER,
+    defaultValue: 1,
+    validate: {
+        min: 1,
+        max: 5
+    }
+},
     correct_answer: {
         type: DataTypes.TEXT,
         allowNull: false

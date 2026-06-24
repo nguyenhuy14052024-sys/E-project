@@ -9,6 +9,9 @@ const Dashboard = () => {
     const [units, setUnits] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedLevel, setSelectedLevel] = useState('B2');
+    const [filterType, setFilterType] = useState(''); // ← THÊM DÒNG NÀY
+
+    // ... phần còn lại giữ nguyên
 
     useEffect(() => {
         const currentUser = getCurrentUser();
@@ -27,7 +30,7 @@ const Dashboard = () => {
             const data = await getUnits(level);
             setUnits(data.units || []);
         } catch (error) {
-            console.error('Lỗi lấy danh sách Unit:', error);
+            console.error('Loi lay danh sach Unit:', error);
         } finally {
             setLoading(false);
         }
@@ -44,7 +47,7 @@ const Dashboard = () => {
         <div style={styles.container}>
             <div style={styles.header}>
                 <div>
-                    <h1>👋 Chào, {user.username}!</h1>
+                    <h1>Xin chào, {user.username}!</h1>
                     <p style={styles.email}>{user.email}</p>
                 </div>
                 <button onClick={handleLogout} style={styles.logoutButton}>
@@ -73,14 +76,36 @@ const Dashboard = () => {
                 </button>
             </div>
 
+            {/* BỘ LỌC CÂU HỎI */}
+            <div style={styles.filterContainer}>
+                <label style={styles.filterLabel}>Lọc câu hỏi:</label>
+                <select 
+                    value={filterType} 
+                    onChange={(e) => setFilterType(e.target.value)}
+                    style={styles.filterSelect}
+                >
+                    <option value="">Tất cả</option>
+                    <option value="multiple_choice">Trắc nghiệm (ABCD)</option>
+                    <option value="gap_filling">Điền từ</option>
+                    <option value="word_formation">Biến đổi từ</option>
+                    <option value="sentence_transformation">Viết lại câu</option>
+                    <option value="error_correction">Sửa lỗi</option>
+                    <option value="collocation">Collocations</option>
+                </select>
+            </div>
+
             <div style={styles.unitGrid}>
                 {loading ? (
-                    <p>Đang tải...</p>
+                    <p>Dang tai...</p>
                 ) : units.length === 0 ? (
-                    <p>Chưa có Unit nào cho trình độ {selectedLevel}</p>
+                    <p>Chua co Unit nao cho trinh do {selectedLevel}</p>
                 ) : (
                     units.map(unit => (
-                        <Link to={`/learn/${unit.id}`} key={unit.id} style={styles.unitCard}>
+                        <Link 
+                            to={`/learn/${unit.id}?type=${filterType}`} 
+                            key={unit.id} 
+                            style={styles.unitCard}
+                        >
                             <h3>Unit {unit.unit_number}</h3>
                             <p>{unit.title}</p>
                             <span style={styles.unitType}>{unit.type}</span>
@@ -123,7 +148,7 @@ const styles = {
     levelSelector: {
         display: 'flex',
         gap: '10px',
-        marginBottom: '30px'
+        marginBottom: '20px'
     },
     levelButton: {
         padding: '10px 30px',
@@ -136,6 +161,29 @@ const styles = {
     activeLevel: {
         backgroundColor: '#007bff',
         color: 'white'
+    },
+    // Style cho bộ lọc
+    filterContainer: {
+        marginBottom: '30px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '12px',
+        padding: '15px',
+        backgroundColor: '#f8f9fa',
+        borderRadius: '8px'
+    },
+    filterLabel: {
+        fontWeight: 'bold',
+        fontSize: '14px',
+        color: '#333'
+    },
+    filterSelect: {
+        padding: '8px 16px',
+        borderRadius: '6px',
+        border: '1px solid #ced4da',
+        fontSize: '14px',
+        backgroundColor: 'white',
+        cursor: 'pointer'
     },
     unitGrid: {
         display: 'grid',

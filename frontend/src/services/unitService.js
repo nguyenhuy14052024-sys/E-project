@@ -18,9 +18,13 @@ export const getUnitById = async (id) => {
     }
 };
 
-export const getQuestions = async (unitId) => {
+export const getQuestions = async (unitId, type = null) => {
     try {
-        const response = await api.get(`/quizzes/${unitId}`);
+        let url = `/quizzes/${unitId}`;
+        if (type) {
+            url += `?type=${type}`;
+        }
+        const response = await api.get(url);
         return response.data;
     } catch (error) {
         throw error.response?.data || { message: 'Lỗi lấy câu hỏi' };

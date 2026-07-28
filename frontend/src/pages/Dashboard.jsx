@@ -50,9 +50,14 @@ const Dashboard = () => {
                     <h1>Xin chào, {user.username}!</h1>
                     <p style={styles.email}>{user.email}</p>
                 </div>
+                <div style={styles.headerRight}>
+                <Link to="/mini-test" style={styles.miniTestButton}>
+                    Mini Test
+                </Link>
                 <button onClick={handleLogout} style={styles.logoutButton}>
                     Đăng xuất
                 </button>
+</div>
             </div>
 
             <div style={styles.levelSelector}>
@@ -211,6 +216,21 @@ const styles = {
         color: '#666',
         fontSize: '14px',
         marginTop: '5px'
+    },
+
+    miniTestButton: {
+    padding: '10px 20px',
+    backgroundColor: '#28a745',
+    color: 'white',
+    border: 'none',
+    borderRadius: '5px',
+    textDecoration: 'none',
+    marginRight: '10px'
+    },
+    headerRight: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px'
     }
 };
 

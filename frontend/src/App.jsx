@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import GrammarSection from './pages/GrammarSection';
 import PracticeZone from './pages/PracticeZone';
 import { isAuthenticated } from './services/authService';
+import MiniTest from './pages/MiniTest';
 
 const PrivateRoute = ({ children }) => {
     return isAuthenticated() ? children : <Navigate to="/login" />;
@@ -32,6 +33,11 @@ function App() {
                 <Route path="/practice/:unitId" element={
                     <PrivateRoute>
                         <PracticeZone />
+                    </PrivateRoute>
+                } />
+                <Route path="/mini-test" element={
+                     <PrivateRoute>
+                        <MiniTest />
                     </PrivateRoute>
                 } />
             </Routes>

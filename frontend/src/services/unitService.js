@@ -39,3 +39,13 @@ export const submitQuiz = async (unitId, answers) => {
         throw error.response?.data || { message: 'Lỗi nộp bài' };
     }
 };
+
+// THÊM HÀM NÀY
+export const generateMiniTest = async (options) => {
+    try {
+        const response = await api.post('/quizzes/generate', options);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || { message: 'Lỗi tạo Mini Test' };
+    }
+};

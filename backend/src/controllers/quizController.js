@@ -122,7 +122,85 @@ const submitQuiz = async (req, res) => {
     }
 };
 
+// Tạo Mini Test: random câu hỏi từ nhiều Unit
+const generateMiniTest = async (req, res) => {
+    try {
+        const { userId } = req.user;
+        const { level, questionTypes, count = 10, difficulty } = req.body;
+
+        // Xây dựng điều kiện lọc
+        const unitWhere = {};
+        if (level) {
+            unitWhere.book_level = level.toUpperCase();
+        }
+
+        // Lấy tất cả Unit theo level
+        const units = await Unit.findAll({
+            where: unitWhere,
+            attributes: ['id']
+        });
+
+        if (units.length === 0) {
+            return res.status(404).json({ message: 'Không tìm thấy Unit nào' });
+        }
+
+        const unitIds = units.map(u => u.id);
+
+        // Xây dựng điều kiện cho câu hỏi
+        const questionWhere = {
+            unit_id: unitIds
+        };
+        if (questionTypes && questionTypes.length > 0) {
+            questionWhere.question_type = questionTypes;
+        }
+        if (difficulty) {
+            questionWhere.difficulty = difficulty;
+        }
+
+        // Lấy câu hỏi
+        const questions = await Question.findAll({
+            where: questionWhere,
+            attributes: { exclude: ['correct_answer', 'explanation'] }
+        });
+
+        if (questions.length === 0) {
+            return res.status(404).json({ message: 'Không tìm thấy câu hỏi nào' });
+        }
+
+        // Random và giới hạn số câu
+        const shuffled = questions
+            .map(q => q.toJSON())
+            .sort(() => Math.random() - 0.5)
+            .slice(0, count);
+
+        // Shuffle options
+        const finalQuestions = shuffled.map(q => {
+            if (q.options && Array.isArray(q.options) && q.options.length > 0) {
+                const shuffledOpts = [...q.options];
+                for (let i = shuffledOpts.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffledOpts[i], shuffledOpts[j]] = [shuffledOpts[j], shuffledOpts[i]];
+                }
+                q.options = shuffledOpts;
+            }
+            return q;
+        });
+
+        res.status(200).json({
+            message: 'Tạo Mini Test thành công',
+            totalQuestions: finalQuestions.length,
+            questions: finalQuestions,
+            testId: Date.now().toString(36) + Math.random().toString(36).substr(2, 5)
+        });
+
+    } catch (error) {
+        console.error('Generate mini test error:', error);
+        res.status(500).json({ message: 'Lỗi tạo Mini Test' });
+    }
+};
+
 module.exports = {
     getQuestions,
-    submitQuiz
+    submitQuiz,
+    generateMiniTest  // ← THÊM DÒNG NÀY
 };

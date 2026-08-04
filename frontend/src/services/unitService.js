@@ -49,3 +49,21 @@ export const generateMiniTest = async (options) => {
         throw error.response?.data || { message: 'Lỗi tạo Mini Test' };
     }
 };
+
+export const getErrorLog = async (params = {}) => {
+    try {
+        const { unitId, limit = 20, offset = 0 } = params;
+        let url = '/quizzes/errors';
+        const queryParams = [];
+        if (unitId) queryParams.push(`unitId=${unitId}`);
+        queryParams.push(`limit=${limit}`);
+        queryParams.push(`offset=${offset}`);
+        if (queryParams.length > 0) {
+            url += `?${queryParams.join('&')}`;
+        }
+        const response = await api.get(url);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || { message: 'Lỗi lấy danh sách lỗi sai' };
+    }
+};

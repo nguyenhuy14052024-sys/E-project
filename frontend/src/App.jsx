@@ -40,9 +40,15 @@ function App() {
                         <MiniTest />
                     </PrivateRoute>
                 } />
+                <Route path="/error-log" element={
+                     <PrivateRoute>
+                         <ErrorLog />
+                    </PrivateRoute>
+                } />
             </Routes>
         </Router>
     );
 }
 
 export default App;
+import ErrorLog from './pages/ErrorLog';

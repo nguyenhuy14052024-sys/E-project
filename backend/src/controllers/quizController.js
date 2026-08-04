@@ -1,4 +1,5 @@
 const { Question, UserAnswer, Unit } = require('../models');
+const sequelize = require('../../config/db'); // ← THÊM VÀO
 
 // Lấy câu hỏi của 1 Unit (ẩn đáp án)
 const getQuestions = async (req, res) => {
@@ -199,8 +200,77 @@ const generateMiniTest = async (req, res) => {
     }
 };
 
+// Lấy danh sách câu hỏi sai của người dùng
+const getErrorLog = async (req, res) => {
+    try {
+        const { userId } = req.user;
+        const { unitId, limit = 20, offset = 0 } = req.query;
+
+        // Xây dựng điều kiện lọc
+        const whereClause = {
+            user_id: userId,
+            is_correct: false
+        };
+        if (unitId) {
+            whereClause.unit_id = unitId;
+        }
+
+        // Lấy danh sách câu trả lời sai (cách đơn giản)
+        const userAnswers = await UserAnswer.findAll({
+            where: whereClause,
+            order: [['timestamp', 'DESC']],
+            limit: parseInt(limit),
+            offset: parseInt(offset)
+        });
+
+        // Lấy thông tin câu hỏi cho từng câu trả lời
+        const questionIds = userAnswers.map(a => a.question_id);
+        const questions = await Question.findAll({
+            where: { id: questionIds }
+        });
+
+        // Đếm tổng số câu sai
+        const totalCount = await UserAnswer.count({
+            where: whereClause
+        });
+
+        // Format kết quả
+        const formattedAnswers = userAnswers.map(answer => {
+            const question = questions.find(q => q.id === answer.question_id);
+            return {
+                id: answer.id,
+                questionId: answer.question_id,
+                content: question ? question.content : 'N/A',
+                questionType: question ? question.question_type : 'N/A',
+                options: question ? question.options : null,
+                correctAnswer: question ? question.correct_answer : 'N/A',
+                userAnswer: answer.user_answer,
+                explanation: question ? question.explanation : null,
+                unitId: question ? question.unit_id : null,
+                timestamp: answer.timestamp
+            };
+        });
+
+        res.status(200).json({
+            message: 'Lấy danh sách lỗi sai thành công',
+            totalCount,
+            limit: parseInt(limit),
+            offset: parseInt(offset),
+            errors: formattedAnswers
+        });
+
+    } catch (error) {
+        console.error('Get error log error:', error);
+        res.status(500).json({ 
+            message: 'Lỗi lấy danh sách lỗi sai',
+            error: error.message 
+        });
+    }
+};
+
 module.exports = {
     getQuestions,
     submitQuiz,
-    generateMiniTest  // ← THÊM DÒNG NÀY
+    generateMiniTest,
+    getErrorLog 
 };

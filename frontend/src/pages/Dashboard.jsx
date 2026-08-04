@@ -54,6 +54,9 @@ const Dashboard = () => {
                 <Link to="/mini-test" style={styles.miniTestButton}>
                     Mini Test
                 </Link>
+                <Link to="/error-log" style={styles.errorLogButton}>
+                    Kho lỗi sai
+                </Link>
                 <button onClick={handleLogout} style={styles.logoutButton}>
                     Đăng xuất
                 </button>
@@ -167,7 +170,6 @@ const styles = {
         backgroundColor: '#007bff',
         color: 'white'
     },
-    // Style cho bộ lọc
     filterContainer: {
         marginBottom: '30px',
         display: 'flex',
@@ -217,20 +219,29 @@ const styles = {
         fontSize: '14px',
         marginTop: '5px'
     },
-
     miniTestButton: {
-    padding: '10px 20px',
-    backgroundColor: '#28a745',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    textDecoration: 'none',
-    marginRight: '10px'
+        padding: '10px 20px',
+        backgroundColor: '#28a745',
+        color: 'white',
+        border: 'none',
+        borderRadius: '5px',
+        textDecoration: 'none',
+        marginRight: '10px'
     },
     headerRight: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px'
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px'
+    },
+    // ← THÊM DẤU PHẨY Ở ĐÂY
+    errorLogButton: {
+        padding: '10px 20px',
+        backgroundColor: '#dc3545',
+        color: 'white',
+        border: 'none',
+        borderRadius: '5px',
+        textDecoration: 'none',
+        marginRight: '10px'
     }
 };
 

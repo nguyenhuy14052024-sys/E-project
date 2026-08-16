@@ -8,6 +8,7 @@ import GrammarSection from './pages/GrammarSection';
 import PracticeZone from './pages/PracticeZone';
 import { isAuthenticated } from './services/authService';
 import MiniTest from './pages/MiniTest';
+import FlashcardPage from './pages/FlashcardPage';
 
 const PrivateRoute = ({ children }) => {
     return isAuthenticated() ? children : <Navigate to="/login" />;
@@ -45,6 +46,11 @@ function App() {
                          <ErrorLog />
                     </PrivateRoute>
                 } />
+                <Route path="/flashcards" element={
+                     <PrivateRoute>
+                         <FlashcardPage />
+                    </PrivateRoute>
+} />
             </Routes>
         </Router>
     );

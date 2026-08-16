@@ -57,6 +57,9 @@ const Dashboard = () => {
                 <Link to="/error-log" style={styles.errorLogButton}>
                     Kho lỗi sai
                 </Link>
+                <Link to="/flashcards" style={styles.flashcardButton}>
+                    Flashcard
+                </Link>
                 <button onClick={handleLogout} style={styles.logoutButton}>
                     Đăng xuất
                 </button>
@@ -222,6 +225,15 @@ const styles = {
     miniTestButton: {
         padding: '10px 20px',
         backgroundColor: '#28a745',
+        color: 'white',
+        border: 'none',
+        borderRadius: '5px',
+        textDecoration: 'none',
+        marginRight: '10px'
+    },
+        flashcardButton: {
+        padding: '10px 20px',
+        backgroundColor: '#6f42c1',
         color: 'white',
         border: 'none',
         borderRadius: '5px',

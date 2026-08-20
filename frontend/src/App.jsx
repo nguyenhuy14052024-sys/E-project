@@ -9,6 +9,7 @@ import PracticeZone from './pages/PracticeZone';
 import { isAuthenticated } from './services/authService';
 import MiniTest from './pages/MiniTest';
 import FlashcardPage from './pages/FlashcardPage';
+import ReviewPage from './pages/ReviewPage';
 
 const PrivateRoute = ({ children }) => {
     return isAuthenticated() ? children : <Navigate to="/login" />;
@@ -50,7 +51,12 @@ function App() {
                      <PrivateRoute>
                          <FlashcardPage />
                     </PrivateRoute>
-} />
+                } />
+                <Route path="/review" element={
+                     <PrivateRoute>
+                         <ReviewPage />
+                     </PrivateRoute>
+                } />
             </Routes>
         </Router>
     );

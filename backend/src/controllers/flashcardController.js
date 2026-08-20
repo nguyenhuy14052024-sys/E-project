@@ -1,4 +1,5 @@
 const { Flashcard } = require('../models');
+const { Op } = require('sequelize');  // ← THÊM DÒNG NÀY
 
 // Thêm flashcard mới
 const createFlashcard = async (req, res) => {
@@ -144,10 +145,101 @@ const deleteFlashcard = async (req, res) => {
     }
 };
 
+// Lấy flashcard đến hạn ôn tập
+const getDueFlashcards = async (req, res) => {
+    try {
+        const { userId } = req.user;
+        const { limit = 20 } = req.query;
+
+        const flashcards = await Flashcard.findAll({
+            where: {
+                user_id: userId,
+                next_review: {
+                    [Op.lte]: new Date()  // next_review <= now
+                }
+            },
+            order: [['next_review', 'ASC']],
+            limit: parseInt(limit)
+        });
+        
+        console.log('✅ Flashcards due:', flashcards.length);  // ← THÊM LOG
+
+        res.status(200).json({
+            message: 'Lấy flashcard đến hạn thành công',
+            flashcards,
+            count: flashcards.length
+        });
+
+    } catch (error) {
+        console.error('Get due flashcards error:', error);
+        res.status(500).json({ message: 'Lỗi lấy flashcard đến hạn' });
+    }
+};
+
+// Cập nhật flashcard sau khi ôn tập (Spaced Repetition)
+const reviewFlashcard = async (req, res) => {
+    try {
+        const { userId } = req.user;
+        const { id } = req.params;
+        const { quality } = req.body;  // 0=Again, 1=Hard, 2=Good, 3=Easy
+
+        if (quality === undefined || quality < 0 || quality > 3) {
+            return res.status(400).json({ message: 'Vui lòng chọn đánh giá (0-3)' });
+        }
+
+        const flashcard = await Flashcard.findOne({
+            where: { id, user_id: userId }
+        });
+
+        if (!flashcard) {
+            return res.status(404).json({ message: 'Không tìm thấy flashcard' });
+        }
+
+        // Thuật toán SM-2
+        let { ease_factor, interval, next_review } = flashcard;
+
+        // Cập nhật ease_factor
+        const qualityMap = { 0: 0, 1: 0, 2: 0.1, 3: 0.3 };
+        ease_factor = Math.max(1.3, ease_factor + qualityMap[quality] - 0.3);
+
+        // Cập nhật interval
+        if (quality === 0 || quality === 1) {
+            interval = 0;  // Reset
+            next_review = new Date(Date.now() + 60 * 60 * 1000);  // 1 giờ sau
+        } else {
+            if (interval === 0) {
+                interval = 1;  // 1 ngày
+            } else if (interval === 1) {
+                interval = 6;  // 6 ngày
+            } else {
+                interval = Math.round(interval * ease_factor);
+            }
+            next_review = new Date(Date.now() + interval * 24 * 60 * 60 * 1000);
+        }
+
+        await flashcard.update({
+            ease_factor,
+            interval,
+            next_review
+        });
+
+        res.status(200).json({
+            message: 'Cập nhật flashcard thành công',
+            flashcard
+        });
+
+    } catch (error) {
+        console.error('Review flashcard error:', error);
+        res.status(500).json({ message: 'Lỗi cập nhật flashcard' });
+    }
+};
+
 module.exports = {
     createFlashcard,
     getFlashcards,
     getFlashcardById,
     updateFlashcard,
-    deleteFlashcard
+    deleteFlashcard,
+    getDueFlashcards,    // ← PHẢI CÓ
+    reviewFlashcard      // ← PHẢI CÓ
 };

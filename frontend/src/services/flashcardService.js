@@ -39,3 +39,23 @@ export const deleteFlashcard = async (id) => {
         throw error.response?.data || { message: 'Lỗi xóa flashcard' };
     }
 };
+
+// Lấy flashcard đến hạn ôn
+export const getDueFlashcards = async (limit = 20) => {
+    try {
+        const response = await api.get(`/flashcards/due?limit=${limit}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || { message: 'Lỗi lấy flashcard đến hạn' };
+    }
+};
+
+// Ôn tập flashcard
+export const reviewFlashcard = async (id, quality) => {
+    try {
+        const response = await api.post(`/flashcards/${id}/review`, { quality });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || { message: 'Lỗi ôn tập flashcard' };
+    }
+};

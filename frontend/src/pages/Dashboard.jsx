@@ -60,10 +60,13 @@ const Dashboard = () => {
                 <Link to="/flashcards" style={styles.flashcardButton}>
                     Flashcard
                 </Link>
+                <Link to="/review" style={styles.reviewButton}>
+                    🔄 Ôn tập hôm nay
+                </Link>
                 <button onClick={handleLogout} style={styles.logoutButton}>
                     Đăng xuất
                 </button>
-</div>
+            </div>
             </div>
 
             <div style={styles.levelSelector}>
@@ -239,6 +242,15 @@ const styles = {
         borderRadius: '5px',
         textDecoration: 'none',
         marginRight: '10px'
+    },
+    reviewButton: {
+    padding: '10px 20px',
+    backgroundColor: '#fd7e14',
+    color: 'white',
+    border: 'none',
+    borderRadius: '5px',
+    textDecoration: 'none',
+    marginRight: '10px'
     },
     headerRight: {
         display: 'flex',

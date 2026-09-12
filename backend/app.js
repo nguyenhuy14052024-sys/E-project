@@ -60,3 +60,6 @@ app.listen(PORT, () => {
 
 const flashcardRoutes = require('./src/routes/flashcardRoutes');
 app.use('/api/flashcards', flashcardRoutes);
+
+const adminRoutes = require('./src/routes/adminRoutes');
+app.use('/api/admin', adminRoutes);

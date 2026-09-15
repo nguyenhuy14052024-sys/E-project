@@ -8,9 +8,9 @@ const Home = () => {
     return (
         <div style={styles.container}>
             <div style={styles.content}>
-                <h1 style={styles.title}>📚 E-Learning B2-C1</h1>
+                <h1 style={styles.title}>EngLishIngLesh</h1>
                 <p style={styles.subtitle}>
-                    Học tiếng Anh chuẩn Destination với hệ thống bài tập thông minh
+                    Học tiếng Anh
                 </p>
                 <div style={styles.features}>
                     <div style={styles.feature}>
@@ -31,7 +31,7 @@ const Home = () => {
                     </div>
                 </div>
                 <Link to={isLoggedIn ? '/dashboard' : '/login'} style={styles.button}>
-                    {isLoggedIn ? '🚀 Vào học ngay' : '🔐 Bắt đầu ngay'}
+                    {isLoggedIn ? ' Vào học ngay' : ' Bắt đầu ngay'}
                 </Link>
             </div>
         </div>

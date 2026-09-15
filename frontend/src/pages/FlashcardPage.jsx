@@ -75,7 +75,7 @@ const FlashcardPage = () => {
     return (
         <div style={styles.container}>
             <div style={styles.header}>
-                <h1>📚 Flashcard</h1>
+                <h1> Flashcard</h1>
                 <button onClick={() => { setShowForm(!showForm); setEditingId(null); setFormData({ word: '', definition: '', example: '', unitId: '' }); }} style={styles.addButton}>
                     {showForm ? 'Đóng' : '+ Thêm mới'}
                 </button>
@@ -125,10 +125,10 @@ const FlashcardPage = () => {
                             <div style={styles.cardContent}>
                                 <h3>{card.word}</h3>
                                 <p style={styles.definition}>{card.definition}</p>
-                                {card.example && <p style={styles.example}>📝 {card.example}</p>}
+                                {card.example && <p style={styles.example}> {card.example}</p>}
                                 <div style={styles.cardMeta}>
                                     <span style={styles.nextReview}>
-                                        📅 Ôn: {new Date(card.next_review).toLocaleDateString('vi-VN')}
+                                         Ôn: {new Date(card.next_review).toLocaleDateString('vi-VN')}
                                     </span>
                                 </div>
                             </div>

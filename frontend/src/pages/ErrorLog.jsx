@@ -59,7 +59,7 @@ const ErrorLog = () => {
 
     return (
         <div style={styles.container}>
-            <h1 style={styles.title}>📝 Kho lỗi sai</h1>
+            <h1 style={styles.title}> Kho lỗi sai</h1>
             <p style={styles.subtitle}>Tổng số câu sai: <strong>{totalCount}</strong></p>
 
             {/* Thống kê theo Unit */}

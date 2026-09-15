@@ -72,21 +72,21 @@ const PracticeZone = () => {
             <div style={styles.container}>
                 <h1>Ket qua: {unitTitle}</h1>
                 <div style={styles.resultBox}>
-                    <p style={styles.score}>Diem: {result.score}%</p>
+                    <p style={styles.score}>Điểm: {result.score}%</p>
                     <p>Dung: {result.correctCount} / {result.totalQuestions}</p>
                 </div>
                 <div style={styles.resultDetails}>
                     {result.results && result.results.map((r, index) => (
                         <div key={index} style={{ ...styles.resultItem, ...(r.isCorrect ? styles.correct : styles.wrong) }}>
-                            <p><strong>Cau {index + 1}:</strong> {r.isCorrect ? 'Dung' : 'Sai'}</p>
-                            <p>Dap an cua ban: {r.userAnswer || 'Chua chon'}</p>
-                            <p>Dap an dung: {r.correctAnswer}</p>
-                            {r.explanation && <p style={styles.explanation}>Giai thich: {r.explanation}</p>}
+                            <p><strong>Cau {index + 1}:</strong> {r.isCorrect ? 'Đúng' : 'Sai'}</p>
+                            <p>Đáp án của bạn: {r.userAnswer || 'Chưa chọn'}</p>
+                            <p>Đáp án đúng: {r.correctAnswer}</p>
+                            {r.explanation && <p style={styles.explanation}>Giải thích: {r.explanation}</p>}
                         </div>
                     ))}
                 </div>
                 <button onClick={() => navigate(`/learn/${unitId}?type=${filterType}`)} style={styles.button}>
-                    Quay lai hoc
+                    Quay lại học
                 </button>
             </div>
         );
@@ -98,13 +98,13 @@ const PracticeZone = () => {
 
     return (
         <div style={styles.container}>
-            <h1>Bai tap: {unitTitle}</h1>
+            <h1>Bài tập: {unitTitle}</h1>
             {filterType && (
                 <p style={styles.filterInfo}>Dang loc: <strong>{filterType.replace('_', ' ').toUpperCase()}</strong></p>
             )}
             {questions.map((q, index) => (
                 <div key={q.id} style={styles.questionCard}>
-                    <p><strong>Cau {index + 1}:</strong> {q.content}</p>
+                    <p><strong>Câu {index + 1}:</strong> {q.content}</p>
                     {q.question_type === 'multiple_choice' && q.options && q.options.length > 0 && (
                         <div>
                             {q.options.map((opt, i) => (
@@ -130,7 +130,7 @@ const PracticeZone = () => {
                     )}
                     {q.question_type === 'sentence_transformation' && (
                         <textarea
-                            placeholder="Viet lai cau..."
+                            placeholder="Viết lại câu..."
                             onChange={(e) => handleAnswerChange(q.id, e.target.value)}
                             style={styles.textarea}
                         />
@@ -138,7 +138,7 @@ const PracticeZone = () => {
                     {q.question_type === 'error_correction' && (
                         <input
                             type="text"
-                            placeholder="Sua loi..."
+                            placeholder="Sửa lỗi..."
                             onChange={(e) => handleAnswerChange(q.id, e.target.value)}
                             style={styles.input}
                         />

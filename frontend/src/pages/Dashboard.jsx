@@ -74,26 +74,38 @@ const Dashboard = () => {
             </div>
             </div>
 
-            <div style={styles.levelSelector}>
-                <button
-                    style={{ ...styles.levelButton, ...(selectedLevel === 'B2' ? styles.activeLevel : {}) }}
-                    onClick={() => setSelectedLevel('B2')}
-                >
-                    B2
-                </button>
-                <button
-                    style={{ ...styles.levelButton, ...(selectedLevel === 'C1' ? styles.activeLevel : {}) }}
-                    onClick={() => setSelectedLevel('C1')}
-                >
-                    C1
-                </button>
-                <button
-                    style={{ ...styles.levelButton, ...(selectedLevel === 'B1' ? styles.activeLevel : {}) }}
-                    onClick={() => setSelectedLevel('B1')}
-                >
-                    B1 (Sắp ra)
-                </button>
-            </div>
+<div style={styles.levelSelector}>
+    <button
+        style={{ ...styles.levelButton, ...(selectedLevel === 'A1' ? styles.activeLevel : {}) }}
+        onClick={() => setSelectedLevel('A1')}
+    >
+        A1
+    </button>
+    <button
+        style={{ ...styles.levelButton, ...(selectedLevel === 'A2' ? styles.activeLevel : {}) }}
+        onClick={() => setSelectedLevel('A2')}
+    >
+        A2
+    </button>
+    <button
+        style={{ ...styles.levelButton, ...(selectedLevel === 'B1' ? styles.activeLevel : {}) }}
+        onClick={() => setSelectedLevel('B1')}
+    >
+        B1
+    </button>
+    <button
+        style={{ ...styles.levelButton, ...(selectedLevel === 'B2' ? styles.activeLevel : {}) }}
+        onClick={() => setSelectedLevel('B2')}
+    >
+        B2
+    </button>
+    <button
+        style={{ ...styles.levelButton, ...(selectedLevel === 'C1' ? styles.activeLevel : {}) }}
+        onClick={() => setSelectedLevel('C1')}
+    >
+        C1
+    </button>
+</div>
 
             {/* BỘ LỌC CÂU HỎI */}
             <div style={styles.filterContainer}>

@@ -51,7 +51,7 @@ const ReviewPage = () => {
         return (
             <div style={styles.container}>
                 <div style={styles.completedBox}>
-                    <h1>🎉 Hoàn thành!</h1>
+                    <h1>Hoàn thành!</h1>
                     <p>Bạn đã ôn tập xong {flashcards.length} flashcard.</p>
                     <button onClick={() => navigate('/flashcards')} style={styles.button}>
                         Quay lại Flashcard

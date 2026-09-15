@@ -10,6 +10,10 @@ import { isAuthenticated } from './services/authService';
 import MiniTest from './pages/MiniTest';
 import FlashcardPage from './pages/FlashcardPage';
 import ReviewPage from './pages/ReviewPage';
+import AdminDashboard from './pages/Admin/AdminDashboard';
+import ManageUnits from './pages/Admin/ManageUnits';
+import ManageQuestions from './pages/Admin/ManageQuestions';
+import ManageUsers from './pages/Admin/ManageUsers';
 
 const PrivateRoute = ({ children }) => {
     return isAuthenticated() ? children : <Navigate to="/login" />;
@@ -57,6 +61,26 @@ function App() {
                          <ReviewPage />
                      </PrivateRoute>
                 } />
+                <Route path="/admin" element={
+    <PrivateRoute>
+        <AdminDashboard />
+    </PrivateRoute>
+} />
+<Route path="/admin/units" element={
+    <PrivateRoute>
+        <ManageUnits />
+    </PrivateRoute>
+} />
+<Route path="/admin/questions" element={
+    <PrivateRoute>
+        <ManageQuestions />
+    </PrivateRoute>
+} />
+<Route path="/admin/users" element={
+    <PrivateRoute>
+        <ManageUsers />
+    </PrivateRoute>
+} />
             </Routes>
         </Router>
     );

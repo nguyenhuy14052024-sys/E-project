@@ -61,8 +61,13 @@ const Dashboard = () => {
                     Flashcard
                 </Link>
                 <Link to="/review" style={styles.reviewButton}>
-                    🔄 Ôn tập hôm nay
+                     Ôn tập hôm nay
                 </Link>
+                {user.role === 'admin' && (
+                <Link to="/admin" style={styles.adminButton}>
+                    🛠️ Admin
+                </Link>
+                 )}
                 <button onClick={handleLogout} style={styles.logoutButton}>
                     Đăng xuất
                 </button>
@@ -242,6 +247,15 @@ const styles = {
         borderRadius: '5px',
         textDecoration: 'none',
         marginRight: '10px'
+    },
+    adminButton: {
+    padding: '10px 20px',
+    backgroundColor: '#343a40',
+    color: 'white',
+    border: 'none',
+    borderRadius: '5px',
+    textDecoration: 'none',
+    marginRight: '10px'
     },
     reviewButton: {
     padding: '10px 20px',

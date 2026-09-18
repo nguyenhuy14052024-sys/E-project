@@ -162,8 +162,8 @@ const getDueFlashcards = async (req, res) => {
             limit: parseInt(limit)
         });
         
-        console.log('✅ Flashcards due:', flashcards.length);  // ← THÊM LOG
 
+        
         res.status(200).json({
             message: 'Lấy flashcard đến hạn thành công',
             flashcards,

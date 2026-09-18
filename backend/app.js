@@ -63,3 +63,6 @@ app.use('/api/flashcards', flashcardRoutes);
 
 const adminRoutes = require('./src/routes/adminRoutes');
 app.use('/api/admin', adminRoutes);
+
+const dictionaryRoutes = require('./src/routes/dictionaryRoutes');
+app.use('/api/dictionary', dictionaryRoutes);

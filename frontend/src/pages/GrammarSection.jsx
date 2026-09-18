@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { getUnitById, getQuestions } from '../services/unitService';
+import DictionaryPopup from '../components/DictionaryPopup';
 
 const GrammarSection = () => {
     const { unitId } = useParams();
@@ -13,6 +14,7 @@ const GrammarSection = () => {
     const [error, setError] = useState('');
     const [questions, setQuestions] = useState([]);
     const [totalQuestions, setTotalQuestions] = useState(0);
+    const [selectedWord, setSelectedWord] = useState(null);
 
     useEffect(() => {
         fetchUnit();
@@ -41,6 +43,12 @@ const GrammarSection = () => {
         }
     };
 
+    const handleWordClick = (e) => {
+        if (e.target.tagName === 'SPAN' && e.target.dataset.word) {
+            setSelectedWord(e.target.dataset.word);
+        }
+    };
+
     if (loading) return <div style={styles.container}>Đang tải...</div>;
     if (error) return <div style={styles.container}>{error}</div>;
     if (!unit) return <div style={styles.container}>Không tìm thấy Unit</div>;
@@ -49,7 +57,6 @@ const GrammarSection = () => {
         <div style={styles.container}>
             <h1>Unit {unit.unit_number}: {unit.title}</h1>
             
-            {/* Hiển thị thông tin bộ lọc */}
             {filterType && (
                 <p style={styles.filterInfo}>
                     Đang lọc: <strong>{filterType.replace('_', ' ').toUpperCase()}</strong> 
@@ -57,8 +64,14 @@ const GrammarSection = () => {
                 </p>
             )}
 
-            <div style={styles.content}
-                dangerouslySetInnerHTML={{ __html: unit.content_html || '<p>Chưa có nội dung lý thuyết</p>' }}
+            {/* Nội dung lý thuyết với tích hợp tra từ */}
+            <div 
+                style={styles.content}
+                onClick={handleWordClick}
+                dangerouslySetInnerHTML={{ 
+                    __html: (unit.content_html || '<p>Chưa có nội dung lý thuyết</p>')
+                        .replace(/\b([a-zA-Z]{3,})\b/g, '<span data-word="$1" style="cursor:pointer;border-bottom:1px dotted #007bff">$1</span>')
+                }}
             />
             
             <button 
@@ -67,6 +80,13 @@ const GrammarSection = () => {
             >
                 Bắt đầu làm bài tập →
             </button>
+
+            {selectedWord && (
+                <DictionaryPopup 
+                    word={selectedWord} 
+                    onClose={() => setSelectedWord(null)} 
+                />
+            )}
         </div>
     );
 };

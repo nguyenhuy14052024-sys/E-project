@@ -4,9 +4,46 @@ const Question = require('./Question');
 const Progress = require('./Progress');
 const UserAnswer = require('./UserAnswer');
 const Flashcard = require('./Flashcard');
-const Dictionary = require('./Dictionary');  // ← THÊM DÒNG NÀY
+const Dictionary = require('./Dictionary');
+const Certificate = require('./Certificate');
 
-// ... các quan hệ khác
+// ==================== QUAN HỆ ====================
+
+// User - Progress (1-n)
+User.hasMany(Progress, { foreignKey: 'user_id' });
+Progress.belongsTo(User, { foreignKey: 'user_id' });
+
+// Unit - Progress (1-n)
+Unit.hasMany(Progress, { foreignKey: 'unit_id' });
+Progress.belongsTo(Unit, { foreignKey: 'unit_id' });
+
+// Unit - Question (1-n)
+Unit.hasMany(Question, { foreignKey: 'unit_id' });
+Question.belongsTo(Unit, { foreignKey: 'unit_id' });
+
+// User - UserAnswer (1-n)
+User.hasMany(UserAnswer, { foreignKey: 'user_id' });
+UserAnswer.belongsTo(User, { foreignKey: 'user_id' });
+
+// Question - UserAnswer (1-n)
+Question.hasMany(UserAnswer, { foreignKey: 'question_id' });
+UserAnswer.belongsTo(Question, { foreignKey: 'question_id' });
+
+// User - Flashcard (1-n)
+User.hasMany(Flashcard, { foreignKey: 'user_id' });
+Flashcard.belongsTo(User, { foreignKey: 'user_id' });
+
+// Unit - Flashcard (1-n)
+Unit.hasMany(Flashcard, { foreignKey: 'unit_id' });
+Flashcard.belongsTo(Unit, { foreignKey: 'unit_id' });
+
+// User - Certificate (1-n)
+User.hasMany(Certificate, { foreignKey: 'user_id' });
+Certificate.belongsTo(User, { foreignKey: 'user_id' });
+
+// Unit - Certificate (1-n)
+Unit.hasMany(Certificate, { foreignKey: 'unit_id' });
+Certificate.belongsTo(Unit, { foreignKey: 'unit_id' });
 
 module.exports = {
     User,
@@ -15,5 +52,6 @@ module.exports = {
     Progress,
     UserAnswer,
     Flashcard,
-    Dictionary
+    Dictionary,
+    Certificate
 };

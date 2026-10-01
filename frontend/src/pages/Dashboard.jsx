@@ -51,6 +51,9 @@ const Dashboard = () => {
                     <p style={styles.email}>{user.email}</p>
                 </div>
                 <div style={styles.headerRight}>
+                    <Link to="/profile" style={styles.profileButton}>
+                      Hồ sơ
+                </Link>
                 <Link to="/mini-test" style={styles.miniTestButton}>
                     Mini Test
                 </Link>
@@ -67,6 +70,7 @@ const Dashboard = () => {
                 <Link to="/admin" style={styles.adminButton}>
                     🛠️ Admin
                 </Link>
+                
                  )}
                 <button onClick={handleLogout} style={styles.logoutButton}>
                     Đăng xuất
@@ -292,7 +296,17 @@ const styles = {
         borderRadius: '5px',
         textDecoration: 'none',
         marginRight: '10px'
-    }
+    },
+
+    profileButton: {
+    padding: '10px 20px',
+    backgroundColor: '#17a2b8',
+    color: 'white',
+    border: 'none',
+    borderRadius: '5px',
+    textDecoration: 'none',
+    marginRight: '10px'
+}
 };
 
 export default Dashboard;

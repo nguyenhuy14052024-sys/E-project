@@ -35,6 +35,22 @@ const User = sequelize.define('User', {
     premium_expiry: {
         type: DataTypes.DATE,
         allowNull: true
+    },
+    points: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+    },
+    rank: {
+        type: DataTypes.ENUM('Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Master'),
+        defaultValue: 'Bronze'
+    },
+    streak: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+    },
+    last_active: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
     }
 }, {
     timestamps: true,

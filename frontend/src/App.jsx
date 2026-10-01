@@ -14,6 +14,7 @@ import AdminDashboard from './pages/Admin/AdminDashboard';
 import ManageUnits from './pages/Admin/ManageUnits';
 import ManageQuestions from './pages/Admin/ManageQuestions';
 import ManageUsers from './pages/Admin/ManageUsers';
+import ProfilePage from './pages/ProfilePage';
 
 const PrivateRoute = ({ children }) => {
     return isAuthenticated() ? children : <Navigate to="/login" />;
@@ -79,6 +80,11 @@ function App() {
 <Route path="/admin/users" element={
     <PrivateRoute>
         <ManageUsers />
+    </PrivateRoute>
+} />
+<Route path="/profile" element={
+    <PrivateRoute>
+        <ProfilePage />
     </PrivateRoute>
 } />
             </Routes>

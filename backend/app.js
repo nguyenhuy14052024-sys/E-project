@@ -66,3 +66,6 @@ app.use('/api/admin', adminRoutes);
 
 const dictionaryRoutes = require('./src/routes/dictionaryRoutes');
 app.use('/api/dictionary', dictionaryRoutes);
+
+const profileRoutes = require('./src/routes/profileRoutes');
+app.use('/api/profile', profileRoutes);

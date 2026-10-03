@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { getQuestions, submitQuiz } from '../services/unitService';
+import DictionaryPopup from '../components/DictionaryPopup';
 
 const PracticeZone = () => {
     const { unitId } = useParams();
@@ -15,6 +16,7 @@ const PracticeZone = () => {
     const [result, setResult] = useState(null);
     const [unitTitle, setUnitTitle] = useState('');
     const [error, setError] = useState('');
+    const [selectedWord, setSelectedWord] = useState(null);
 
     useEffect(() => {
         fetchQuestions();
@@ -43,6 +45,12 @@ const PracticeZone = () => {
         setAnswers({ ...answers, [questionId]: value });
     };
 
+    const handleWordClick = (e) => {
+        if (e.target.tagName === 'SPAN' && e.target.dataset.word) {
+            setSelectedWord(e.target.dataset.word);
+        }
+    };
+
     const handleSubmit = async () => {
         const answerList = Object.entries(answers).map(([questionId, userAnswer]) => ({
             questionId,
@@ -64,7 +72,7 @@ const PracticeZone = () => {
     }
 
     if (error) {
-        return <div style={styles.container} style={{ color: 'red' }}>{error}</div>;
+        return <div style={{ ...styles.container, color: 'red' }}>{error}</div>;
     }
 
     if (submitted && result) {
@@ -72,21 +80,24 @@ const PracticeZone = () => {
             <div style={styles.container}>
                 <h1>Ket qua: {unitTitle}</h1>
                 <div style={styles.resultBox}>
-                    <p style={styles.score}>Điểm: {result.score}%</p>
+                    <p style={styles.score}>Diem: {result.score}%</p>
                     <p>Dung: {result.correctCount} / {result.totalQuestions}</p>
+                    {result.pointsEarned && (
+                        <p style={styles.pointsEarned}>+{result.pointsEarned} điểm</p>
+                    )}
                 </div>
                 <div style={styles.resultDetails}>
                     {result.results && result.results.map((r, index) => (
                         <div key={index} style={{ ...styles.resultItem, ...(r.isCorrect ? styles.correct : styles.wrong) }}>
-                            <p><strong>Cau {index + 1}:</strong> {r.isCorrect ? 'Đúng' : 'Sai'}</p>
-                            <p>Đáp án của bạn: {r.userAnswer || 'Chưa chọn'}</p>
-                            <p>Đáp án đúng: {r.correctAnswer}</p>
-                            {r.explanation && <p style={styles.explanation}>Giải thích: {r.explanation}</p>}
+                            <p><strong>Cau {index + 1}:</strong> {r.isCorrect ? 'Dung' : 'Sai'}</p>
+                            <p>Dap an cua ban: {r.userAnswer || 'Chua chon'}</p>
+                            <p>Dap an dung: {r.correctAnswer}</p>
+                            {r.explanation && <p style={styles.explanation}>Giai thich: {r.explanation}</p>}
                         </div>
                     ))}
                 </div>
                 <button onClick={() => navigate(`/learn/${unitId}?type=${filterType}`)} style={styles.button}>
-                    Quay lại học
+                    Quay lai hoc
                 </button>
             </div>
         );
@@ -98,13 +109,21 @@ const PracticeZone = () => {
 
     return (
         <div style={styles.container}>
-            <h1>Bài tập: {unitTitle}</h1>
+            <h1>Bai tap: {unitTitle}</h1>
             {filterType && (
                 <p style={styles.filterInfo}>Dang loc: <strong>{filterType.replace('_', ' ').toUpperCase()}</strong></p>
             )}
+            <p style={styles.hint}>Bấm vào từ để tra nghĩa</p>
+            
             {questions.map((q, index) => (
                 <div key={q.id} style={styles.questionCard}>
-                    <p><strong>Câu {index + 1}:</strong> {q.content}</p>
+                    <p 
+                        onClick={handleWordClick}
+                        dangerouslySetInnerHTML={{ 
+                            __html: `<strong>Câu ${index + 1}:</strong> ` + 
+                                q.content.replace(/\b([a-zA-Z]{3,})\b/g, '<span data-word="$1" style="cursor:pointer;border-bottom:1px dotted #007bff">$1</span>')
+                        }}
+                    />
                     {q.question_type === 'multiple_choice' && q.options && q.options.length > 0 && (
                         <div>
                             {q.options.map((opt, i) => (
@@ -130,7 +149,7 @@ const PracticeZone = () => {
                     )}
                     {q.question_type === 'sentence_transformation' && (
                         <textarea
-                            placeholder="Viết lại câu..."
+                            placeholder="Viet lai cau..."
                             onChange={(e) => handleAnswerChange(q.id, e.target.value)}
                             style={styles.textarea}
                         />
@@ -138,7 +157,7 @@ const PracticeZone = () => {
                     {q.question_type === 'error_correction' && (
                         <input
                             type="text"
-                            placeholder="Sửa lỗi..."
+                            placeholder="Sua loi..."
                             onChange={(e) => handleAnswerChange(q.id, e.target.value)}
                             style={styles.input}
                         />
@@ -148,6 +167,13 @@ const PracticeZone = () => {
             <button onClick={handleSubmit} style={styles.submitButton}>
                 Nop bai
             </button>
+
+            {selectedWord && (
+                <DictionaryPopup 
+                    word={selectedWord} 
+                    onClose={() => setSelectedWord(null)} 
+                />
+            )}
         </div>
     );
 };
@@ -163,6 +189,14 @@ const styles = {
         backgroundColor: '#e3f2fd',
         padding: '10px 15px',
         borderRadius: '5px',
+        marginBottom: '20px'
+    },
+    hint: {
+        backgroundColor: '#fff3cd',
+        padding: '8px 15px',
+        borderRadius: '5px',
+        fontSize: '14px',
+        color: '#856404',
         marginBottom: '20px'
     },
     questionCard: {
@@ -216,6 +250,12 @@ const styles = {
         fontSize: '32px',
         fontWeight: 'bold',
         color: '#28a745'
+    },
+    pointsEarned: {
+        fontSize: '18px',
+        color: '#007bff',
+        fontWeight: 'bold',
+        marginTop: '10px'
     },
     resultDetails: {
         display: 'flex',

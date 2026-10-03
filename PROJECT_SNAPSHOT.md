@@ -1,5 +1,5 @@
 # DỰ ÁN E-LEARNING B2-C1 - TRẠNG THÁI HIỆN TẠI
-*Cập nhật lần cuối: 01/10/2026*
+*Cập nhật lần cuối: 03/10/2026*
 
 ## 1. CÔNG NGHỆ
 - Backend: Node.js + Express + PostgreSQL + Sequelize
@@ -16,18 +16,19 @@
 - Flashcard: CRUD + Spaced Repetition (SM-2)
 - Review: Trang ôn tập flashcard đến hạn
 - Admin Panel: CRUD Unit, Question, User
-- Dictionary: Tra từ (Hybrid fallback 3 API)
-- **Profile: Hồ sơ cá nhân, Rank, Streak, Điểm số (MỚI)**
-- **Certificate: Kho chứng nhận (MỚI)**
+- Dictionary: Tra từ (Hybrid fallback 3 API) - trong Grammar + Practice
+- Profile: Hồ sơ cá nhân, Rank, Streak, Điểm số
+- Certificate: Kho chứng nhận
+- Tự động hóa: Cộng điểm, cấp chứng nhận, cập nhật Streak
 
 ## 3. TÍNH NĂNG CHƯA LÀM
-- Tự động cấp chứng nhận
-- Tự động cộng điểm
-- Tự động cập nhật Streak
-- Quên mật khẩu + Xác thực email
-- Đăng nhập Google
+- Quên mật khẩu + Xác thực email (đang làm)
+- Đăng nhập Google (đang làm)
+- Nút báo cáo lỗi
 - Premium / Thanh toán
 - Deploy lên VPS
+- Soạn nội dung thật A1-C1
+- UI/UX hoàn thiện
 
 ## 4. CẤU TRÚC CHÍNH
 - backend/src/controllers/ (auth, unit, quiz, flashcard, admin, dictionary, profile)
@@ -66,9 +67,8 @@
 - Đăng nhập: test@gmail.com / 123456 (admin)
 
 ## 7. VIỆC CẦN LÀM TIẾP
-- [ ] Tự động cấp chứng nhận
-- [ ] Tự động cộng điểm
-- [ ] Tự động cập nhật Streak
+- [ ] Quên mật khẩu + Xác thực email
+- [ ] Đăng nhập Google
 - [ ] Soạn nội dung thật A1-C1
 - [ ] UI/UX + Deploy
 - [ ] Premium / Thanh toán

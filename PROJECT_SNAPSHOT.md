@@ -5,10 +5,13 @@
 - Backend: Node.js + Express + PostgreSQL + Sequelize
 - Frontend: React + Vite + React Router + Axios
 - Auth: JWT
+- Email: Resend API
 - Cache: Redis (tạm tắt)
 
 ## 2. TÍNH NĂNG ĐÃ HOÀN THÀNH
 - Auth: Đăng ký, đăng nhập, JWT
+- **Quên mật khẩu + Reset password qua email (Resend)**
+- **Xác thực email (API đã có)**
 - Unit: Xem danh sách, chi tiết theo trình độ (A1-C1)
 - Quiz: 6 loại câu hỏi, random, hoán vị, lọc theo loại
 - Mini Test: Random từ nhiều Unit
@@ -22,8 +25,7 @@
 - Tự động hóa: Cộng điểm, cấp chứng nhận, cập nhật Streak
 
 ## 3. TÍNH NĂNG CHƯA LÀM
-- Quên mật khẩu + Xác thực email (đang làm)
-- Đăng nhập Google (đang làm)
+- Đăng nhập Google (Passport)
 - Nút báo cáo lỗi
 - Premium / Thanh toán
 - Deploy lên VPS
@@ -31,12 +33,13 @@
 - UI/UX hoàn thiện
 
 ## 4. CẤU TRÚC CHÍNH
+- backend/config/ (db, redis, email, passport)
 - backend/src/controllers/ (auth, unit, quiz, flashcard, admin, dictionary, profile)
 - backend/src/models/ (User, Unit, Question, Progress, UserAnswer, Flashcard, Dictionary, Certificate)
 - backend/src/routes/ (auth, unit, quiz, flashcard, admin, dictionary, profile)
 - backend/src/middlewares/ (authMiddleware, isAdmin)
 - backend/src/services/ (dictionaryService)
-- frontend/src/pages/ (10 trang + 4 trang Admin + Profile)
+- frontend/src/pages/ (10 trang + 4 trang Admin + Profile + ResetPassword)
 - frontend/src/services/ (api, auth, unit, flashcard, admin, dictionary, profile)
 - frontend/src/components/ (DictionaryPopup, CertificateBadge)
 - data_migration/raw_data/demo.json
@@ -44,6 +47,9 @@
 ## 5. API HIỆN CÓ
 - POST /api/auth/register, /login
 - GET /api/auth/profile
+- POST /api/auth/forgot-password
+- POST /api/auth/reset-password/:token
+- GET /api/auth/verify-email/:token
 - GET /api/units?level=B2, /api/units/:id
 - GET /api/quizzes/:unitId?type=
 - POST /api/quizzes/submit, /api/quizzes/generate
@@ -67,8 +73,8 @@
 - Đăng nhập: test@gmail.com / 123456 (admin)
 
 ## 7. VIỆC CẦN LÀM TIẾP
-- [ ] Quên mật khẩu + Xác thực email
 - [ ] Đăng nhập Google
+- [ ] Hoàn thiện xác thực email khi đăng ký
 - [ ] Soạn nội dung thật A1-C1
 - [ ] UI/UX + Deploy
 - [ ] Premium / Thanh toán

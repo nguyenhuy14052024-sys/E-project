@@ -4,7 +4,6 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 
-// const redisClient = require('./config/redis'); // Đã comment tạm
 const sequelize = require('./config/db');
 
 const app = express();
@@ -21,17 +20,24 @@ app.use(express.urlencoded({ extended: true }));
 const authRoutes = require('./src/routes/authRoutes');
 const unitRoutes = require('./src/routes/unitRoutes');
 const quizRoutes = require('./src/routes/quizRoutes');
+const flashcardRoutes = require('./src/routes/flashcardRoutes');
+const adminRoutes = require('./src/routes/adminRoutes');
+const dictionaryRoutes = require('./src/routes/dictionaryRoutes');
+const profileRoutes = require('./src/routes/profileRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/units', unitRoutes);
 app.use('/api/quizzes', quizRoutes);
+app.use('/api/flashcards', flashcardRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/dictionary', dictionaryRoutes);
+app.use('/api/profile', profileRoutes);
 
 // Test kết nối Database
 (async () => {
     try {
         await sequelize.authenticate();
         console.log('✅ PostgreSQL connected successfully');
-        
         await sequelize.sync({ alter: true });
         console.log('✅ Database synced');
     } catch (error) {
@@ -57,15 +63,3 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
-
-const flashcardRoutes = require('./src/routes/flashcardRoutes');
-app.use('/api/flashcards', flashcardRoutes);
-
-const adminRoutes = require('./src/routes/adminRoutes');
-app.use('/api/admin', adminRoutes);
-
-const dictionaryRoutes = require('./src/routes/dictionaryRoutes');
-app.use('/api/dictionary', dictionaryRoutes);
-
-const profileRoutes = require('./src/routes/profileRoutes');
-app.use('/api/profile', profileRoutes);

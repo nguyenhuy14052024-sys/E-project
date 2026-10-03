@@ -51,6 +51,27 @@ const User = sequelize.define('User', {
     last_active: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
+    },
+    // ==================== THÊM MỚI ====================
+    is_verified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
+    verification_token: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    reset_password_token: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    reset_password_expires: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
+    google_id: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 }, {
     timestamps: true,

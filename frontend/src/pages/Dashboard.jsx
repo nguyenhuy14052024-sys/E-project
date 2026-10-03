@@ -68,7 +68,7 @@ const Dashboard = () => {
                 </Link>
                 {user.role === 'admin' && (
                 <Link to="/admin" style={styles.adminButton}>
-                    🛠️ Admin
+                    Admin
                 </Link>
                 
                  )}
@@ -133,7 +133,7 @@ const Dashboard = () => {
                 {loading ? (
                     <p>Dang tai...</p>
                 ) : units.length === 0 ? (
-                    <p>Chua co Unit nao cho trinh do {selectedLevel}</p>
+                    <p>Chưa có Unit nào cho trình độ {selectedLevel}</p>
                 ) : (
                     units.map(unit => (
                         <Link 

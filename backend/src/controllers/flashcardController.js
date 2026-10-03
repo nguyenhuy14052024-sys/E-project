@@ -1,5 +1,6 @@
 const { Flashcard } = require('../models');
 const { Op } = require('sequelize');  // ← THÊM DÒNG NÀY
+const { issueCertificate } = require('./profileController');
 
 // Thêm flashcard mới
 const createFlashcard = async (req, res) => {
@@ -22,6 +23,38 @@ const createFlashcard = async (req, res) => {
         });
 
         console.log('✅ Flashcard đã tạo:', flashcard.id);
+
+        // Đếm số flashcard của user
+        const flashcardCount = await Flashcard.count({
+            where: { user_id: userId }
+        });
+
+        // Cấp chứng nhận theo mốc
+        if (flashcardCount === 50) {
+            await issueCertificate(
+                userId,
+                'flashcard',
+                'Bộ sưu tập 50 từ',
+                'Tạo thành công 50 flashcard'
+            );
+            console.log('🃏 Đã cấp chứng nhận 50 flashcard');
+        } else if (flashcardCount === 100) {
+            await issueCertificate(
+                userId,
+                'flashcard',
+                'Bộ sưu tập 100 từ',
+                'Tạo thành công 100 flashcard'
+            );
+            console.log('🃏 Đã cấp chứng nhận 100 flashcard');
+        } else if (flashcardCount === 500) {
+            await issueCertificate(
+                userId,
+                'flashcard',
+                'Bộ sưu tập 500 từ',
+                'Tạo thành công 500 flashcard'
+            );
+            console.log('🃏 Đã cấp chứng nhận 500 flashcard');
+        }
 
         res.status(201).json({
             message: 'Thêm flashcard thành công',

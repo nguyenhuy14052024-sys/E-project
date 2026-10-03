@@ -14,19 +14,19 @@ const Home = () => {
                 </p>
                 <div style={styles.features}>
                     <div style={styles.feature}>
-                        <span style={styles.icon}>📖</span>
+                        <span style={styles.icon}>A</span>
                         <p>Lý thuyết chi tiết theo từng Unit</p>
                     </div>
                     <div style={styles.feature}>
-                        <span style={styles.icon}>✍️</span>
+                        <span style={styles.icon}>B</span>
                         <p>Bài tập đa dạng, chấm điểm tự động</p>
                     </div>
                     <div style={styles.feature}>
-                        <span style={styles.icon}>📊</span>
+                        <span style={styles.icon}>C</span>
                         <p>Kho lỗi sai và theo dõi tiến độ</p>
                     </div>
                     <div style={styles.feature}>
-                        <span style={styles.icon}>🔄</span>
+                        <span style={styles.icon}>D</span>
                         <p>Flashcard với thuật toán ôn tập thông minh</p>
                     </div>
                 </div>
@@ -74,9 +74,18 @@ const styles = {
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
     },
     icon: {
-        fontSize: '36px',
-        display: 'block',
-        marginBottom: '10px'
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '50px',
+        height: '50px',
+        borderRadius: '50%',
+        backgroundColor: '#007bff',
+        color: 'white',
+        fontSize: '24px',
+        fontWeight: 'bold',
+        marginBottom: '15px',
+        boxShadow: '0 4px 10px rgba(0, 123, 255, 0.3)'
     },
     button: {
         display: 'inline-block',

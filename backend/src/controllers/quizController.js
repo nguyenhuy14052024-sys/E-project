@@ -1,5 +1,6 @@
-const { Question, UserAnswer, Unit } = require('../models');
-const sequelize = require('../../config/db'); // ← THÊM VÀO
+const sequelize = require('../../config/db');
+const { updatePoints, issueCertificate } = require('./profileController');
+const { Question, UserAnswer, Unit, Progress, Certificate } = require('../models');
 
 // Lấy câu hỏi của 1 Unit (ẩn đáp án)
 const getQuestions = async (req, res) => {
@@ -65,6 +66,7 @@ const getQuestions = async (req, res) => {
         });
     }
 };
+
 // Nộp bài và chấm điểm
 const submitQuiz = async (req, res) => {
     try {
@@ -109,11 +111,109 @@ const submitQuiz = async (req, res) => {
         const totalQuestions = questions.length;
         const score = (correctCount / totalQuestions) * 100;
 
+        // Cộng điểm cho user
+        const pointsEarned = correctCount * 1;
+        await updatePoints(userId, pointsEarned);
+
+        // Cập nhật Progress
+        const progress = await Progress.findOne({
+            where: { user_id: userId, unit_id: unitId }
+        });
+
+        if (progress) {
+            const newScore = Math.max(progress.score, score);
+            let newStatus = progress.status;
+            if (score >= 80) newStatus = 'completed';
+            else if (score > 0) newStatus = 'in_progress';
+
+            await progress.update({
+                score: newScore,
+                status: newStatus,
+                last_accessed: new Date()
+            });
+        } else {
+            await Progress.create({
+                user_id: userId,
+                unit_id: unitId,
+                score: score,
+                status: score >= 80 ? 'completed' : 'in_progress',
+                last_accessed: new Date()
+            });
+        }
+
+        // Cấp chứng nhận nếu đạt 100%
+        if (correctCount === totalQuestions) {
+            await issueCertificate(
+                userId,
+                'unit',
+                `Hoàn thành Unit`,
+                `Đạt 100% câu hỏi đúng`,
+                unitId
+            );
+        }
+// Kiểm tra Mini Test (nếu làm nhiều câu từ nhiều Unit)
+const uniqueUnits = [...new Set(answers.map(a => {
+    const q = questions.find(q => q.id === a.questionId);
+    return q ? q.unit_id : null;
+}).filter(Boolean))];
+
+if (uniqueUnits.length >= 3 && score >= 90) {
+    await issueCertificate(
+        userId,
+        'mini_test',
+        'Mini Test xuất sắc',
+        `Đạt ${score}% với câu hỏi từ ${uniqueUnits.length} Unit`
+    );
+    console.log('📝 Đã cấp chứng nhận Mini Test');
+}
+
+        // Kiểm tra hoàn thành khóa học (tất cả Unit của level đã completed)
+const unit = await Unit.findByPk(unitId);
+if (unit) {
+    const totalUnitsInLevel = await Unit.count({
+        where: { book_level: unit.book_level }
+    });
+    
+    const completedUnitsInLevel = await Progress.count({
+        where: {
+            user_id: userId,
+            status: 'completed'
+        },
+        include: [{
+            model: Unit,
+            where: { book_level: unit.book_level },
+            attributes: []
+        }]
+    });
+    
+    if (completedUnitsInLevel === totalUnitsInLevel && totalUnitsInLevel > 0) {
+        // Kiểm tra đã có chứng nhận khóa học chưa
+        const existingCert = await Certificate.findOne({
+            where: {
+                user_id: userId,
+                type: 'course',
+                title: `Hoàn thành khóa học ${unit.book_level}`
+            }
+        });
+        
+        if (!existingCert) {
+            await issueCertificate(
+                userId,
+                'course',
+                `Hoàn thành khóa học ${unit.book_level}`,
+                `Hoàn thành tất cả ${totalUnitsInLevel} Unit trình độ ${unit.book_level}`
+            );
+            console.log('🎓 Đã cấp chứng nhận khóa học:', unit.book_level);
+        }
+    }
+}
+        // Trả về response CUỐI CÙNG
         res.status(200).json({
             message: 'Nộp bài thành công',
             score: Math.round(score * 100) / 100,
             correctCount,
             totalQuestions,
+            pointsEarned,
             results
         });
 
@@ -129,13 +229,11 @@ const generateMiniTest = async (req, res) => {
         const { userId } = req.user;
         const { level, questionTypes, count = 10, difficulty } = req.body;
 
-        // Xây dựng điều kiện lọc
         const unitWhere = {};
         if (level) {
             unitWhere.book_level = level.toUpperCase();
         }
 
-        // Lấy tất cả Unit theo level
         const units = await Unit.findAll({
             where: unitWhere,
             attributes: ['id']
@@ -147,10 +245,7 @@ const generateMiniTest = async (req, res) => {
 
         const unitIds = units.map(u => u.id);
 
-        // Xây dựng điều kiện cho câu hỏi
-        const questionWhere = {
-            unit_id: unitIds
-        };
+        const questionWhere = { unit_id: unitIds };
         if (questionTypes && questionTypes.length > 0) {
             questionWhere.question_type = questionTypes;
         }
@@ -158,7 +253,6 @@ const generateMiniTest = async (req, res) => {
             questionWhere.difficulty = difficulty;
         }
 
-        // Lấy câu hỏi
         const questions = await Question.findAll({
             where: questionWhere,
             attributes: { exclude: ['correct_answer', 'explanation'] }
@@ -168,13 +262,11 @@ const generateMiniTest = async (req, res) => {
             return res.status(404).json({ message: 'Không tìm thấy câu hỏi nào' });
         }
 
-        // Random và giới hạn số câu
         const shuffled = questions
             .map(q => q.toJSON())
             .sort(() => Math.random() - 0.5)
             .slice(0, count);
 
-        // Shuffle options
         const finalQuestions = shuffled.map(q => {
             if (q.options && Array.isArray(q.options) && q.options.length > 0) {
                 const shuffledOpts = [...q.options];
@@ -206,7 +298,6 @@ const getErrorLog = async (req, res) => {
         const { userId } = req.user;
         const { unitId, limit = 20, offset = 0 } = req.query;
 
-        // Xây dựng điều kiện lọc
         const whereClause = {
             user_id: userId,
             is_correct: false
@@ -215,7 +306,6 @@ const getErrorLog = async (req, res) => {
             whereClause.unit_id = unitId;
         }
 
-        // Lấy danh sách câu trả lời sai (cách đơn giản)
         const userAnswers = await UserAnswer.findAll({
             where: whereClause,
             order: [['timestamp', 'DESC']],
@@ -223,18 +313,13 @@ const getErrorLog = async (req, res) => {
             offset: parseInt(offset)
         });
 
-        // Lấy thông tin câu hỏi cho từng câu trả lời
         const questionIds = userAnswers.map(a => a.question_id);
         const questions = await Question.findAll({
             where: { id: questionIds }
         });
 
-        // Đếm tổng số câu sai
-        const totalCount = await UserAnswer.count({
-            where: whereClause
-        });
+        const totalCount = await UserAnswer.count({ where: whereClause });
 
-        // Format kết quả
         const formattedAnswers = userAnswers.map(answer => {
             const question = questions.find(q => q.id === answer.question_id);
             return {
@@ -272,5 +357,5 @@ module.exports = {
     getQuestions,
     submitQuiz,
     generateMiniTest,
-    getErrorLog 
+    getErrorLog
 };

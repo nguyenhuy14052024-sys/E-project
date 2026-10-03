@@ -60,7 +60,7 @@ const ProfilePage = () => {
     return (
         <div style={styles.container}>
             <div style={styles.header}>
-                <h1>👤 Hồ sơ cá nhân</h1>
+                <h1>Hồ sơ cá nhân</h1>
                 <button onClick={() => navigate('/dashboard')} style={styles.backButton}>
                     ← Về Dashboard
                 </button>
@@ -89,7 +89,7 @@ const ProfilePage = () => {
 
             {/* Thống kê */}
             <div style={styles.statsSection}>
-                <h3>📊 Thống kê</h3>
+                <h3> Thống kê</h3>
                 <div style={styles.statsGrid}>
                     <div style={styles.statCard}>
                         <div style={styles.statValue}>{stats.completedUnits}/{stats.totalUnits}</div>
@@ -112,7 +112,7 @@ const ProfilePage = () => {
 
             {/* Kho chứng nhận */}
             <div style={styles.certSection}>
-                <h3>🏆 Kho chứng nhận ({certificates.length})</h3>
+                <h3>Kho chứng nhận ({certificates.length})</h3>
                 {certificates.length === 0 ? (
                     <div style={styles.emptyState}>
                         <p>Chưa có chứng nhận nào. Hãy học tập để nhận chứng nhận!</p>

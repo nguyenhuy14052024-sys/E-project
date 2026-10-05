@@ -427,8 +427,7 @@ Frontend chạy tại http://localhost:5173
 ------------------------------------------
 
 7.4. Tài khoản test
-Vai trò	Email	Mật khẩu
-Admin	test@gmail.com	123456
+### git addTài khoản test thông quan chức năng đăng ký
 8. BIẾN MÔI TRƯỜNG
 8.1. Backend (.env)
 Biến	Mô tả	Bắt buộc

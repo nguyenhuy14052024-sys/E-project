@@ -1,5 +1,5 @@
 const { Flashcard } = require('../models');
-const { Op } = require('sequelize');  // ← THÊM DÒNG NÀY
+const { Op } = require('sequelize');
 const { issueCertificate } = require('./profileController');
 
 // Thêm flashcard mới
@@ -188,15 +188,13 @@ const getDueFlashcards = async (req, res) => {
             where: {
                 user_id: userId,
                 next_review: {
-                    [Op.lte]: new Date()  // next_review <= now
+                    [Op.lte]: new Date()
                 }
             },
             order: [['next_review', 'ASC']],
             limit: parseInt(limit)
         });
-        
 
-        
         res.status(200).json({
             message: 'Lấy flashcard đến hạn thành công',
             flashcards,
@@ -209,12 +207,36 @@ const getDueFlashcards = async (req, res) => {
     }
 };
 
+// Lấy TẤT CẢ flashcard để ôn lại (không cần đến hạn)
+const getAllFlashcardsForReview = async (req, res) => {
+    try {
+        const { userId } = req.user;
+        const { limit = 50 } = req.query;
+
+        const flashcards = await Flashcard.findAll({
+            where: { user_id: userId },
+            order: [['next_review', 'ASC']],
+            limit: parseInt(limit)
+        });
+
+        res.status(200).json({
+            message: 'Lấy tất cả flashcard thành công',
+            flashcards,
+            count: flashcards.length
+        });
+
+    } catch (error) {
+        console.error('Get all flashcards for review error:', error);
+        res.status(500).json({ message: 'Lỗi lấy flashcard' });
+    }
+};
+
 // Cập nhật flashcard sau khi ôn tập (Spaced Repetition)
 const reviewFlashcard = async (req, res) => {
     try {
         const { userId } = req.user;
         const { id } = req.params;
-        const { quality } = req.body;  // 0=Again, 1=Hard, 2=Good, 3=Easy
+        const { quality } = req.body;
 
         if (quality === undefined || quality < 0 || quality > 3) {
             return res.status(400).json({ message: 'Vui lòng chọn đánh giá (0-3)' });
@@ -231,19 +253,17 @@ const reviewFlashcard = async (req, res) => {
         // Thuật toán SM-2
         let { ease_factor, interval, next_review } = flashcard;
 
-        // Cập nhật ease_factor
         const qualityMap = { 0: 0, 1: 0, 2: 0.1, 3: 0.3 };
         ease_factor = Math.max(1.3, ease_factor + qualityMap[quality] - 0.3);
 
-        // Cập nhật interval
         if (quality === 0 || quality === 1) {
-            interval = 0;  // Reset
-            next_review = new Date(Date.now() + 60 * 60 * 1000);  // 1 giờ sau
+            interval = 0;
+            next_review = new Date(Date.now() + 60 * 60 * 1000);
         } else {
             if (interval === 0) {
-                interval = 1;  // 1 ngày
+                interval = 1;
             } else if (interval === 1) {
-                interval = 6;  // 6 ngày
+                interval = 6;
             } else {
                 interval = Math.round(interval * ease_factor);
             }
@@ -273,6 +293,7 @@ module.exports = {
     getFlashcardById,
     updateFlashcard,
     deleteFlashcard,
-    getDueFlashcards,    // ← PHẢI CÓ
-    reviewFlashcard      // ← PHẢI CÓ
+    getDueFlashcards,
+    getAllFlashcardsForReview,
+    reviewFlashcard
 };

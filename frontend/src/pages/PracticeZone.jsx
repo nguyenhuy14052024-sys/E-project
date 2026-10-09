@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { getQuestions, submitQuiz } from '../services/unitService';
 import DictionaryPopup from '../components/DictionaryPopup';
+import CertificateNotification from '../components/CertificateNotification';
 
 const PracticeZone = () => {
     const { unitId } = useParams();
@@ -17,6 +18,7 @@ const PracticeZone = () => {
     const [unitTitle, setUnitTitle] = useState('');
     const [error, setError] = useState('');
     const [selectedWord, setSelectedWord] = useState(null);
+    const [newCertificate, setNewCertificate] = useState(null);
 
     useEffect(() => {
         fetchQuestions();
@@ -61,6 +63,11 @@ const PracticeZone = () => {
             const data = await submitQuiz(unitId, answerList);
             setResult(data);
             setSubmitted(true);
+
+            // Kiểm tra chứng nhận mới
+            if (data.newCertificate) {
+                setNewCertificate(data.newCertificate);
+            }
         } catch (error) {
             console.error('Lỗi nộp bài:', error);
             alert('Lỗi nộp bài. Vui lòng thử lại.');
@@ -78,10 +85,10 @@ const PracticeZone = () => {
     if (submitted && result) {
         return (
             <div style={styles.container}>
-                <h1>Ket qua: {unitTitle}</h1>
+                <h1 style={styles.title}>Kết quả: {unitTitle}</h1>
                 <div style={styles.resultBox}>
-                    <p style={styles.score}>Diem: {result.score}%</p>
-                    <p>Dung: {result.correctCount} / {result.totalQuestions}</p>
+                    <p style={styles.score}>Điểm: {result.score}%</p>
+                    <p>Đúng: {result.correctCount} / {result.totalQuestions}</p>
                     {result.pointsEarned && (
                         <p style={styles.pointsEarned}>+{result.pointsEarned} điểm</p>
                     )}
@@ -89,29 +96,37 @@ const PracticeZone = () => {
                 <div style={styles.resultDetails}>
                     {result.results && result.results.map((r, index) => (
                         <div key={index} style={{ ...styles.resultItem, ...(r.isCorrect ? styles.correct : styles.wrong) }}>
-                            <p><strong>Cau {index + 1}:</strong> {r.isCorrect ? 'Dung' : 'Sai'}</p>
-                            <p>Dap an cua ban: {r.userAnswer || 'Chua chon'}</p>
-                            <p>Dap an dung: {r.correctAnswer}</p>
-                            {r.explanation && <p style={styles.explanation}>Giai thich: {r.explanation}</p>}
+                            <p><strong>Câu {index + 1}:</strong> {r.isCorrect ? 'Đúng' : 'Sai'}</p>
+                            <p>Đáp án của bạn: {r.userAnswer || 'Chưa chọn'}</p>
+                            <p>Đáp án đúng: {r.correctAnswer}</p>
+                            {r.explanation && <p style={styles.explanation}>Giải thích: {r.explanation}</p>}
                         </div>
                     ))}
                 </div>
                 <button onClick={() => navigate(`/learn/${unitId}?type=${filterType}`)} style={styles.button}>
-                    Quay lai hoc
+                    Quay lại học
                 </button>
+
+                {newCertificate && (
+                    <CertificateNotification
+                        certificate={newCertificate}
+                        onClose={() => setNewCertificate(null)}
+                        onViewProfile={() => navigate('/profile')}
+                    />
+                )}
             </div>
         );
     }
 
     if (questions.length === 0) {
-        return <div style={styles.container}>Chua co cau hoi cho Unit nay</div>;
+        return <div style={styles.container}>Chưa có câu hỏi cho Unit này</div>;
     }
 
     return (
         <div style={styles.container}>
-            <h1>Bai tap: {unitTitle}</h1>
+            <h1 style={styles.title}>Bài tập: {unitTitle}</h1>
             {filterType && (
-                <p style={styles.filterInfo}>Dang loc: <strong>{filterType.replace('_', ' ').toUpperCase()}</strong></p>
+                <p style={styles.filterInfo}>Đang lọc: <strong>{filterType.replace('_', ' ').toUpperCase()}</strong></p>
             )}
             <p style={styles.hint}>Bấm vào từ để tra nghĩa</p>
             
@@ -142,14 +157,14 @@ const PracticeZone = () => {
                     {(q.question_type === 'gap_filling' || q.question_type === 'word_formation') && (
                         <input
                             type="text"
-                            placeholder="Nhap dap an..."
+                            placeholder="Nhập đáp án..."
                             onChange={(e) => handleAnswerChange(q.id, e.target.value)}
                             style={styles.input}
                         />
                     )}
                     {q.question_type === 'sentence_transformation' && (
                         <textarea
-                            placeholder="Viet lai cau..."
+                            placeholder="Viết lại câu..."
                             onChange={(e) => handleAnswerChange(q.id, e.target.value)}
                             style={styles.textarea}
                         />
@@ -157,7 +172,7 @@ const PracticeZone = () => {
                     {q.question_type === 'error_correction' && (
                         <input
                             type="text"
-                            placeholder="Sua loi..."
+                            placeholder="Sửa lỗi..."
                             onChange={(e) => handleAnswerChange(q.id, e.target.value)}
                             style={styles.input}
                         />
@@ -165,7 +180,7 @@ const PracticeZone = () => {
                 </div>
             ))}
             <button onClick={handleSubmit} style={styles.submitButton}>
-                Nop bai
+                Nộp bài
             </button>
 
             {selectedWord && (
@@ -183,78 +198,101 @@ const styles = {
         padding: '40px',
         maxWidth: '900px',
         margin: '0 auto',
-        fontFamily: 'Arial, sans-serif'
+        fontFamily: "'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    },
+    title: {
+        fontSize: '24px',
+        fontWeight: '700',
+        color: '#212529',
+        marginBottom: '16px'
     },
     filterInfo: {
-        backgroundColor: '#e3f2fd',
+        backgroundColor: '#E7F1FF',
+        color: '#0D6EFD',
         padding: '10px 15px',
-        borderRadius: '5px',
-        marginBottom: '20px'
+        borderRadius: '8px',
+        marginBottom: '20px',
+        fontSize: '14px',
+        fontWeight: '500'
     },
     hint: {
-        backgroundColor: '#fff3cd',
-        padding: '8px 15px',
-        borderRadius: '5px',
-        fontSize: '14px',
+        backgroundColor: '#FFF3CD',
         color: '#856404',
+        padding: '8px 15px',
+        borderRadius: '8px',
+        fontSize: '14px',
         marginBottom: '20px'
     },
     questionCard: {
-        backgroundColor: 'white',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(4px)',
+        WebkitBackdropFilter: 'blur(4px)',
         padding: '20px',
-        borderRadius: '10px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        borderRadius: '12px',
+        border: '2px solid #DCE8F5',
+        boxShadow: '0 2px 12px rgba(13, 110, 253, 0.06)',
         marginBottom: '20px'
     },
     option: {
         display: 'block',
         margin: '8px 0',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        fontSize: '15px'
     },
     input: {
-        padding: '10px',
-        border: '1px solid #ddd',
-        borderRadius: '5px',
+        padding: '10px 14px',
+        border: '1px solid #CED4DA',
+        borderRadius: '8px',
         width: '100%',
         marginTop: '10px',
-        fontSize: '16px'
+        fontSize: '15px',
+        outline: 'none'
     },
     textarea: {
-        padding: '10px',
-        border: '1px solid #ddd',
-        borderRadius: '5px',
+        padding: '10px 14px',
+        border: '1px solid #CED4DA',
+        borderRadius: '8px',
         width: '100%',
         marginTop: '10px',
-        fontSize: '16px',
-        minHeight: '80px'
+        fontSize: '15px',
+        minHeight: '80px',
+        outline: 'none',
+        fontFamily: 'inherit'
     },
     submitButton: {
         padding: '15px 40px',
-        backgroundColor: '#007bff',
+        backgroundColor: '#0D6EFD',
         color: 'white',
         border: 'none',
-        borderRadius: '5px',
-        fontSize: '18px',
+        borderRadius: '10px',
+        fontSize: '16px',
+        fontWeight: '600',
         cursor: 'pointer',
         width: '100%',
-        marginTop: '10px'
+        marginTop: '10px',
+        boxShadow: '0 4px 12px rgba(13, 110, 253, 0.35)',
+        transition: 'all 0.25s ease'
     },
     resultBox: {
-        backgroundColor: '#e9ecef',
-        padding: '20px',
-        borderRadius: '10px',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(4px)',
+        WebkitBackdropFilter: 'blur(4px)',
+        padding: '24px',
+        borderRadius: '12px',
+        border: '2px solid #DCE8F5',
         textAlign: 'center',
         marginBottom: '20px'
     },
     score: {
         fontSize: '32px',
-        fontWeight: 'bold',
-        color: '#28a745'
+        fontWeight: '700',
+        color: '#28A745',
+        margin: '0 0 8px 0'
     },
     pointsEarned: {
         fontSize: '18px',
-        color: '#007bff',
-        fontWeight: 'bold',
+        color: '#0D6EFD',
+        fontWeight: '700',
         marginTop: '10px'
     },
     resultDetails: {
@@ -265,26 +303,30 @@ const styles = {
     },
     resultItem: {
         padding: '15px',
-        borderRadius: '5px'
+        borderRadius: '8px'
     },
     correct: {
-        backgroundColor: '#d4edda'
+        backgroundColor: '#D4EDDA'
     },
     wrong: {
-        backgroundColor: '#f8d7da'
+        backgroundColor: '#F8D7DA'
     },
     explanation: {
-        color: '#666',
+        color: '#6C757D',
         fontStyle: 'italic',
         marginTop: '5px'
     },
     button: {
-        padding: '10px 20px',
-        backgroundColor: '#6c757d',
+        padding: '12px 24px',
+        backgroundColor: '#6C757D',
         color: 'white',
         border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer'
+        borderRadius: '10px',
+        cursor: 'pointer',
+        fontSize: '14px',
+        fontWeight: '600',
+        boxShadow: '0 2px 6px rgba(108, 117, 125, 0.25)',
+        transition: 'all 0.25s ease'
     }
 };
 

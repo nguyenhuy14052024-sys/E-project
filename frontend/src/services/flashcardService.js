@@ -50,6 +50,16 @@ export const getDueFlashcards = async (limit = 20) => {
     }
 };
 
+// Lấy TẤT CẢ flashcard để ôn lại
+export const getAllFlashcardsForReview = async (limit = 50) => {
+    try {
+        const response = await api.get(`/flashcards/all?limit=${limit}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || { message: 'Lỗi lấy tất cả flashcard' };
+    }
+};
+
 // Ôn tập flashcard
 export const reviewFlashcard = async (id, quality) => {
     try {

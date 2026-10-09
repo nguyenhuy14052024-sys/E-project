@@ -8,21 +8,21 @@ const AdminDashboard = () => {
         {
             title: 'Quản lý Unit',
             description: 'Thêm, sửa, xóa các Unit học tập',
-            icon: '📚',
+            icon: '',
             path: '/admin/units',
             color: '#007bff'
         },
         {
             title: 'Quản lý câu hỏi',
             description: 'Thêm, sửa, xóa câu hỏi trong các Unit',
-            icon: '❓',
+            icon: '',
             path: '/admin/questions',
             color: '#28a745'
         },
         {
             title: 'Quản lý người dùng',
             description: 'Xem danh sách, nâng cấp Premium',
-            icon: '👥',
+            icon: '',
             path: '/admin/users',
             color: '#6f42c1'
         }
@@ -31,7 +31,7 @@ const AdminDashboard = () => {
     return (
         <div style={styles.container}>
             <div style={styles.header}>
-                <h1>🛠️ Admin Panel</h1>
+                <h1> Admin Panel</h1>
                 <button onClick={() => navigate('/dashboard')} style={styles.backButton}>
                     ← Về Dashboard
                 </button>

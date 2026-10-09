@@ -7,12 +7,14 @@ const {
     updateFlashcard, 
     deleteFlashcard,
     getDueFlashcards,
+    getAllFlashcardsForReview,
     reviewFlashcard
 } = require('../controllers/flashcardController');
 const { authMiddleware } = require('../middlewares/authMiddleware');
 
-// ✅ Route CỤ THỂ - đặt LÊN TRƯỚC
-router.get('/due', authMiddleware, getDueFlashcards);        // ← Đưa lên đầu
+// Route cụ thể - đặt trước route động
+router.get('/due', authMiddleware, getDueFlashcards);
+router.get('/all', authMiddleware, getAllFlashcardsForReview);
 router.post('/', authMiddleware, createFlashcard);
 router.get('/', authMiddleware, getFlashcards);
 router.post('/:id/review', authMiddleware, reviewFlashcard);

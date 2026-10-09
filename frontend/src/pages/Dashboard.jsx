@@ -44,9 +44,13 @@ const Dashboard = () => {
 
     return (
         <div style={styles.page}>
+            <div style={styles.bgShape1}></div>
+            <div style={styles.bgShape2}></div>
+            <div style={styles.bgShape3}></div>
+
             <nav style={styles.navbar}>
                 <div style={styles.navLeft}>
-                    <span style={styles.logo}> EnglishIngLesh</span>
+                    <span style={styles.logo}>EnglishIngLesh</span>
                 </div>
                 <button
                     style={styles.mobileMenuToggle}
@@ -58,35 +62,35 @@ const Dashboard = () => {
                     ...styles.navRight,
                     ...(isMobileMenuOpen ? styles.navRightOpen : {})
                 }}>
-                    <Link to="/profile" style={styles.navBtnProfile}>
-                        <span style={styles.navIcon}></span> Hồ sơ
+                    <Link to="/profile" style={styles.navBtn}>
+                        Hồ sơ
                     </Link>
-                    <Link to="/mini-test" style={styles.navBtnGreen}>
-                        <span style={styles.navIcon}></span> Mini Test
+                    <Link to="/mini-test" style={styles.navBtn}>
+                        Mini Test
                     </Link>
-                    <Link to="/error-log" style={styles.navBtnRed}>
-                        <span style={styles.navIcon}></span> Kho lỗi sai
+                    <Link to="/error-log" style={styles.navBtn}>
+                        Kho lỗi sai
                     </Link>
-                    <Link to="/flashcards" style={styles.navBtnPurple}>
-                        <span style={styles.navIcon}></span> Flashcard
+                    <Link to="/flashcards" style={styles.navBtn}>
+                        Flashcard
                     </Link>
-                    <Link to="/review" style={styles.navBtnOrange}>
-                        <span style={styles.navIcon}></span> Ôn tập hôm nay
+                    <Link to="/review" style={styles.navBtn}>
+                        Ôn tập hôm nay
                     </Link>
                     {user.role === 'admin' && (
-                        <Link to="/admin" style={styles.navBtnDark}>
-                            <span style={styles.navIcon}>⚙️</span> Admin
+                        <Link to="/admin" style={styles.navBtnAdmin}>
+                            Admin
                         </Link>
                     )}
                     <button onClick={handleLogout} style={styles.navBtnLogout}>
-                        <span style={styles.navIcon}></span> Đăng xuất
+                        Đăng xuất
                     </button>
                 </div>
             </nav>
 
             <div style={styles.container}>
                 <div style={styles.welcomeSection}>
-                    <h1 style={styles.welcomeTitle}>Xin chào, {user.username}! </h1>
+                    <h1 style={styles.welcomeTitle}>Xin chào, {user.username}!</h1>
                     <p style={styles.welcomeEmail}>{user.email}</p>
                 </div>
 
@@ -106,7 +110,7 @@ const Dashboard = () => {
                 </div>
 
                 <div style={styles.filterContainer}>
-                    <label style={styles.filterLabel}> Lọc câu hỏi:</label>
+                    <label style={styles.filterLabel}>Lọc câu hỏi:</label>
                     <select
                         value={filterType}
                         onChange={(e) => setFilterType(e.target.value)}
@@ -140,13 +144,13 @@ const Dashboard = () => {
                                 style={styles.unitCard}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.transform = 'translateY(-4px)';
-                                    e.currentTarget.style.boxShadow = '0 8px 24px rgba(13, 110, 253, 0.15)';
+                                    e.currentTarget.style.boxShadow = '0 12px 32px rgba(13, 110, 253, 0.20)';
                                     e.currentTarget.style.borderColor = '#0D6EFD';
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)';
-                                    e.currentTarget.style.borderColor = '#E9ECEF';
+                                    e.currentTarget.style.boxShadow = '0 2px 12px rgba(13, 110, 253, 0.06)';
+                                    e.currentTarget.style.borderColor = '#DCE8F5';
                                 }}
                             >
                                 <div style={styles.unitHeader}>
@@ -168,8 +172,44 @@ const Dashboard = () => {
 const styles = {
     page: {
         minHeight: '100vh',
-        backgroundColor: '#F8F9FA',
-        fontFamily: "'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        backgroundColor: '#F6F9FE',
+        fontFamily: "'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        position: 'relative',
+        overflow: 'hidden'
+    },
+    bgShape1: {
+        position: 'fixed',
+        top: '-120px',
+        right: '-120px',
+        width: '460px',
+        height: '460px',
+        borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(13, 110, 253, 0.12) 0%, rgba(13, 110, 253, 0) 70%)',
+        pointerEvents: 'none',
+        zIndex: 0
+    },
+    bgShape2: {
+        position: 'fixed',
+        bottom: '-160px',
+        left: '-100px',
+        width: '520px',
+        height: '520px',
+        borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(13, 110, 253, 0.08) 0%, rgba(13, 110, 253, 0) 70%)',
+        pointerEvents: 'none',
+        zIndex: 0
+    },
+    bgShape3: {
+        position: 'fixed',
+        top: '40%',
+        left: '50%',
+        width: '640px',
+        height: '640px',
+        borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(13, 110, 253, 0.05) 0%, rgba(13, 110, 253, 0) 70%)',
+        transform: 'translate(-50%, -50%)',
+        pointerEvents: 'none',
+        zIndex: 0
     },
     navbar: {
         display: 'flex',
@@ -177,11 +217,14 @@ const styles = {
         alignItems: 'center',
         padding: '0 32px',
         height: '64px',
-        backgroundColor: '#FFFFFF',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        boxShadow: '0 1px 3px rgba(13, 110, 253, 0.06)',
         position: 'sticky',
         top: 0,
-        zIndex: 100
+        zIndex: 100,
+        borderBottom: '1px solid rgba(220, 232, 245, 0.8)'
     },
     navLeft: {
         display: 'flex',
@@ -199,7 +242,7 @@ const styles = {
         border: 'none',
         fontSize: '24px',
         cursor: 'pointer',
-        color: '#212529',
+        color: '#0D6EFD',
         padding: '8px'
     },
     navRight: {
@@ -208,94 +251,39 @@ const styles = {
         gap: '8px'
     },
     navRightOpen: {},
-    navBtnProfile: {
+    navBtn: {
         display: 'flex',
         alignItems: 'center',
-        gap: '6px',
         padding: '8px 16px',
-        backgroundColor: '#E7F1FF',
-        color: '#0D6EFD',
+        backgroundColor: '#0D6EFD',
+        color: '#FFFFFF',
         borderRadius: '8px',
         textDecoration: 'none',
         fontSize: '14px',
         fontWeight: '500',
-        transition: 'all 0.2s ease',
-        cursor: 'pointer'
+        transition: 'all 0.25s ease',
+        cursor: 'pointer',
+        border: 'none',
+        boxShadow: '0 2px 6px rgba(13, 110, 253, 0.25)'
     },
-    navBtnGreen: {
+    navBtnAdmin: {
         display: 'flex',
         alignItems: 'center',
-        gap: '6px',
         padding: '8px 16px',
-        backgroundColor: '#D4EDDA',
-        color: '#155724',
+        backgroundColor: '#6C757D',
+        color: '#FFFFFF',
         borderRadius: '8px',
         textDecoration: 'none',
         fontSize: '14px',
         fontWeight: '500',
-        transition: 'all 0.2s ease',
-        cursor: 'pointer'
-    },
-    navBtnRed: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: '6px',
-        padding: '8px 16px',
-        backgroundColor: '#F8D7DA',
-        color: '#721C24',
-        borderRadius: '8px',
-        textDecoration: 'none',
-        fontSize: '14px',
-        fontWeight: '500',
-        transition: 'all 0.2s ease',
-        cursor: 'pointer'
-    },
-    navBtnPurple: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: '6px',
-        padding: '8px 16px',
-        backgroundColor: '#E2D9F3',
-        color: '#6F42C1',
-        borderRadius: '8px',
-        textDecoration: 'none',
-        fontSize: '14px',
-        fontWeight: '500',
-        transition: 'all 0.2s ease',
-        cursor: 'pointer'
-    },
-    navBtnOrange: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: '6px',
-        padding: '8px 16px',
-        backgroundColor: '#FFE8CC',
-        color: '#D9480F',
-        borderRadius: '8px',
-        textDecoration: 'none',
-        fontSize: '14px',
-        fontWeight: '500',
-        transition: 'all 0.2s ease',
-        cursor: 'pointer'
-    },
-    navBtnDark: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: '6px',
-        padding: '8px 16px',
-        backgroundColor: '#E2E3E5',
-        color: '#343A40',
-        borderRadius: '8px',
-        textDecoration: 'none',
-        fontSize: '14px',
-        fontWeight: '500',
-        transition: 'all 0.2s ease',
-        cursor: 'pointer'
+        transition: 'all 0.25s ease',
+        cursor: 'pointer',
+        border: 'none',
+        boxShadow: '0 2px 6px rgba(108, 117, 125, 0.25)'
     },
     navBtnLogout: {
         display: 'flex',
         alignItems: 'center',
-        gap: '6px',
         padding: '8px 16px',
         backgroundColor: '#DC3545',
         color: '#FFFFFF',
@@ -303,16 +291,16 @@ const styles = {
         border: 'none',
         fontSize: '14px',
         fontWeight: '500',
-        transition: 'all 0.2s ease',
-        cursor: 'pointer'
-    },
-    navIcon: {
-        fontSize: '16px'
+        transition: 'all 0.25s ease',
+        cursor: 'pointer',
+        boxShadow: '0 2px 6px rgba(220, 53, 69, 0.25)'
     },
     container: {
         maxWidth: '1200px',
         margin: '0 auto',
-        padding: '32px'
+        padding: '32px',
+        position: 'relative',
+        zIndex: 1
     },
     welcomeSection: {
         marginBottom: '32px'
@@ -343,24 +331,27 @@ const styles = {
         fontSize: '15px',
         fontWeight: '600',
         color: '#495057',
-        transition: 'all 0.2s ease'
+        transition: 'all 0.25s ease'
     },
     activeLevel: {
         backgroundColor: '#0D6EFD',
         color: '#FFFFFF',
         borderColor: '#0D6EFD',
-        boxShadow: '0 4px 12px rgba(13, 110, 253, 0.3)'
+        boxShadow: '0 4px 12px rgba(13, 110, 253, 0.35)'
     },
     filterContainer: {
         display: 'flex',
         alignItems: 'center',
         gap: '16px',
         padding: '16px 24px',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'rgba(255, 255, 255, 0.85)',
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
         borderRadius: '12px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+        boxShadow: '0 2px 12px rgba(13, 110, 253, 0.06)',
         marginBottom: '32px',
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+        border: '1px solid rgba(220, 232, 245, 0.8)'
     },
     filterLabel: {
         fontWeight: '600',
@@ -377,7 +368,7 @@ const styles = {
         cursor: 'pointer',
         color: '#212529',
         outline: 'none',
-        transition: 'border-color 0.2s ease',
+        transition: 'all 0.25s ease',
         minWidth: '200px'
     },
     unitGrid: {
@@ -389,11 +380,13 @@ const styles = {
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(4px)',
+        WebkitBackdropFilter: 'blur(4px)',
         padding: '24px',
         borderRadius: '12px',
-        border: '2px solid #E9ECEF',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+        border: '2px solid #DCE8F5',
+        boxShadow: '0 2px 12px rgba(13, 110, 253, 0.06)',
         textDecoration: 'none',
         color: '#212529',
         transition: 'all 0.3s ease',
@@ -454,7 +447,7 @@ const styles = {
     spinner: {
         width: '40px',
         height: '40px',
-        border: '4px solid #E9ECEF',
+        border: '4px solid #DCE8F5',
         borderTop: '4px solid #0D6EFD',
         borderRadius: '50%',
         animation: 'spin 0.8s linear infinite'
@@ -469,9 +462,11 @@ const styles = {
         display: 'flex',
         justifyContent: 'center',
         padding: '64px',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'rgba(255, 255, 255, 0.85)',
+        backdropFilter: 'blur(4px)',
+        WebkitBackdropFilter: 'blur(4px)',
         borderRadius: '12px',
-        border: '2px dashed #E9ECEF'
+        border: '2px dashed #DCE8F5'
     },
     emptyText: {
         color: '#6C757D',
@@ -486,11 +481,55 @@ styleSheet.textContent = `
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
+    @keyframes neonPulseBlue {
+        0% { box-shadow: 0 0 8px rgba(13, 110, 253, 0.8), 0 0 20px rgba(13, 110, 253, 0.6), 0 0 40px rgba(13, 110, 253, 0.4); }
+        50% { box-shadow: 0 0 12px rgba(13, 110, 253, 1), 0 0 28px rgba(13, 110, 253, 0.8), 0 0 52px rgba(13, 110, 253, 0.5); }
+        100% { box-shadow: 0 0 8px rgba(13, 110, 253, 0.8), 0 0 20px rgba(13, 110, 253, 0.6), 0 0 40px rgba(13, 110, 253, 0.4); }
+    }
+    @keyframes neonPulseGray {
+        0% { box-shadow: 0 0 8px rgba(108, 117, 125, 0.8), 0 0 20px rgba(108, 117, 125, 0.6), 0 0 40px rgba(108, 117, 125, 0.4); }
+        50% { box-shadow: 0 0 12px rgba(108, 117, 125, 1), 0 0 28px rgba(108, 117, 125, 0.8), 0 0 52px rgba(108, 117, 125, 0.5); }
+        100% { box-shadow: 0 0 8px rgba(108, 117, 125, 0.8), 0 0 20px rgba(108, 117, 125, 0.6), 0 0 40px rgba(108, 117, 125, 0.4); }
+    }
+    @keyframes neonPulseRed {
+        0% { box-shadow: 0 0 8px rgba(220, 53, 69, 0.8), 0 0 20px rgba(220, 53, 69, 0.6), 0 0 40px rgba(220, 53, 69, 0.4); }
+        50% { box-shadow: 0 0 12px rgba(220, 53, 69, 1), 0 0 28px rgba(220, 53, 69, 0.8), 0 0 52px rgba(220, 53, 69, 0.5); }
+        100% { box-shadow: 0 0 8px rgba(220, 53, 69, 0.8), 0 0 20px rgba(220, 53, 69, 0.6), 0 0 40px rgba(220, 53, 69, 0.4); }
+    }
+    a[style*="backgroundColor: rgb(13, 110, 253)"]:hover,
+    a[style*="background-color: rgb(13, 110, 253)"]:hover {
+        transform: translateY(-4px) scale(1.04) !important;
+        animation: neonPulseBlue 1.2s ease-in-out infinite !important;
+        filter: brightness(1.15) !important;
+    }
+    a[style*="backgroundColor: rgb(108, 117, 125)"]:hover,
+    a[style*="background-color: rgb(108, 117, 125)"]:hover {
+        transform: translateY(-4px) scale(1.04) !important;
+        animation: neonPulseGray 1.2s ease-in-out infinite !important;
+        filter: brightness(1.15) !important;
+    }
+    button[style*="backgroundColor: rgb(220, 53, 69)"]:hover,
+    button[style*="background-color: rgb(220, 53, 69)"]:hover {
+        transform: translateY(-4px) scale(1.04) !important;
+        animation: neonPulseRed 1.2s ease-in-out infinite !important;
+        filter: brightness(1.15) !important;
+    }
+    button[style*="backgroundColor: rgb(233, 236, 239)"]:hover,
+    button[style*="background-color: rgb(233, 236, 239)"]:hover {
+        transform: translateY(-4px) scale(1.04) !important;
+        animation: neonPulseBlue 1.2s ease-in-out infinite !important;
+        background-color: #0D6EFD !important;
+        color: #FFFFFF !important;
+    }
+    select[style*="filterSelect"]:hover {
+        border-color: #0D6EFD !important;
+        box-shadow: 0 0 8px rgba(13, 110, 253, 0.5), 0 0 16px rgba(13, 110, 253, 0.3) !important;
+    }
     a:hover {
-        opacity: 0.9;
+        opacity: 1;
     }
     button:hover {
-        opacity: 0.9;
+        opacity: 1;
     }
     @media (max-width: 768px) {
         nav {

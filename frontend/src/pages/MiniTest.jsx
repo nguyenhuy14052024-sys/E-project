@@ -52,7 +52,6 @@ const MiniTest = () => {
         }));
 
         try {
-            // Lấy unitId từ câu hỏi đầu tiên
             const unitId = questions[0]?.unit_id;
             const data = await submitQuiz(unitId, answerList);
             setResult(data);
@@ -67,7 +66,7 @@ const MiniTest = () => {
     if (submitted && result) {
         return (
             <div style={styles.container}>
-                <h1 style={styles.title}>📊 Kết quả Mini Test</h1>
+                <h1 style={styles.title}> Kết quả Mini Test</h1>
                 <div style={styles.resultBox}>
                     <p style={styles.score}>Điểm: {result.score}%</p>
                     <p>Đúng: {result.correctCount} / {result.totalQuestions}</p>
@@ -96,7 +95,7 @@ const MiniTest = () => {
 
     return (
         <div style={styles.container}>
-            <h1 style={styles.title}>🎯 Mini Test</h1>
+            <h1 style={styles.title}> Mini Test</h1>
             <p style={styles.subtitle}>Tạo bài test ngẫu nhiên từ nhiều Unit</p>
 
             {error && <div style={styles.error}>{error}</div>}
@@ -109,6 +108,9 @@ const MiniTest = () => {
                         onChange={(e) => setOptions({ ...options, level: e.target.value })}
                         style={styles.select}
                     >
+                        <option value="A1">A1</option>
+                        <option value="A2">A2</option>
+                        <option value="B1">B1</option>
                         <option value="B2">B2</option>
                         <option value="C1">C1</option>
                     </select>
@@ -146,12 +148,12 @@ const MiniTest = () => {
             </div>
 
             <button onClick={handleGenerate} style={styles.generateButton} disabled={loading}>
-                🚀 Tạo bài test
+                 Tạo bài test
             </button>
 
             {questions.length > 0 && !submitted && (
                 <div style={styles.questionList}>
-                    <h2 style={styles.sectionTitle}>📝 Bài test ({questions.length} câu)</h2>
+                    <h2 style={styles.sectionTitle}> Bài test ({questions.length} câu)</h2>
                     {questions.map((q, index) => (
                         <div key={q.id} style={styles.questionCard}>
                             <p style={styles.questionText}>

@@ -1,6 +1,6 @@
+const { Question, UserAnswer, Unit, Progress, Certificate } = require('../models');
 const sequelize = require('../../config/db');
 const { updatePoints, issueCertificate } = require('./profileController');
-const { Question, UserAnswer, Unit, Progress, Certificate } = require('../models');
 
 // Lấy câu hỏi của 1 Unit (ẩn đáp án)
 const getQuestions = async (req, res) => {
@@ -141,9 +141,12 @@ const submitQuiz = async (req, res) => {
             });
         }
 
+        // Khai báo biến newCertificate (CHỈ 1 LẦN DUY NHẤT)
+        let newCertificate = null;
+
         // Cấp chứng nhận nếu đạt 100%
         if (correctCount === totalQuestions) {
-            await issueCertificate(
+            newCertificate = await issueCertificate(
                 userId,
                 'unit',
                 `Hoàn thành Unit`,
@@ -151,62 +154,64 @@ const submitQuiz = async (req, res) => {
                 unitId
             );
         }
-// Kiểm tra Mini Test (nếu làm nhiều câu từ nhiều Unit)
-const uniqueUnits = [...new Set(answers.map(a => {
-    const q = questions.find(q => q.id === a.questionId);
-    return q ? q.unit_id : null;
-}).filter(Boolean))];
 
-if (uniqueUnits.length >= 3 && score >= 90) {
-    await issueCertificate(
-        userId,
-        'mini_test',
-        'Mini Test xuất sắc',
-        `Đạt ${score}% với câu hỏi từ ${uniqueUnits.length} Unit`
-    );
-    console.log('📝 Đã cấp chứng nhận Mini Test');
-}
+        // Kiểm tra Mini Test (nếu làm nhiều câu từ nhiều Unit)
+        const uniqueUnits = [...new Set(answers.map(a => {
+            const q = questions.find(q => q.id === a.questionId);
+            return q ? q.unit_id : null;
+        }).filter(Boolean))];
 
-        // Kiểm tra hoàn thành khóa học (tất cả Unit của level đã completed)
-const unit = await Unit.findByPk(unitId);
-if (unit) {
-    const totalUnitsInLevel = await Unit.count({
-        where: { book_level: unit.book_level }
-    });
-    
-    const completedUnitsInLevel = await Progress.count({
-        where: {
-            user_id: userId,
-            status: 'completed'
-        },
-        include: [{
-            model: Unit,
-            where: { book_level: unit.book_level },
-            attributes: []
-        }]
-    });
-    
-    if (completedUnitsInLevel === totalUnitsInLevel && totalUnitsInLevel > 0) {
-        // Kiểm tra đã có chứng nhận khóa học chưa
-        const existingCert = await Certificate.findOne({
-            where: {
-                user_id: userId,
-                type: 'course',
-                title: `Hoàn thành khóa học ${unit.book_level}`
-            }
-        });
-        
-        if (!existingCert) {
+        if (uniqueUnits.length >= 3 && score >= 90) {
             await issueCertificate(
                 userId,
-                'course',
-                `Hoàn thành khóa học ${unit.book_level}`,
-                `Hoàn thành tất cả ${totalUnitsInLevel} Unit trình độ ${unit.book_level}`
+                'mini_test',
+                'Mini Test xuất sắc',
+                `Đạt ${score}% với câu hỏi từ ${uniqueUnits.length} Unit`
             );
-            console.log('🎓 Đã cấp chứng nhận khóa học:', unit.book_level);
+            console.log('📝 Đã cấp chứng nhận Mini Test');
         }
-    }
-}
+
+        // Kiểm tra hoàn thành khóa học (tất cả Unit của level đã completed)
+        const unit = await Unit.findByPk(unitId);
+        if (unit) {
+            const totalUnitsInLevel = await Unit.count({
+                where: { book_level: unit.book_level }
+            });
+            
+            const completedUnitsInLevel = await Progress.count({
+                where: {
+                    user_id: userId,
+                    status: 'completed'
+                },
+                include: [{
+                    model: Unit,
+                    where: { book_level: unit.book_level },
+                    attributes: []
+                }]
+            });
+            
+            if (completedUnitsInLevel === totalUnitsInLevel && totalUnitsInLevel > 0) {
+                // Kiểm tra đã có chứng nhận khóa học chưa
+                const existingCert = await Certificate.findOne({
+                    where: {
+                        user_id: userId,
+                        type: 'course',
+                        title: `Hoàn thành khóa học ${unit.book_level}`
+                    }
+                });
+                
+                if (!existingCert) {
+                    await issueCertificate(
+                        userId,
+                        'course',
+                        `Hoàn thành khóa học ${unit.book_level}`,
+                        `Hoàn thành tất cả ${totalUnitsInLevel} Unit trình độ ${unit.book_level}`
+                    );
+                    console.log('🎓 Đã cấp chứng nhận khóa học:', unit.book_level);
+                }
+            }
+        }
+
         // Trả về response CUỐI CÙNG
         res.status(200).json({
             message: 'Nộp bài thành công',
@@ -214,6 +219,7 @@ if (unit) {
             correctCount,
             totalQuestions,
             pointsEarned,
+            newCertificate,
             results
         });
 

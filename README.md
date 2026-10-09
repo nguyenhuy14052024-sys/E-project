@@ -177,98 +177,113 @@ Frontend hiển thị kết quả cho người dùng
 E-project/
 │
 ├── backend/
-│ ├── config/
-│ │ ├── db.js
-│ │ ├── redis.js
-│ │ ├── email.js
-│ │ └── passport.js
-│ │
-│ ├── src/
-│ │ ├── controllers/
-│ │ │ ├── authController.js
-│ │ │ ├── unitController.js
-│ │ │ ├── quizController.js
-│ │ │ ├── flashcardController.js
-│ │ │ ├── adminController.js
-│ │ │ ├── dictionaryController.js
-│ │ │ └── profileController.js
-│ │ │
-│ │ ├── models/
-│ │ │ ├── User.js
-│ │ │ ├── Unit.js
-│ │ │ ├── Question.js
-│ │ │ ├── Progress.js
-│ │ │ ├── UserAnswer.js
-│ │ │ ├── Flashcard.js
-│ │ │ ├── Dictionary.js
-│ │ │ ├── Certificate.js
-│ │ │ └── index.js
-│ │ │
-│ │ ├── routes/
-│ │ │ ├── authRoutes.js
-│ │ │ ├── unitRoutes.js
-│ │ │ ├── quizRoutes.js
-│ │ │ ├── flashcardRoutes.js
-│ │ │ ├── adminRoutes.js
-│ │ │ ├── dictionaryRoutes.js
-│ │ │ └── profileRoutes.js
-│ │ │
-│ │ ├── middlewares/
-│ │ │ └── authMiddleware.js
-│ │ │
-│ │ └── services/
-│ │ └── dictionaryService.js
-│ │
-│ ├── .env
-│ ├── app.js
-│ └── package.json
+│   ├── config/
+│   │   ├── db.js
+│   │   ├── redis.js
+│   │   ├── email.js
+│   │   └── passport.js
+│   │
+│   ├── src/
+│   │   ├── controllers/
+│   │   │   ├── authController.js
+│   │   │   ├── unitController.js
+│   │   │   ├── quizController.js
+│   │   │   ├── flashcardController.js
+│   │   │   ├── adminController.js
+│   │   │   ├── dictionaryController.js
+│   │   │   └── profileController.js
+│   │   │
+│   │   ├── models/
+│   │   │   ├── User.js
+│   │   │   ├── Unit.js
+│   │   │   ├── Question.js
+│   │   │   ├── Progress.js
+│   │   │   ├── UserAnswer.js
+│   │   │   ├── Flashcard.js
+│   │   │   ├── Dictionary.js
+│   │   │   ├── Certificate.js
+│   │   │   └── index.js
+│   │   │
+│   │   ├── routes/
+│   │   │   ├── authRoutes.js
+│   │   │   ├── unitRoutes.js
+│   │   │   ├── quizRoutes.js
+│   │   │   ├── flashcardRoutes.js
+│   │   │   ├── adminRoutes.js
+│   │   │   ├── dictionaryRoutes.js
+│   │   │   └── profileRoutes.js
+│   │   │
+│   │   ├── middlewares/
+│   │   │   └── authMiddleware.js
+│   │   │
+│   │   └── services/
+│   │       └── dictionaryService.js
+│   │
+│   ├── .env
+│   ├── app.js
+│   ├── package.json
+│   └── package-lock.json
 │
 ├── frontend/
-│ ├── src/
-│ │ ├── components/
-│ │ │ ├── DictionaryPopup.jsx
-│ │ │ └── CertificateBadge.jsx
-│ │ │
-│ │ ├── pages/
-│ │ │ ├── Home.jsx
-│ │ │ ├── Login.jsx
-│ │ │ ├── Register.jsx
-│ │ │ ├── Dashboard.jsx
-│ │ │ ├── GrammarSection.jsx
-│ │ │ ├── PracticeZone.jsx
-│ │ │ ├── MiniTest.jsx
-│ │ │ ├── ErrorLog.jsx
-│ │ │ ├── FlashcardPage.jsx
-│ │ │ ├── ReviewPage.jsx
-│ │ │ ├── ProfilePage.jsx
-│ │ │ ├── ResetPassword.jsx
-│ │ │ └── Admin/
-│ │ │ ├── AdminDashboard.jsx
-│ │ │ ├── ManageUnits.jsx
-│ │ │ ├── ManageQuestions.jsx
-│ │ │ └── ManageUsers.jsx
-│ │ │
-│ │ ├── services/
-│ │ │ ├── api.js
-│ │ │ ├── authService.js
-│ │ │ ├── unitService.js
-│ │ │ ├── flashcardService.js
-│ │ │ ├── adminService.js
-│ │ │ ├── dictionaryService.js
-│ │ │ └── profileService.js
-│ │ │
-│ │ ├── App.jsx
-│ │ └── main.jsx
-│ │
-│ ├── index.html
-│ ├── package.json
-│ └── vite.config.js
+│   ├── public/
+│   │   ├── favicon.svg
+│   │   └── vite.svg
+│   │
+│   ├── src/
+│   │   ├── assets/
+│   │   │   └── react.svg
+│   │   │
+│   │   ├── components/
+│   │   │   ├── DictionaryPopup.jsx
+│   │   │   ├── CertificateBadge.jsx
+│   │   │   └── CertificateNotification.jsx
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── Home.jsx
+│   │   │   ├── Login.jsx
+│   │   │   ├── Register.jsx
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── GrammarSection.jsx
+│   │   │   ├── PracticeZone.jsx
+│   │   │   ├── MiniTest.jsx
+│   │   │   ├── ErrorLog.jsx
+│   │   │   ├── FlashcardPage.jsx
+│   │   │   ├── ReviewPage.jsx
+│   │   │   ├── ProfilePage.jsx
+│   │   │   ├── ResetPassword.jsx
+│   │   │   └── Admin/
+│   │   │       ├── AdminDashboard.jsx
+│   │   │       ├── ManageUnits.jsx
+│   │   │       ├── ManageQuestions.jsx
+│   │   │       └── ManageUsers.jsx
+│   │   │
+│   │   ├── services/
+│   │   │   ├── api.js
+│   │   │   ├── authService.js
+│   │   │   ├── unitService.js
+│   │   │   ├── flashcardService.js
+│   │   │   ├── adminService.js
+│   │   │   ├── dictionaryService.js
+│   │   │   └── profileService.js
+│   │   │
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   │
+│   ├── .env
+│   ├── .gitignore
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── README.md
+│   └── vite.config.js
 │
 ├── data_migration/
-│ ├── raw_data/
-│ │ └── demo.json
-│ └── importToDB.js
+│   ├── raw_data/
+│   │   └── demo.json
+│   └── importToDB.js
 │
+├── .gitignore
 ├── PROJECT_SNAPSHOT.md
 └── README.md
 ---
@@ -537,3 +552,44 @@ Email: nguyenhuy14052024@gmail.com
 
 12. GIẤY PHÉP
 Dự án này được phát triển cho mục đích học tập và phi lợi nhuận. Mọi đóng góp đều được hoan nghênh.
+
+---
+
+## 13. LỊCH SỬ THAY ĐỔI
+
+### 09/10/2026
+
+**Đã thay đổi:**
+
+| STT | Thay đổi | Chi tiết |
+|-----|----------|----------|
+| 1 | Thêm component `CertificateNotification.jsx` | Popup thông báo khi nhận chứng nhận mới |
+| 2 | Thêm endpoint `/api/flashcards/all` | Lấy tất cả flashcard để ôn lại |
+| 3 | Thêm tính năng thông báo chứng nhận | Popup + Confetti khi hoàn thành Unit 100% |
+| 4 | Nâng cấp giao diện | Home, Login, Dashboard, Profile, Flashcard, Review, PracticeZone |
+
+**Sơ đồ nhánh thay đổi:**
+
+**API thay đổi:**
+
+| Method | Endpoint | Trạng thái |
+|--------|----------|------------|
+| GET | /api/flashcards/all | MỚI |
+
+---
+
+### 05/10/2026
+
+**Đã thay đổi:**
+
+| STT | Thay đổi | Chi tiết |
+|-----|----------|----------|
+| 1 | Thêm tính năng quên mật khẩu | Gửi email qua Resend |
+| 2 | Thêm trang Reset Password | Cho phép đặt lại mật khẩu |
+| 3 | Thêm xác thực email | API đã có |
+| 4 | Thêm model `Certificate` | Lưu chứng nhận |
+| 5 | Thêm tính năng tự động cộng điểm | Khi làm bài |
+| 6 | Thêm tính năng tự động cấp chứng nhận | Unit, khóa học, flashcard, streak |
+| 7 | Thêm tính năng Streak | Cập nhật khi đăng nhập |
+
+**Sơ đồ nhánh thay đổi:**

@@ -35,9 +35,9 @@ const getUnitById = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const unit = await Unit.findByPk(id, {
-            attributes: ['id', 'book_level', 'unit_number', 'title', 'type', 'description', 'content_html']
-        });
+       const unit = await Unit.findByPk(id, {
+    attributes: ['id', 'book_level', 'unit_number', 'title', 'type', 'description', 'content_html', 'difficulty', 'note', 'parts']
+});
 
         if (!unit) {
             return res.status(404).json({

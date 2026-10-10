@@ -377,21 +377,24 @@ const styles = {
         gap: '24px'
     },
     unitCard: {
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(4px)',
-        WebkitBackdropFilter: 'blur(4px)',
-        padding: '24px',
-        borderRadius: '12px',
-        border: '2px solid #DCE8F5',
-        boxShadow: '0 2px 12px rgba(13, 110, 253, 0.06)',
-        textDecoration: 'none',
-        color: '#212529',
-        transition: 'all 0.3s ease',
-        cursor: 'pointer'
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backdropFilter: 'blur(4px)',
+    WebkitBackdropFilter: 'blur(4px)',
+    padding: '24px',
+    borderRadius: '12px',
+    borderWidth: '2px',
+    borderStyle: 'solid',
+    borderColor: '#DCE8F5',
+    boxShadow: '0 2px 12px rgba(13, 110, 253, 0.06)',
+    textDecoration: 'none',
+    color: '#212529',
+    transition: 'all 0.3s ease',
+    cursor: 'pointer'
     },
+    
     unitHeader: {
         display: 'flex',
         justifyContent: 'space-between',

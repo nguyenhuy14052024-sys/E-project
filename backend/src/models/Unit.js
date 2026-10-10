@@ -8,7 +8,7 @@ const Unit = sequelize.define('Unit', {
         primaryKey: true
     },
     book_level: {
-        type: DataTypes.ENUM('B2', 'C1'),
+        type: DataTypes.ENUM('A1', 'A2', 'B1', 'B2', 'C1'),
         allowNull: false
     },
     unit_number: {
@@ -20,11 +20,27 @@ const Unit = sequelize.define('Unit', {
         allowNull: false
     },
     type: {
-        type: DataTypes.ENUM('grammar', 'vocabulary'),
+        type: DataTypes.ENUM('grammar', 'vocabulary', 'mixed'),
         allowNull: false
     },
     description: {
         type: DataTypes.TEXT,
+        allowNull: true
+    },
+    difficulty: {
+        type: DataTypes.INTEGER,
+        defaultValue: 1,
+        validate: {
+            min: 1,
+            max: 3
+        }
+    },
+    note: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
+    parts: {
+        type: DataTypes.JSON,
         allowNull: true
     },
     content_html: {

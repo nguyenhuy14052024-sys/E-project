@@ -1,11 +1,12 @@
 # DỰ ÁN E-LEARNING B2-C1 - TRẠNG THÁI HIỆN TẠI
-*Cập nhật lần cuối: 09/10/2026*
+*Cập nhật lần cuối: 10/10/2026*
 
 ## 1. CÔNG NGHỆ
 - Backend: Node.js + Express + PostgreSQL + Sequelize
 - Frontend: React + Vite + React Router + Axios
 - Auth: JWT
 - Email: Resend API
+- Editor: React Quill (Rich Text Editor)
 - Cache: Redis (tạm tắt)
 
 ## 2. TÍNH NĂNG ĐÃ HOÀN THÀNH
@@ -24,6 +25,11 @@
 - Certificate: Kho chứng nhận
 - Tự động hóa: Cộng điểm, cấp chứng nhận, cập nhật Streak
 - Thông báo chứng nhận: Popup + Confetti khi nhận chứng nhận mới
+- **Form soạn nội dung mới: chia trường (level, unit, tên, mô tả, độ khó, ghi chú, các phần)**
+- **Rich Text Editor: hỗ trợ in đậm, in nghiêng, gạch chân, màu, highlight**
+- **Giao diện bài học theo tone màu trình độ (A1-C1)**
+- **Độ khó thể hiện qua màu nền (Dễ, Trung bình, Nâng cao)**
+- **Ghi chú mềm mại, không "công nghiệp"**
 
 ## 3. GIAO DIỆN ĐÃ NÂNG CẤP
 - Dashboard
@@ -34,14 +40,15 @@
 - Login
 - CertificateBadge
 - PracticeZone
+- GrammarSection
+- ManageUnits (Admin)
 
 ## 4. GIAO DIỆN CHƯA NÂNG CẤP
 - Register
-- GrammarSection
 - MiniTest
 - ErrorLog
 - ResetPassword
-- Admin (4 trang)
+- Admin (AdminDashboard, ManageQuestions, ManageUsers)
 
 ## 5. TÍNH NĂNG CHƯA LÀM
 - Đăng nhập Google (Passport)
@@ -53,6 +60,7 @@
 - Deploy lên VPS
 - Soạn nội dung thật A1-C1
 - UI/UX hoàn thiện cho các trang còn lại
+- Loading component (icon nhảy)
 
 ## 6. CẤU TRÚC CHÍNH
 - backend/config/ (db, redis, email, passport)

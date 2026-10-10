@@ -35,7 +35,17 @@ const getAllUnits = async (req, res) => {
 // Thêm Unit mới
 const createUnit = async (req, res) => {
     try {
-        const { book_level, unit_number, title, type, description, content_html } = req.body;
+        const { 
+            book_level, 
+            unit_number, 
+            title, 
+            type, 
+            description, 
+            difficulty,
+            note,
+            parts,
+            content_html 
+        } = req.body;
 
         if (!book_level || !unit_number || !title || !type) {
             return res.status(400).json({ 
@@ -49,6 +59,9 @@ const createUnit = async (req, res) => {
             title,
             type,
             description,
+            difficulty: difficulty || 1,
+            note,
+            parts,
             content_html
         });
 
@@ -67,7 +80,19 @@ const createUnit = async (req, res) => {
 const updateUnit = async (req, res) => {
     try {
         const { id } = req.params;
-        const { book_level, unit_number, title, type, description, content_html } = req.body;
+        const { 
+            book_level, 
+            unit_number, 
+            title, 
+            type, 
+            description, 
+            difficulty,
+            note,
+            parts,
+            content_html 
+        } = req.body;
+
+        console.log('📥 [UPDATE UNIT] Nhận parts:', JSON.stringify(parts));
 
         const unit = await Unit.findByPk(id);
         if (!unit) {
@@ -79,9 +104,16 @@ const updateUnit = async (req, res) => {
         if (title) unit.title = title;
         if (type) unit.type = type;
         if (description !== undefined) unit.description = description;
+        if (difficulty !== undefined) unit.difficulty = difficulty;
+        if (note !== undefined) unit.note = note;
+        if (parts !== undefined) {
+            console.log('📝 [UPDATE UNIT] Gán parts:', JSON.stringify(parts));
+            unit.parts = parts;
+        }
         if (content_html !== undefined) unit.content_html = content_html;
 
         await unit.save();
+        console.log('✅ [UPDATE UNIT] Đã lưu parts:', JSON.stringify(unit.parts));
 
         res.status(200).json({
             message: 'Cập nhật Unit thành công',
@@ -93,7 +125,6 @@ const updateUnit = async (req, res) => {
         res.status(500).json({ message: 'Lỗi cập nhật Unit' });
     }
 };
-
 // Xóa Unit (và tất cả câu hỏi của nó)
 const deleteUnit = async (req, res) => {
     try {

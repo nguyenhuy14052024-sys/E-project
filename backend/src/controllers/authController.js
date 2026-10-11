@@ -11,10 +11,15 @@ const register = async (req, res) => {
     try {
         const { username, email, password } = req.body;
 
-        const existingUser = await User.findOne({ where: { email } });
-        if (existingUser) {
-            return res.status(400).json({ message: 'Email đã được đăng ký' });
-        }
+       const existingEmail = await User.findOne({ where: { email } });
+if (existingEmail) {
+    return res.status(400).json({ message: 'Email đã được đăng ký' });
+}
+
+const existingUsername = await User.findOne({ where: { username } });
+if (existingUsername) {
+    return res.status(400).json({ message: 'Tên người dùng đã được sử dụng' });
+}
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);

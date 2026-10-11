@@ -33,162 +33,318 @@ const ManageUsers = () => {
         }
     };
 
-    const handleToggleRole = async (user) => {
-        const newRole = user.role === 'admin' ? 'user' : 'admin';
-        if (window.confirm(`Đổi quyền thành ${newRole}?`)) {
-            try {
-                await updateUser(user.id, { role: newRole });
-                fetchUsers();
-            } catch (err) {
-                setError('Lỗi cập nhật quyền');
-            }
-        }
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('vi-VN', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
     };
 
-    if (loading) return <div style={styles.container}>Đang tải...</div>;
+    if (loading) {
+        return (
+            <div style={styles.page}>
+                <div style={styles.container}>
+                    <div style={styles.loadingWrapper}>
+                        <div style={styles.spinner}></div>
+                        <p style={styles.loadingText}>Đang tải danh sách người dùng...</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div style={styles.container}>
-            <div style={styles.header}>
-                <h1>👥 Quản lý người dùng</h1>
-                <button onClick={() => navigate('/admin')} style={styles.backButton}>
-                    ← Về Admin
-                </button>
+        <div style={styles.page}>
+            <div style={styles.container}>
+                <div style={styles.header}>
+                    <h1 style={styles.title}>Quản lý người dùng</h1>
+                    <button onClick={() => navigate('/admin')} style={styles.backButton}>
+                        ← Về Admin
+                    </button>
+                </div>
+
+                {error && <div style={styles.error}>{error}</div>}
+
+                <div style={styles.statsBar}>
+                    <div style={styles.statItem}>
+                        <span style={styles.statValue}>{users.length}</span>
+                        <span style={styles.statLabel}>Tổng người dùng</span>
+                    </div>
+                    <div style={styles.statItem}>
+                        <span style={styles.statValue}>
+                            {users.filter(u => u.role === 'admin').length}
+                        </span>
+                        <span style={styles.statLabel}>Admin</span>
+                    </div>
+                    <div style={styles.statItem}>
+                        <span style={styles.statValue}>
+                            {users.filter(u => u.is_premium).length}
+                        </span>
+                        <span style={styles.statLabel}>Premium</span>
+                    </div>
+                </div>
+
+                <div style={styles.tableWrapper}>
+                    <table style={styles.table}>
+                        <thead>
+                            <tr>
+                                <th style={styles.th}>Username</th>
+                                <th style={styles.th}>Email</th>
+                                <th style={styles.th}>Role</th>
+                                <th style={styles.th}>Premium</th>
+                                <th style={styles.th}>Ngày tạo</th>
+                                <th style={styles.th}>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {users.map((user) => (
+                                <tr key={user.id} style={styles.tr}>
+                                    <td style={styles.td}>
+                                        <div style={styles.userCell}>
+                                            <div style={styles.avatar}>
+                                                {user.username.charAt(0).toUpperCase()}
+                                            </div>
+                                            <span style={styles.username}>{user.username}</span>
+                                        </div>
+                                    </td>
+                                    <td style={styles.td}>{user.email}</td>
+                                    <td style={styles.td}>
+                                        <span style={{
+                                            ...styles.badge,
+                                            backgroundColor: user.role === 'admin' ? '#DC3545' : '#0D6EFD'
+                                        }}>
+                                            {user.role === 'admin' ? 'Admin' : 'User'}
+                                        </span>
+                                    </td>
+                                    <td style={styles.td}>
+                                        <span style={{
+                                            ...styles.badge,
+                                            backgroundColor: user.is_premium ? '#28A745' : '#6C757D'
+                                        }}>
+                                            {user.is_premium ? 'Premium' : 'Free'}
+                                        </span>
+                                    </td>
+                                    <td style={styles.td}>{formatDate(user.createdAt)}</td>
+                                    <td style={styles.td}>
+                                        <div style={styles.actions}>
+                                            {user.role !== 'admin' && (
+                                                <button
+                                                    onClick={() => handleTogglePremium(user)}
+                                                    style={{
+                                                        ...styles.actionButton,
+                                                        backgroundColor: user.is_premium ? '#6C757D' : '#28A745'
+                                                    }}
+                                                >
+                                                    {user.is_premium ? 'Hủy Premium' : 'Nâng Premium'}
+                                                </button>
+                                            )}
+                                            {user.role === 'admin' && (
+                                                <span style={styles.adminNote}>Admin cố định</span>
+                                            )}
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
-
-            {error && <div style={styles.error}>{error}</div>}
-
-            <table style={styles.table}>
-                <thead>
-                    <tr>
-                        <th style={styles.th}>Username</th>
-                        <th style={styles.th}>Email</th>
-                        <th style={styles.th}>Role</th>
-                        <th style={styles.th}>Premium</th>
-                        <th style={styles.th}>Ngày tạo</th>
-                        <th style={styles.th}>Hành động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {users.map((user) => (
-                        <tr key={user.id}>
-                            <td style={styles.td}>{user.username}</td>
-                            <td style={styles.td}>{user.email}</td>
-                            <td style={styles.td}>
-                                <span style={{
-                                    ...styles.badge,
-                                    backgroundColor: user.role === 'admin' ? '#dc3545' : '#007bff'
-                                }}>
-                                    {user.role}
-                                </span>
-                            </td>
-                            <td style={styles.td}>
-                                <span style={{
-                                    ...styles.badge,
-                                    backgroundColor: user.is_premium ? '#28a745' : '#6c757d'
-                                }}>
-                                    {user.is_premium ? 'Premium' : 'Free'}
-                                </span>
-                            </td>
-                            <td style={styles.td}>
-                                {new Date(user.createdAt).toLocaleDateString('vi-VN')}
-                            </td>
-                            <td style={styles.td}>
-                                <button
-                                    onClick={() => handleTogglePremium(user)}
-                                    style={styles.premiumButton}
-                                >
-                                    {user.is_premium ? 'Hủy Premium' : 'Nâng Premium'}
-                                </button>
-                                <button
-                                    onClick={() => handleToggleRole(user)}
-                                    style={styles.roleButton}
-                                >
-                                    Đổi Role
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
         </div>
     );
 };
 
 const styles = {
+    page: {
+        minHeight: '100vh',
+        backgroundColor: '#F6F9FE',
+        fontFamily: "'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        padding: '40px 24px'
+    },
     container: {
-        padding: '40px',
         maxWidth: '1200px',
-        margin: '0 auto',
-        fontFamily: 'Arial, sans-serif'
+        margin: '0 auto'
     },
     header: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '20px'
+        marginBottom: '24px'
+    },
+    title: {
+        fontSize: '28px',
+        fontWeight: '800',
+        color: '#212529',
+        margin: 0
     },
     backButton: {
         padding: '10px 20px',
-        backgroundColor: '#6c757d',
+        backgroundColor: '#6C757D',
         color: 'white',
         border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer'
+        borderRadius: '8px',
+        cursor: 'pointer',
+        fontSize: '14px',
+        fontWeight: '500',
+        boxShadow: '0 2px 6px rgba(108, 117, 125, 0.25)'
+    },
+    statsBar: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+        gap: '16px',
+        marginBottom: '24px'
+    },
+    statItem: {
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        padding: '20px',
+        borderRadius: '12px',
+        border: '2px solid #DCE8F5',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '4px'
+    },
+    statValue: {
+        fontSize: '28px',
+        fontWeight: '800',
+        color: '#0D6EFD'
+    },
+    statLabel: {
+        fontSize: '13px',
+        color: '#6C757D',
+        fontWeight: '500'
+    },
+    tableWrapper: {
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        borderRadius: '12px',
+        border: '2px solid #DCE8F5',
+        boxShadow: '0 2px 12px rgba(13, 110, 253, 0.06)',
+        overflow: 'hidden'
     },
     table: {
         width: '100%',
-        borderCollapse: 'collapse',
-        backgroundColor: 'white',
-        borderRadius: '10px',
-        overflow: 'hidden',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+        borderCollapse: 'collapse'
     },
     th: {
-        backgroundColor: '#f8f9fa',
-        padding: '12px',
+        backgroundColor: '#F6F9FE',
+        padding: '14px 16px',
         textAlign: 'left',
-        borderBottom: '2px solid #dee2e6',
-        fontSize: '14px'
+        borderBottom: '2px solid #DCE8F5',
+        fontSize: '13px',
+        fontWeight: '700',
+        color: '#495057',
+        textTransform: 'uppercase',
+        letterSpacing: '0.5px'
+    },
+    tr: {
+        transition: 'background-color 0.2s'
     },
     td: {
-        padding: '12px',
-        borderBottom: '1px solid #eee',
-        fontSize: '14px'
+        padding: '14px 16px',
+        borderBottom: '1px solid #DCE8F5',
+        fontSize: '14px',
+        color: '#495057'
+    },
+    userCell: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px'
+    },
+    avatar: {
+        width: '32px',
+        height: '32px',
+        borderRadius: '50%',
+        backgroundColor: '#0D6EFD',
+        color: '#FFFFFF',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '14px',
+        fontWeight: '700',
+        flexShrink: 0
+    },
+    username: {
+        fontWeight: '600',
+        color: '#212529'
     },
     badge: {
         display: 'inline-block',
-        padding: '3px 10px',
-        color: 'white',
-        borderRadius: '3px',
-        fontSize: '12px'
+        padding: '4px 12px',
+        color: '#FFFFFF',
+        borderRadius: '20px',
+        fontSize: '11px',
+        fontWeight: '700',
+        letterSpacing: '0.5px',
+        textTransform: 'uppercase'
     },
-    premiumButton: {
-        padding: '5px 10px',
-        backgroundColor: '#28a745',
+    actions: {
+        display: 'flex',
+        gap: '8px',
+        flexWrap: 'wrap',
+        alignItems: 'center'
+    },
+    actionButton: {
+        padding: '6px 12px',
         color: 'white',
         border: 'none',
-        borderRadius: '3px',
+        borderRadius: '6px',
         cursor: 'pointer',
-        marginRight: '5px',
-        fontSize: '12px'
+        fontSize: '12px',
+        fontWeight: '600',
+        transition: 'all 0.2s ease'
     },
-    roleButton: {
-        padding: '5px 10px',
-        backgroundColor: '#6f42c1',
-        color: 'white',
-        border: 'none',
-        borderRadius: '3px',
-        cursor: 'pointer',
-        fontSize: '12px'
+    adminNote: {
+        fontSize: '12px',
+        color: '#6C757D',
+        fontStyle: 'italic',
+        padding: '6px 0'
     },
     error: {
-        backgroundColor: '#f8d7da',
-        color: '#721c24',
-        padding: '10px',
-        borderRadius: '5px',
-        marginBottom: '15px'
+        backgroundColor: '#F8D7DA',
+        color: '#721C24',
+        padding: '12px 16px',
+        borderRadius: '8px',
+        marginBottom: '16px',
+        fontSize: '14px'
+    },
+    loadingWrapper: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '80px 20px',
+        gap: '20px'
+    },
+    spinner: {
+        width: '48px',
+        height: '48px',
+        border: '4px solid #DCE8F5',
+        borderTop: '4px solid #0D6EFD',
+        borderRadius: '50%',
+        animation: 'spin 0.8s linear infinite'
+    },
+    loadingText: {
+        color: '#6C757D',
+        fontSize: '15px',
+        fontWeight: '500',
+        margin: 0
     }
 };
+
+if (typeof document !== 'undefined') {
+    const existing = document.getElementById('manageusers-keyframes');
+    if (!existing) {
+        const styleSheet = document.createElement('style');
+        styleSheet.id = 'manageusers-keyframes';
+        styleSheet.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+    }
+}
 
 export default ManageUsers;

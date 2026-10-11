@@ -8,6 +8,7 @@ const Login = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -62,7 +63,27 @@ const Login = () => {
                                 style={styles.input}
                                 required
                             />
-                        </div>
+                        </div><div style={styles.inputGroup}>
+    <label style={styles.label}>Mật khẩu</label>
+    <div style={styles.passwordWrapper}>
+        <input
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Nhập mật khẩu"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            style={styles.passwordInput}
+            required
+        />
+        <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            style={styles.eyeButton}
+            tabIndex={-1}
+        >
+            {showPassword ? '🙈' : '👁️'}
+        </button>
+    </div>
+</div>
                         <button type="submit" style={styles.button} disabled={loading}>
                             {loading ? 'Đang xử lý...' : 'Đăng nhập'}
                         </button>
@@ -238,7 +259,33 @@ const styles = {
         color: '#0D6EFD',
         fontWeight: '600',
         textDecoration: 'none'
-    }
+    },
+    passwordWrapper: {
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center'
+},
+passwordInput: {
+    padding: '12px 48px 12px 16px',
+    border: '1px solid #CED4DA',
+    borderRadius: '8px',
+    fontSize: '14px',
+    outline: 'none',
+    transition: 'border-color 0.25s ease',
+    backgroundColor: '#F8F9FA',
+    width: '100%',
+    boxSizing: 'border-box'
+},
+eyeButton: {
+    position: 'absolute',
+    right: '12px',
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: '18px',
+    padding: '4px',
+    opacity: 0.7
+}
 };
 
 export default Login;

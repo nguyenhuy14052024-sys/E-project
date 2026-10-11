@@ -292,7 +292,7 @@ const getAllUsers = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const { role, is_premium, premium_expiry } = req.body;
+        const { is_premium, premium_expiry } = req.body;
 
         const user = await User.findByPk(id, {
             attributes: { exclude: ['password_hash'] }
@@ -302,7 +302,8 @@ const updateUser = async (req, res) => {
             return res.status(404).json({ message: 'Không tìm thấy người dùng' });
         }
 
-        if (role) user.role = role;
+        // KHÔNG cho phép đổi role qua API
+        // Chỉ cho phép đổi is_premium và premium_expiry
         if (is_premium !== undefined) user.is_premium = is_premium;
         if (premium_expiry !== undefined) user.premium_expiry = premium_expiry;
 

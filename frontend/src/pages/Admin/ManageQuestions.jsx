@@ -57,7 +57,6 @@ const ManageQuestions = () => {
         e.preventDefault();
         setError('');
 
-        // Chuyển options từ string sang mảng
         let optionsArray = null;
         if (formData.question_type === 'multiple_choice' && formData.options) {
             optionsArray = formData.options.split(',').map(o => o.trim()).filter(o => o);
@@ -124,268 +123,402 @@ const ManageQuestions = () => {
     };
 
     return (
-        <div style={styles.container}>
-            <div style={styles.header}>
-                <h1>❓ Quản lý câu hỏi</h1>
-                <button onClick={() => navigate('/admin')} style={styles.backButton}>
-                    ← Về Admin
-                </button>
-            </div>
-
-            {error && <div style={styles.error}>{error}</div>}
-
-            <div style={styles.unitSelector}>
-                <label>Chọn Unit:</label>
-                <select
-                    value={selectedUnit}
-                    onChange={(e) => setSelectedUnit(e.target.value)}
-                    style={styles.select}
-                >
-                    <option value="">-- Chọn Unit --</option>
-                    {units.map(u => (
-                        <option key={u.id} value={u.id}>
-                            [{u.book_level}] Unit {u.unit_number}: {u.title}
-                        </option>
-                    ))}
-                </select>
-                {selectedUnit && (
-                    <button onClick={() => { resetForm(); setShowForm(!showForm); }} style={styles.addButton}>
-                        {showForm ? 'Đóng' : '+ Thêm câu hỏi'}
+        <div style={styles.page}>
+            <div style={styles.container}>
+                <div style={styles.header}>
+                    <h1 style={styles.title}>Quản lý câu hỏi</h1>
+                    <button onClick={() => navigate('/admin')} style={styles.backButton}>
+                        ← Về Admin
                     </button>
+                </div>
+
+                {error && <div style={styles.error}>{error}</div>}
+
+                <div style={styles.unitSelector}>
+                    <label style={styles.label}>Chọn Unit:</label>
+                    <select
+                        value={selectedUnit}
+                        onChange={(e) => setSelectedUnit(e.target.value)}
+                        style={styles.select}
+                    >
+                        <option value="">-- Chọn Unit --</option>
+                        {units.map(u => (
+                            <option key={u.id} value={u.id}>
+                                [{u.book_level}] Unit {u.unit_number}: {u.title}
+                            </option>
+                        ))}
+                    </select>
+                    {selectedUnit && (
+                        <button 
+                            onClick={() => { resetForm(); setShowForm(!showForm); }} 
+                            style={styles.addButton}
+                        >
+                            {showForm ? 'Đóng' : '+ Thêm câu hỏi'}
+                        </button>
+                    )}
+                </div>
+
+                {showForm && selectedUnit && (
+                    <form onSubmit={handleSubmit} style={styles.form}>
+                        <div style={styles.formGroup}>
+                            <label style={styles.label}>Loại câu hỏi</label>
+                            <select
+                                value={formData.question_type}
+                                onChange={(e) => setFormData({ ...formData, question_type: e.target.value })}
+                                style={styles.input}
+                            >
+                                <option value="multiple_choice">Trắc nghiệm (ABCD)</option>
+                                <option value="gap_filling">Điền từ</option>
+                                <option value="word_formation">Biến đổi từ</option>
+                                <option value="sentence_transformation">Viết lại câu</option>
+                                <option value="error_correction">Sửa lỗi</option>
+                                <option value="collocation">Collocations</option>
+                            </select>
+                        </div>
+
+                        <div style={styles.formGroup}>
+                            <label style={styles.label}>Nội dung câu hỏi</label>
+                            <textarea
+                                placeholder="Nhập nội dung câu hỏi"
+                                value={formData.content}
+                                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                                style={styles.textarea}
+                                rows="3"
+                                required
+                            />
+                        </div>
+
+                        {formData.question_type === 'multiple_choice' && (
+                            <div style={styles.formGroup}>
+                                <label style={styles.label}>Các lựa chọn (phân cách bằng dấu phẩy)</label>
+                                <input
+                                    type="text"
+                                    placeholder="go, goes, going"
+                                    value={formData.options}
+                                    onChange={(e) => setFormData({ ...formData, options: e.target.value })}
+                                    style={styles.input}
+                                />
+                            </div>
+                        )}
+
+                        <div style={styles.formGroup}>
+                            <label style={styles.label}>Đáp án đúng</label>
+                            <input
+                                type="text"
+                                placeholder="Nhập đáp án đúng"
+                                value={formData.correct_answer}
+                                onChange={(e) => setFormData({ ...formData, correct_answer: e.target.value })}
+                                style={styles.input}
+                                required
+                            />
+                        </div>
+
+                        <div style={styles.formGroup}>
+                            <label style={styles.label}>Giải thích đáp án</label>
+                            <textarea
+                                placeholder="Nhập giải thích"
+                                value={formData.explanation}
+                                onChange={(e) => setFormData({ ...formData, explanation: e.target.value })}
+                                style={styles.textarea}
+                                rows="2"
+                            />
+                        </div>
+
+                        <button type="submit" style={styles.submitButton}>
+                            {editingId ? 'Cập nhật' : 'Thêm câu hỏi'}
+                        </button>
+                    </form>
+                )}
+
+                {loading ? (
+                    <div style={styles.loadingWrapper}>
+                        <div style={styles.spinner}></div>
+                        <p style={styles.loadingText}>Đang tải...</p>
+                    </div>
+                ) : !selectedUnit ? (
+                    <div style={styles.emptyState}>Chọn một Unit để xem câu hỏi</div>
+                ) : questions.length === 0 ? (
+                    <div style={styles.emptyState}>Unit này chưa có câu hỏi nào</div>
+                ) : (
+                    <div style={styles.questionList}>
+                        {questions.map((q, index) => (
+                            <div key={q.id} style={styles.questionCard}>
+                                <div style={styles.questionHeader}>
+                                    <span style={styles.questionType}>
+                                        {q.question_type.replace('_', ' ').toUpperCase()}
+                                    </span>
+                                    <div style={styles.actions}>
+                                        <button onClick={() => handleEdit(q)} style={styles.editButton}>Sửa</button>
+                                        <button onClick={() => handleDelete(q.id)} style={styles.deleteButton}>Xóa</button>
+                                    </div>
+                                </div>
+                                <p style={styles.questionContent}>
+                                    <strong>Câu {index + 1}:</strong> {q.content}
+                                </p>
+                                {q.options && (
+                                    <p style={styles.options}>
+                                        <strong>Lựa chọn:</strong> {q.options.join(' | ')}
+                                    </p>
+                                )}
+                                <p style={styles.correctAnswer}>
+                                    <strong>Đáp án:</strong> {q.correct_answer}
+                                </p>
+                                {q.explanation && (
+                                    <p style={styles.explanation}>
+                                        <strong>Giải thích:</strong> {q.explanation}
+                                    </p>
+                                )}
+                            </div>
+                        ))}
+                    </div>
                 )}
             </div>
-
-            {showForm && selectedUnit && (
-                <form onSubmit={handleSubmit} style={styles.form}>
-                    <select
-                        value={formData.question_type}
-                        onChange={(e) => setFormData({ ...formData, question_type: e.target.value })}
-                        style={styles.input}
-                    >
-                        <option value="multiple_choice">Trắc nghiệm (ABCD)</option>
-                        <option value="gap_filling">Điền từ</option>
-                        <option value="word_formation">Biến đổi từ</option>
-                        <option value="sentence_transformation">Viết lại câu</option>
-                        <option value="error_correction">Sửa lỗi</option>
-                        <option value="collocation">Collocations</option>
-                    </select>
-
-                    <textarea
-                        placeholder="Nội dung câu hỏi *"
-                        value={formData.content}
-                        onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                        style={styles.textarea}
-                        rows="3"
-                        required
-                    />
-
-                    {formData.question_type === 'multiple_choice' && (
-                        <input
-                            type="text"
-                            placeholder="Các lựa chọn (phân cách bởi dấu phẩy): go, goes, going"
-                            value={formData.options}
-                            onChange={(e) => setFormData({ ...formData, options: e.target.value })}
-                            style={styles.input}
-                        />
-                    )}
-
-                    <input
-                        type="text"
-                        placeholder="Đáp án đúng *"
-                        value={formData.correct_answer}
-                        onChange={(e) => setFormData({ ...formData, correct_answer: e.target.value })}
-                        style={styles.input}
-                        required
-                    />
-
-                    <textarea
-                        placeholder="Giải thích đáp án"
-                        value={formData.explanation}
-                        onChange={(e) => setFormData({ ...formData, explanation: e.target.value })}
-                        style={styles.textarea}
-                        rows="2"
-                    />
-
-                    <button type="submit" style={styles.submitButton}>
-                        {editingId ? 'Cập nhật' : 'Thêm câu hỏi'}
-                    </button>
-                </form>
-            )}
-
-            {loading ? (
-                <p>Đang tải...</p>
-            ) : !selectedUnit ? (
-                <div style={styles.emptyState}>Chọn một Unit để xem câu hỏi</div>
-            ) : questions.length === 0 ? (
-                <div style={styles.emptyState}>Unit này chưa có câu hỏi nào</div>
-            ) : (
-                <div style={styles.questionList}>
-                    {questions.map((q, index) => (
-                        <div key={q.id} style={styles.questionCard}>
-                            <div style={styles.questionHeader}>
-                                <span style={styles.questionType}>{q.question_type}</span>
-                                <div>
-                                    <button onClick={() => handleEdit(q)} style={styles.editButton}>✏️</button>
-                                    <button onClick={() => handleDelete(q.id)} style={styles.deleteButton}>🗑️</button>
-                                </div>
-                            </div>
-                            <p><strong>Câu {index + 1}:</strong> {q.content}</p>
-                            {q.options && (
-                                <p style={styles.options}>Lựa chọn: {q.options.join(' | ')}</p>
-                            )}
-                            <p style={styles.correctAnswer}>✅ Đáp án: {q.correct_answer}</p>
-                            {q.explanation && <p style={styles.explanation}>💡 {q.explanation}</p>}
-                        </div>
-                    ))}
-                </div>
-            )}
         </div>
     );
 };
 
 const styles = {
+    page: {
+        minHeight: '100vh',
+        backgroundColor: '#F6F9FE',
+        fontFamily: "'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        padding: '40px 24px'
+    },
     container: {
-        padding: '40px',
         maxWidth: '1000px',
-        margin: '0 auto',
-        fontFamily: 'Arial, sans-serif'
+        margin: '0 auto'
     },
     header: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '20px'
+        marginBottom: '24px'
+    },
+    title: {
+        fontSize: '28px',
+        fontWeight: '800',
+        color: '#212529',
+        margin: 0
     },
     backButton: {
         padding: '10px 20px',
-        backgroundColor: '#6c757d',
+        backgroundColor: '#6C757D',
         color: 'white',
         border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer'
+        borderRadius: '8px',
+        cursor: 'pointer',
+        fontSize: '14px',
+        fontWeight: '500'
     },
     unitSelector: {
         display: 'flex',
         alignItems: 'center',
-        gap: '10px',
+        gap: '12px',
         marginBottom: '20px',
-        padding: '15px',
-        backgroundColor: '#f8f9fa',
-        borderRadius: '8px'
+        padding: '16px 20px',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        borderRadius: '12px',
+        border: '2px solid #DCE8F5',
+        flexWrap: 'wrap'
     },
     select: {
-        padding: '10px',
-        border: '1px solid #ddd',
-        borderRadius: '5px',
+        padding: '10px 16px',
+        borderRadius: '8px',
+        border: '1px solid #CED4DA',
         fontSize: '14px',
-        flex: 1
+        flex: 1,
+        outline: 'none',
+        backgroundColor: '#F8F9FA',
+        cursor: 'pointer'
     },
     addButton: {
         padding: '10px 20px',
-        backgroundColor: '#007bff',
+        backgroundColor: '#0D6EFD',
         color: 'white',
         border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer'
+        borderRadius: '8px',
+        cursor: 'pointer',
+        fontSize: '14px',
+        fontWeight: '500'
     },
     form: {
-        backgroundColor: '#f8f9fa',
-        padding: '20px',
-        borderRadius: '10px',
-        marginBottom: '20px',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        padding: '24px',
+        borderRadius: '12px',
+        border: '2px solid #DCE8F5',
+        marginBottom: '24px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '10px'
+        gap: '16px'
+    },
+    formGroup: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '6px'
+    },
+    label: {
+        fontSize: '13px',
+        fontWeight: '600',
+        color: '#495057'
     },
     input: {
-        padding: '10px',
-        border: '1px solid #ddd',
-        borderRadius: '5px',
-        fontSize: '14px'
+        padding: '12px 16px',
+        border: '1px solid #CED4DA',
+        borderRadius: '8px',
+        fontSize: '14px',
+        outline: 'none',
+        backgroundColor: '#F8F9FA',
+        width: '100%',
+        boxSizing: 'border-box'
     },
     textarea: {
-        padding: '10px',
-        border: '1px solid #ddd',
-        borderRadius: '5px',
+        padding: '12px 16px',
+        border: '1px solid #CED4DA',
+        borderRadius: '8px',
         fontSize: '14px',
-        fontFamily: 'Arial'
+        outline: 'none',
+        backgroundColor: '#F8F9FA',
+        fontFamily: 'inherit',
+        width: '100%',
+        minHeight: '80px',
+        resize: 'vertical',
+        boxSizing: 'border-box'
     },
     submitButton: {
-        padding: '10px',
-        backgroundColor: '#28a745',
+        padding: '14px',
+        backgroundColor: '#28A745',
         color: 'white',
         border: 'none',
-        borderRadius: '5px',
+        borderRadius: '10px',
+        fontSize: '15px',
+        fontWeight: '600',
         cursor: 'pointer',
-        fontSize: '14px'
+        boxShadow: '0 4px 12px rgba(40, 167, 69, 0.35)'
     },
     questionList: {
         display: 'flex',
         flexDirection: 'column',
-        gap: '15px'
+        gap: '16px'
     },
     questionCard: {
-        backgroundColor: 'white',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
         padding: '20px',
-        borderRadius: '10px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        borderRadius: '12px',
+        border: '2px solid #DCE8F5',
+        boxShadow: '0 2px 12px rgba(13, 110, 253, 0.06)'
     },
     questionHeader: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '10px'
+        marginBottom: '12px'
     },
     questionType: {
-        padding: '3px 10px',
-        backgroundColor: '#e9ecef',
-        borderRadius: '3px',
-        fontSize: '12px'
+        padding: '4px 10px',
+        backgroundColor: '#E7F1FF',
+        color: '#0D6EFD',
+        borderRadius: '20px',
+        fontSize: '11px',
+        fontWeight: '600',
+        letterSpacing: '0.5px'
     },
-    options: {
-        color: '#666',
-        fontSize: '14px',
-        marginTop: '5px'
-    },
-    correctAnswer: {
-        color: '#28a745',
-        fontSize: '14px',
-        marginTop: '5px'
-    },
-    explanation: {
-        color: '#666',
-        fontStyle: 'italic',
-        fontSize: '14px',
-        marginTop: '5px'
+    actions: {
+        display: 'flex',
+        gap: '8px'
     },
     editButton: {
-        padding: '5px 10px',
-        backgroundColor: '#ffc107',
+        padding: '6px 14px',
+        backgroundColor: '#FFC107',
+        color: '#333',
         border: 'none',
-        borderRadius: '3px',
+        borderRadius: '6px',
         cursor: 'pointer',
-        marginRight: '5px'
+        fontSize: '13px',
+        fontWeight: '500'
     },
     deleteButton: {
-        padding: '5px 10px',
-        backgroundColor: '#dc3545',
+        padding: '6px 14px',
+        backgroundColor: '#DC3545',
         color: 'white',
         border: 'none',
-        borderRadius: '3px',
-        cursor: 'pointer'
+        borderRadius: '6px',
+        cursor: 'pointer',
+        fontSize: '13px',
+        fontWeight: '500'
     },
-    error: {
-        backgroundColor: '#f8d7da',
-        color: '#721c24',
-        padding: '10px',
-        borderRadius: '5px',
-        marginBottom: '15px'
+    questionContent: {
+        fontSize: '15px',
+        color: '#212529',
+        margin: '0 0 8px 0',
+        lineHeight: '1.6'
+    },
+    options: {
+        fontSize: '14px',
+        color: '#6C757D',
+        margin: '4px 0'
+    },
+    correctAnswer: {
+        fontSize: '14px',
+        color: '#28A745',
+        margin: '4px 0'
+    },
+    explanation: {
+        fontSize: '13px',
+        color: '#6C757D',
+        fontStyle: 'italic',
+        margin: '4px 0'
     },
     emptyState: {
         textAlign: 'center',
-        padding: '40px',
-        color: '#666'
+        padding: '60px 40px',
+        color: '#6C757D',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        borderRadius: '12px',
+        border: '2px solid #DCE8F5'
+    },
+    error: {
+        backgroundColor: '#F8D7DA',
+        color: '#721C24',
+        padding: '12px 16px',
+        borderRadius: '8px',
+        marginBottom: '16px',
+        fontSize: '14px'
+    },
+    loadingWrapper: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: '60px 20px',
+        gap: '16px'
+    },
+    spinner: {
+        width: '40px',
+        height: '40px',
+        border: '4px solid #DCE8F5',
+        borderTop: '4px solid #0D6EFD',
+        borderRadius: '50%',
+        animation: 'spin 0.8s linear infinite'
+    },
+    loadingText: {
+        color: '#6C757D',
+        fontSize: '14px',
+        margin: 0
     }
 };
+
+if (typeof document !== 'undefined') {
+    const existing = document.getElementById('manageq-keyframes');
+    if (!existing) {
+        const styleSheet = document.createElement('style');
+        styleSheet.id = 'manageq-keyframes';
+        styleSheet.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+    }
+}
 
 export default ManageQuestions;

@@ -51,9 +51,19 @@ const ProfilePage = () => {
         return (points / 100) * 100;
     };
 
-    if (loading) return <div style={styles.container}>Đang tải...</div>;
-    if (error) return <div style={styles.container}>{error}</div>;
-    if (!profile) return <div style={styles.container}>Không tìm thấy thông tin</div>;
+    if (loading) return (
+        <div style={styles.page}>
+            <div style={styles.container}>
+                <div style={styles.loadingWrapper}>
+                    <div style={styles.spinner}></div>
+                    <p style={styles.loadingText}>Đang tải hồ sơ...</p>
+                </div>
+            </div>
+        </div>
+    );
+
+    if (error) return <div style={styles.page}><div style={styles.container}>{error}</div></div>;
+    if (!profile) return <div style={styles.page}><div style={styles.container}>Không tìm thấy thông tin</div></div>;
 
     const { user, stats } = profile;
 
@@ -70,7 +80,6 @@ const ProfilePage = () => {
                     </button>
                 </div>
 
-                {/* Thông tin user */}
                 <div style={styles.profileCard}>
                     <div style={styles.avatar}>
                         {user.username.charAt(0).toUpperCase()}
@@ -87,13 +96,12 @@ const ProfilePage = () => {
                         <div style={styles.progressBar}>
                             <div style={{ ...styles.progressFill, width: `${getRankProgress(user.points)}%` }} />
                         </div>
-                        <p style={styles.streak}>🔥 Streak: {user.streak} ngày</p>
+                        <p style={styles.streak}>Streak: {user.streak} ngày</p>
                     </div>
                 </div>
 
-                {/* Thống kê */}
                 <div style={styles.statsSection}>
-                    <h3 style={styles.sectionTitle}> Thống kê</h3>
+                    <h3 style={styles.sectionTitle}>Thống kê</h3>
                     <div style={styles.statsGrid}>
                         <div style={styles.statCard}>
                             <div style={styles.statValue}>{stats.completedUnits}/{stats.totalUnits}</div>
@@ -114,7 +122,6 @@ const ProfilePage = () => {
                     </div>
                 </div>
 
-                {/* Kho chứng nhận */}
                 <div style={styles.certSection}>
                     <h3 style={styles.sectionTitle}>Kho chứng nhận ({certificates.length})</h3>
                     {certificates.length === 0 ? (
@@ -140,7 +147,10 @@ const styles = {
         backgroundColor: '#F6F9FE',
         fontFamily: "'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        width: '100%',
+        maxWidth: '100vw',
+        boxSizing: 'border-box'
     },
     bgShape1: {
         position: 'fixed',
@@ -166,19 +176,23 @@ const styles = {
     },
     container: {
         maxWidth: '1000px',
+        width: '100%',
         margin: '0 auto',
-        padding: '40px',
+        padding: '40px 20px',
         position: 'relative',
-        zIndex: 1
+        zIndex: 1,
+        boxSizing: 'border-box'
     },
     header: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '32px'
+        marginBottom: '24px',
+        flexWrap: 'wrap',
+        gap: '12px'
     },
     pageTitle: {
-        fontSize: '28px',
+        fontSize: 'clamp(22px, 5vw, 28px)',
         fontWeight: '700',
         color: '#212529',
         margin: 0
@@ -192,54 +206,58 @@ const styles = {
         cursor: 'pointer',
         fontSize: '14px',
         fontWeight: '500',
-        boxShadow: '0 2px 6px rgba(108, 117, 125, 0.25)',
-        transition: 'all 0.25s ease'
+        boxShadow: '0 2px 6px rgba(108, 117, 125, 0.25)'
     },
     profileCard: {
         display: 'flex',
-        gap: '30px',
+        gap: '24px',
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(4px)',
-        WebkitBackdropFilter: 'blur(4px)',
-        padding: '30px',
+        padding: '28px',
         borderRadius: '12px',
         border: '2px solid #DCE8F5',
         boxShadow: '0 2px 12px rgba(13, 110, 253, 0.06)',
-        marginBottom: '30px',
-        alignItems: 'center'
+        marginBottom: '24px',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        boxSizing: 'border-box'
     },
     avatar: {
-        width: '100px',
-        height: '100px',
+        width: '80px',
+        height: '80px',
         borderRadius: '50%',
         backgroundColor: '#0D6EFD',
         color: 'white',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        fontSize: '48px',
+        fontSize: '36px',
         fontWeight: 'bold',
-        boxShadow: '0 4px 12px rgba(13, 110, 253, 0.35)'
+        boxShadow: '0 4px 12px rgba(13, 110, 253, 0.35)',
+        flexShrink: 0
     },
     userInfo: {
-        flex: 1
+        flex: 1,
+        minWidth: '200px'
     },
     username: {
-        fontSize: '24px',
+        fontSize: 'clamp(20px, 4vw, 24px)',
         fontWeight: '700',
         color: '#212529',
-        margin: '0 0 6px 0'
+        margin: '0 0 6px 0',
+        wordBreak: 'break-word'
     },
     email: {
         color: '#6C757D',
         marginBottom: '12px',
-        fontSize: '14px'
+        fontSize: '14px',
+        wordBreak: 'break-word'
     },
     rankContainer: {
         display: 'flex',
         alignItems: 'center',
-        gap: '15px',
-        marginBottom: '10px'
+        gap: '12px',
+        marginBottom: '10px',
+        flexWrap: 'wrap'
     },
     rankBadge: {
         padding: '5px 15px',
@@ -258,13 +276,13 @@ const styles = {
         backgroundColor: '#DCE8F5',
         borderRadius: '5px',
         overflow: 'hidden',
-        marginBottom: '10px'
+        marginBottom: '10px',
+        width: '100%'
     },
     progressFill: {
         height: '100%',
         backgroundColor: '#0D6EFD',
-        transition: 'width 0.5s',
-        boxShadow: '0 0 8px rgba(13, 110, 253, 0.6)'
+        transition: 'width 0.5s'
     },
     streak: {
         fontSize: '14px',
@@ -272,32 +290,30 @@ const styles = {
         fontWeight: '500'
     },
     statsSection: {
-        marginBottom: '30px'
+        marginBottom: '24px'
     },
     sectionTitle: {
-        fontSize: '20px',
+        fontSize: 'clamp(18px, 4vw, 20px)',
         fontWeight: '700',
         color: '#212529',
         marginBottom: '16px'
     },
     statsGrid: {
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-        gap: '15px'
+        gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+        gap: '12px'
     },
     statCard: {
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(4px)',
-        WebkitBackdropFilter: 'blur(4px)',
         padding: '20px',
         borderRadius: '12px',
         border: '2px solid #DCE8F5',
         boxShadow: '0 2px 12px rgba(13, 110, 253, 0.06)',
         textAlign: 'center',
-        transition: 'all 0.25s ease'
+        boxSizing: 'border-box'
     },
     statValue: {
-        fontSize: '28px',
+        fontSize: 'clamp(22px, 5vw, 28px)',
         fontWeight: 'bold',
         color: '#0D6EFD',
         marginBottom: '5px'
@@ -312,19 +328,54 @@ const styles = {
     certGrid: {
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-        gap: '20px',
+        gap: '16px',
         marginTop: '15px'
     },
     emptyState: {
         textAlign: 'center',
-        padding: '40px',
+        padding: '40px 24px',
         color: '#6C757D',
         backgroundColor: 'rgba(255, 255, 255, 0.85)',
-        backdropFilter: 'blur(4px)',
-        WebkitBackdropFilter: 'blur(4px)',
         borderRadius: '12px',
         border: '2px dashed #DCE8F5'
+    },
+    loadingWrapper: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '80px 20px',
+        gap: '20px'
+    },
+    spinner: {
+        width: '48px',
+        height: '48px',
+        border: '4px solid #DCE8F5',
+        borderTop: '4px solid #0D6EFD',
+        borderRadius: '50%',
+        animation: 'spin 0.8s linear infinite'
+    },
+    loadingText: {
+        color: '#6C757D',
+        fontSize: '15px',
+        fontWeight: '500',
+        margin: 0
     }
 };
+
+if (typeof document !== 'undefined') {
+    const existing = document.getElementById('profile-keyframes');
+    if (!existing) {
+        const styleSheet = document.createElement('style');
+        styleSheet.id = 'profile-keyframes';
+        styleSheet.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+    }
+}
 
 export default ProfilePage;

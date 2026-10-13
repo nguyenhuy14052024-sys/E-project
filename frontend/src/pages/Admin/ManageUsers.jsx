@@ -128,22 +128,19 @@ const ManageUsers = () => {
                                     </td>
                                     <td style={styles.td}>{formatDate(user.createdAt)}</td>
                                     <td style={styles.td}>
-                                        <div style={styles.actions}>
-                                            {user.role !== 'admin' && (
-                                                <button
-                                                    onClick={() => handleTogglePremium(user)}
-                                                    style={{
-                                                        ...styles.actionButton,
-                                                        backgroundColor: user.is_premium ? '#6C757D' : '#28A745'
-                                                    }}
-                                                >
-                                                    {user.is_premium ? 'Hủy Premium' : 'Nâng Premium'}
-                                                </button>
-                                            )}
-                                            {user.role === 'admin' && (
-                                                <span style={styles.adminNote}>Admin cố định</span>
-                                            )}
-                                        </div>
+                                        {user.role !== 'admin' ? (
+                                            <button
+                                                onClick={() => handleTogglePremium(user)}
+                                                style={{
+                                                    ...styles.actionButton,
+                                                    backgroundColor: user.is_premium ? '#6C757D' : '#28A745'
+                                                }}
+                                            >
+                                                {user.is_premium ? 'Hủy Premium' : 'Nâng Premium'}
+                                            </button>
+                                        ) : (
+                                            <span style={styles.adminNote}>Admin cố định</span>
+                                        )}
                                     </td>
                                 </tr>
                             ))}
@@ -160,20 +157,28 @@ const styles = {
         minHeight: '100vh',
         backgroundColor: '#F6F9FE',
         fontFamily: "'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-        padding: '40px 24px'
+        padding: '40px 20px',
+        width: '100%',
+        maxWidth: '100vw',
+        boxSizing: 'border-box',
+        overflow: 'hidden'
     },
     container: {
         maxWidth: '1200px',
-        margin: '0 auto'
+        width: '100%',
+        margin: '0 auto',
+        boxSizing: 'border-box'
     },
     header: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '24px'
+        marginBottom: '24px',
+        flexWrap: 'wrap',
+        gap: '12px'
     },
     title: {
-        fontSize: '28px',
+        fontSize: 'clamp(22px, 5vw, 28px)',
         fontWeight: '800',
         color: '#212529',
         margin: 0
@@ -191,22 +196,23 @@ const styles = {
     },
     statsBar: {
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-        gap: '16px',
-        marginBottom: '24px'
+        gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+        gap: '12px',
+        marginBottom: '20px'
     },
     statItem: {
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        padding: '20px',
+        padding: '18px',
         borderRadius: '12px',
         border: '2px solid #DCE8F5',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        gap: '4px'
+        gap: '4px',
+        boxSizing: 'border-box'
     },
     statValue: {
-        fontSize: '28px',
+        fontSize: 'clamp(22px, 5vw, 28px)',
         fontWeight: '800',
         color: '#0D6EFD'
     },
@@ -220,11 +226,15 @@ const styles = {
         borderRadius: '12px',
         border: '2px solid #DCE8F5',
         boxShadow: '0 2px 12px rgba(13, 110, 253, 0.06)',
-        overflow: 'hidden'
+        overflowX: 'auto',
+        WebkitOverflowScrolling: 'touch',
+        width: '100%',
+        boxSizing: 'border-box'
     },
     table: {
         width: '100%',
-        borderCollapse: 'collapse'
+        borderCollapse: 'collapse',
+        minWidth: '700px'
     },
     th: {
         backgroundColor: '#F6F9FE',
@@ -235,7 +245,8 @@ const styles = {
         fontWeight: '700',
         color: '#495057',
         textTransform: 'uppercase',
-        letterSpacing: '0.5px'
+        letterSpacing: '0.5px',
+        whiteSpace: 'nowrap'
     },
     tr: {
         transition: 'background-color 0.2s'
@@ -244,7 +255,8 @@ const styles = {
         padding: '14px 16px',
         borderBottom: '1px solid #DCE8F5',
         fontSize: '14px',
-        color: '#495057'
+        color: '#495057',
+        whiteSpace: 'nowrap'
     },
     userCell: {
         display: 'flex',
@@ -276,13 +288,8 @@ const styles = {
         fontSize: '11px',
         fontWeight: '700',
         letterSpacing: '0.5px',
-        textTransform: 'uppercase'
-    },
-    actions: {
-        display: 'flex',
-        gap: '8px',
-        flexWrap: 'wrap',
-        alignItems: 'center'
+        textTransform: 'uppercase',
+        whiteSpace: 'nowrap'
     },
     actionButton: {
         padding: '6px 12px',
@@ -292,13 +299,14 @@ const styles = {
         cursor: 'pointer',
         fontSize: '12px',
         fontWeight: '600',
-        transition: 'all 0.2s ease'
+        transition: 'all 0.2s ease',
+        whiteSpace: 'nowrap'
     },
     adminNote: {
         fontSize: '12px',
         color: '#6C757D',
         fontStyle: 'italic',
-        padding: '6px 0'
+        whiteSpace: 'nowrap'
     },
     error: {
         backgroundColor: '#F8D7DA',

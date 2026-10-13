@@ -1,5 +1,5 @@
 # DỰ ÁN E-LEARNING B2-C1 - TRẠNG THÁI HIỆN TẠI
-*Cập nhật lần cuối: 11/10/2026*
+*Cập nhật lần cuối: 13/10/2026*
 
 ## 1. CÔNG NGHỆ
 - Backend: Node.js + Express + PostgreSQL + Sequelize
@@ -30,16 +30,17 @@
 - Giao diện bài học theo tone màu trình độ (A1-C1)
 - Độ khó thể hiện qua màu nền (Dễ, Trung bình, Nâng cao)
 - Ghi chú mềm mại, không "công nghiệp"
-- **Trang Điều khoản sử dụng (Terms)**
-- **Trang Chính sách bảo mật (Privacy)**
-- **Trang Quên mật khẩu (ForgotPassword)**
-- **Biểu tượng con mắt ẩn/hiện mật khẩu**
-- **Thanh đo độ mạnh mật khẩu**
-- **Ô tích Đồng ý Điều khoản**
-- **Admin cố định (tạo qua script createAdmin.js)**
-- **Xóa nút Đổi Role khỏi giao diện Admin**
+- Trang Điều khoản sử dụng (Terms)
+- Trang Chính sách bảo mật (Privacy)
+- Trang Quên mật khẩu (ForgotPassword)
+- Biểu tượng con mắt ẩn/hiện mật khẩu
+- Thanh đo độ mạnh mật khẩu
+- Ô tích Đồng ý Điều khoản
+- Admin cố định (tạo qua script createAdmin.js)
+- Xóa nút Đổi Role khỏi giao diện Admin
+- **Sửa lỗi tràn giao diện trên mobile cho tất cả các trang**
 
-## 3. GIAO DIỆN ĐÃ NÂNG CẤP
+## 3. GIAO DIỆN ĐÃ NÂNG CẤP VÀ RESPONSIVE
 - Home
 - Login
 - Register
@@ -61,7 +62,7 @@
 - ManageUsers
 
 ## 4. GIAO DIỆN CHƯA NÂNG CẤP
-- (Tất cả đã nâng cấp)
+- (Tất cả đã nâng cấp và responsive)
 
 ## 5. TÍNH NĂNG CHƯA LÀM
 - Đăng nhập Google (Passport)

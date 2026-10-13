@@ -7,7 +7,6 @@ const Home = () => {
 
     return (
         <div style={styles.page}>
-            {/* Background shapes */}
             <div style={styles.bgShape1}></div>
             <div style={styles.bgShape2}></div>
             <div style={styles.bgShape3}></div>
@@ -16,7 +15,6 @@ const Home = () => {
 
             <div style={styles.container}>
                 <div style={styles.content}>
-                    {/* Logo / Title */}
                     <div style={styles.logoWrapper}>
                         <span style={styles.logoBadge}></span>
                         <h1 style={styles.title}>EnglishIngLesh</h1>
@@ -28,7 +26,6 @@ const Home = () => {
                         Ôn luyện ngữ pháp, từ vựng và theo dõi tiến độ của bạn.
                     </p>
 
-                    {/* Features */}
                     <div style={styles.features}>
                         <div style={styles.feature}>
                             <div style={styles.featureIcon}>A</div>
@@ -52,7 +49,6 @@ const Home = () => {
                         </div>
                     </div>
 
-                    {/* CTA */}
                     <Link to={isLoggedIn ? '/dashboard' : '/login'} style={styles.button}>
                         {isLoggedIn ? 'Vào học ngay' : 'Bắt đầu ngay'}
                     </Link>
@@ -75,9 +71,10 @@ const styles = {
         overflow: 'hidden',
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        width: '100%',
+        maxWidth: '100vw'
     },
-    // Background shapes
     bgShape1: {
         position: 'fixed',
         top: '-180px',
@@ -143,17 +140,18 @@ const styles = {
         zIndex: 0
     },
     container: {
+        width: '100%',
         maxWidth: '1000px',
         margin: '0 auto',
-        padding: '48px 32px',
+        padding: '48px 24px',
         position: 'relative',
         zIndex: 1,
-        width: '100%'
+        boxSizing: 'border-box'
     },
     content: {
-        textAlign: 'center'
+        textAlign: 'center',
+        width: '100%'
     },
-    // Logo
     logoWrapper: {
         marginBottom: '24px'
     },
@@ -164,7 +162,7 @@ const styles = {
         animation: 'pulse 2.5s ease-in-out infinite'
     },
     title: {
-        fontSize: '56px',
+        fontSize: 'clamp(32px, 8vw, 56px)',
         fontWeight: '800',
         color: '#0D6EFD',
         margin: '0 0 8px 0',
@@ -173,25 +171,26 @@ const styles = {
         background: 'linear-gradient(135deg, #0D6EFD 0%, #4D9BFF 100%)',
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
-        backgroundClip: 'text'
+        backgroundClip: 'text',
+        wordBreak: 'break-word'
     },
     tagline: {
-        fontSize: '16px',
+        fontSize: 'clamp(14px, 3vw, 16px)',
         fontWeight: '500',
         color: '#6C757D',
         margin: 0,
         letterSpacing: '0.5px'
     },
     subtitle: {
-        fontSize: '18px',
+        fontSize: 'clamp(15px, 3vw, 18px)',
         color: '#495057',
         marginBottom: '48px',
         lineHeight: '1.6',
         maxWidth: '640px',
         marginLeft: 'auto',
-        marginRight: 'auto'
+        marginRight: 'auto',
+        padding: '0 8px'
     },
-    // Features
     features: {
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
@@ -235,7 +234,6 @@ const styles = {
         margin: 0,
         lineHeight: '1.5'
     },
-    // CTA
     button: {
         display: 'inline-block',
         padding: '16px 48px',
@@ -243,11 +241,13 @@ const styles = {
         color: '#FFFFFF',
         borderRadius: '12px',
         textDecoration: 'none',
-        fontSize: '17px',
+        fontSize: 'clamp(15px, 3vw, 17px)',
         fontWeight: '700',
         boxShadow: '0 8px 24px rgba(13, 110, 253, 0.35)',
         transition: 'all 0.25s ease',
-        letterSpacing: '0.3px'
+        letterSpacing: '0.3px',
+        maxWidth: '100%',
+        boxSizing: 'border-box'
     },
     footerNote: {
         marginTop: '20px',
@@ -256,7 +256,6 @@ const styles = {
     }
 };
 
-// Inject animations
 const styleSheet = document.createElement('style');
 styleSheet.textContent = `
     @keyframes float {
@@ -269,9 +268,10 @@ styleSheet.textContent = `
         50% { transform: scale(1.15); }
         100% { transform: scale(1); }
     }
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+    @media (max-width: 480px) {
+        .home-features {
+            grid-template-columns: 1fr !important;
+        }
     }
 `;
 document.head.appendChild(styleSheet);

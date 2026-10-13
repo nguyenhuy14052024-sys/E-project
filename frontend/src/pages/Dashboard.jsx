@@ -10,7 +10,6 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [selectedLevel, setSelectedLevel] = useState('B2');
     const [filterType, setFilterType] = useState('');
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     useEffect(() => {
         const currentUser = getCurrentUser();
@@ -19,7 +18,6 @@ const Dashboard = () => {
             return;
         }
         setUser(currentUser);
-
         fetchUnits(selectedLevel);
     }, [selectedLevel]);
 
@@ -46,41 +44,20 @@ const Dashboard = () => {
         <div style={styles.page}>
             <div style={styles.bgShape1}></div>
             <div style={styles.bgShape2}></div>
-            <div style={styles.bgShape3}></div>
 
             <nav style={styles.navbar}>
-                <div style={styles.navLeft}>
+                <div style={styles.navTop}>
                     <span style={styles.logo}>EnglishIngLesh</span>
+                    <span style={styles.userBadge}>{user.username}</span>
                 </div>
-                <button
-                    style={styles.mobileMenuToggle}
-                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                >
-                    {isMobileMenuOpen ? '✕' : '☰'}
-                </button>
-                <div style={{
-                    ...styles.navRight,
-                    ...(isMobileMenuOpen ? styles.navRightOpen : {})
-                }}>
-                    <Link to="/profile" style={styles.navBtn}>
-                        Hồ sơ
-                    </Link>
-                    <Link to="/mini-test" style={styles.navBtn}>
-                        Mini Test
-                    </Link>
-                    <Link to="/error-log" style={styles.navBtn}>
-                        Kho lỗi sai
-                    </Link>
-                    <Link to="/flashcards" style={styles.navBtn}>
-                        Flashcard
-                    </Link>
-                    <Link to="/review" style={styles.navBtn}>
-                        Ôn tập hôm nay
-                    </Link>
+                <div style={styles.navMenu}>
+                    <Link to="/profile" style={styles.navBtn}>Hồ sơ</Link>
+                    <Link to="/mini-test" style={styles.navBtn}>Mini Test</Link>
+                    <Link to="/error-log" style={styles.navBtn}>Kho lỗi sai</Link>
+                    <Link to="/flashcards" style={styles.navBtn}>Flashcard</Link>
+                    <Link to="/review" style={styles.navBtn}>Ôn tập</Link>
                     {user.role === 'admin' && (
-                        <Link to="/admin" style={styles.navBtnAdmin}>
-                            Admin
-                        </Link>
+                        <Link to="/admin" style={styles.navBtnAdmin}>Admin</Link>
                     )}
                     <button onClick={handleLogout} style={styles.navBtnLogout}>
                         Đăng xuất
@@ -142,16 +119,6 @@ const Dashboard = () => {
                                 to={`/learn/${unit.id}?type=${filterType}`}
                                 key={unit.id}
                                 style={styles.unitCard}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(-4px)';
-                                    e.currentTarget.style.boxShadow = '0 12px 32px rgba(13, 110, 253, 0.20)';
-                                    e.currentTarget.style.borderColor = '#0D6EFD';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.boxShadow = '0 2px 12px rgba(13, 110, 253, 0.06)';
-                                    e.currentTarget.style.borderColor = '#DCE8F5';
-                                }}
                             >
                                 <div style={styles.unitHeader}>
                                     <span style={styles.unitNumber}>Unit {unit.unit_number}</span>
@@ -175,12 +142,15 @@ const styles = {
         backgroundColor: '#F6F9FE',
         fontFamily: "'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        width: '100%',
+        maxWidth: '100vw',
+        boxSizing: 'border-box'
     },
     bgShape1: {
         position: 'fixed',
-        top: '-120px',
-        right: '-120px',
+        top: '-180px',
+        right: '-180px',
         width: '460px',
         height: '460px',
         borderRadius: '50%',
@@ -199,136 +169,127 @@ const styles = {
         pointerEvents: 'none',
         zIndex: 0
     },
-    bgShape3: {
-        position: 'fixed',
-        top: '40%',
-        left: '50%',
-        width: '640px',
-        height: '640px',
-        borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(13, 110, 253, 0.05) 0%, rgba(13, 110, 253, 0) 70%)',
-        transform: 'translate(-50%, -50%)',
-        pointerEvents: 'none',
-        zIndex: 0
-    },
     navbar: {
         display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '0 32px',
-        height: '64px',
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        flexDirection: 'column',
+        padding: '12px 24px',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         boxShadow: '0 1px 3px rgba(13, 110, 253, 0.06)',
         position: 'sticky',
         top: 0,
         zIndex: 100,
-        borderBottom: '1px solid rgba(220, 232, 245, 0.8)'
+        borderBottom: '1px solid rgba(220, 232, 245, 0.8)',
+        width: '100%',
+        boxSizing: 'border-box',
+        gap: '10px'
     },
-    navLeft: {
+    navTop: {
         display: 'flex',
-        alignItems: 'center'
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%'
     },
     logo: {
-        fontSize: '20px',
+        fontSize: '18px',
         fontWeight: '700',
         color: '#0D6EFD',
         letterSpacing: '-0.5px'
     },
-    mobileMenuToggle: {
-        display: 'none',
-        background: 'none',
-        border: 'none',
-        fontSize: '24px',
-        cursor: 'pointer',
-        color: '#0D6EFD',
-        padding: '8px'
+    userBadge: {
+        fontSize: '13px',
+        fontWeight: '600',
+        color: '#6C757D',
+        backgroundColor: '#F0F4F8',
+        padding: '4px 12px',
+        borderRadius: '20px'
     },
-    navRight: {
+    navMenu: {
         display: 'flex',
-        alignItems: 'center',
-        gap: '8px'
+        flexWrap: 'wrap',
+        gap: '8px',
+        width: '100%',
+        justifyContent: 'flex-start'
     },
-    navRightOpen: {},
     navBtn: {
-        display: 'flex',
+        display: 'inline-flex',
         alignItems: 'center',
-        padding: '8px 16px',
+        padding: '7px 14px',
         backgroundColor: '#0D6EFD',
         color: '#FFFFFF',
         borderRadius: '8px',
         textDecoration: 'none',
-        fontSize: '14px',
+        fontSize: '13px',
         fontWeight: '500',
         transition: 'all 0.25s ease',
         cursor: 'pointer',
         border: 'none',
-        boxShadow: '0 2px 6px rgba(13, 110, 253, 0.25)'
+        whiteSpace: 'nowrap'
     },
     navBtnAdmin: {
-        display: 'flex',
+        display: 'inline-flex',
         alignItems: 'center',
-        padding: '8px 16px',
+        padding: '7px 14px',
         backgroundColor: '#6C757D',
         color: '#FFFFFF',
         borderRadius: '8px',
         textDecoration: 'none',
-        fontSize: '14px',
+        fontSize: '13px',
         fontWeight: '500',
-        transition: 'all 0.25s ease',
-        cursor: 'pointer',
-        border: 'none',
-        boxShadow: '0 2px 6px rgba(108, 117, 125, 0.25)'
+        whiteSpace: 'nowrap'
     },
     navBtnLogout: {
-        display: 'flex',
+        display: 'inline-flex',
         alignItems: 'center',
-        padding: '8px 16px',
+        padding: '7px 14px',
         backgroundColor: '#DC3545',
         color: '#FFFFFF',
         borderRadius: '8px',
         border: 'none',
-        fontSize: '14px',
+        fontSize: '13px',
         fontWeight: '500',
-        transition: 'all 0.25s ease',
         cursor: 'pointer',
-        boxShadow: '0 2px 6px rgba(220, 53, 69, 0.25)'
+        whiteSpace: 'nowrap'
     },
     container: {
         maxWidth: '1200px',
+        width: '100%',
         margin: '0 auto',
-        padding: '32px',
+        padding: '32px 20px',
         position: 'relative',
-        zIndex: 1
+        zIndex: 1,
+        boxSizing: 'border-box'
     },
     welcomeSection: {
-        marginBottom: '32px'
+        marginBottom: '24px'
     },
     welcomeTitle: {
-        fontSize: '28px',
+        fontSize: 'clamp(20px, 5vw, 28px)',
         fontWeight: '700',
         color: '#212529',
-        margin: '0 0 4px 0'
+        margin: '0 0 4px 0',
+        wordBreak: 'break-word'
     },
     welcomeEmail: {
         fontSize: '14px',
         color: '#6C757D',
-        margin: 0
+        margin: 0,
+        wordBreak: 'break-word'
     },
     levelSelector: {
         display: 'flex',
         gap: '8px',
-        marginBottom: '24px',
+        marginBottom: '20px',
         flexWrap: 'wrap'
     },
     levelButton: {
-        padding: '10px 28px',
+        padding: '10px 22px',
         backgroundColor: '#E9ECEF',
         border: '2px solid transparent',
         borderRadius: '10px',
         cursor: 'pointer',
-        fontSize: '15px',
+        fontSize: '14px',
         fontWeight: '600',
         color: '#495057',
         transition: 'all 0.25s ease'
@@ -342,16 +303,13 @@ const styles = {
     filterContainer: {
         display: 'flex',
         alignItems: 'center',
-        gap: '16px',
-        padding: '16px 24px',
-        backgroundColor: 'rgba(255, 255, 255, 0.85)',
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
+        gap: '12px',
+        padding: '14px 18px',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
         borderRadius: '12px',
         boxShadow: '0 2px 12px rgba(13, 110, 253, 0.06)',
-        marginBottom: '32px',
-        flexWrap: 'wrap',
-        border: '1px solid rgba(220, 232, 245, 0.8)'
+        marginBottom: '24px',
+        flexWrap: 'wrap'
     },
     filterLabel: {
         fontWeight: '600',
@@ -360,7 +318,7 @@ const styles = {
         whiteSpace: 'nowrap'
     },
     filterSelect: {
-        padding: '10px 20px',
+        padding: '10px 16px',
         borderRadius: '8px',
         border: '1px solid #CED4DA',
         fontSize: '14px',
@@ -368,38 +326,38 @@ const styles = {
         cursor: 'pointer',
         color: '#212529',
         outline: 'none',
-        transition: 'all 0.25s ease',
-        minWidth: '200px'
+        flex: 1,
+        minWidth: '150px',
+        maxWidth: '100%',
+        boxSizing: 'border-box'
     },
     unitGrid: {
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-        gap: '24px'
+        gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+        gap: '20px'
     },
     unitCard: {
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    backdropFilter: 'blur(4px)',
-    WebkitBackdropFilter: 'blur(4px)',
-    padding: '24px',
-    borderRadius: '12px',
-    borderWidth: '2px',
-    borderStyle: 'solid',
-    borderColor: '#DCE8F5',
-    boxShadow: '0 2px 12px rgba(13, 110, 253, 0.06)',
-    textDecoration: 'none',
-    color: '#212529',
-    transition: 'all 0.3s ease',
-    cursor: 'pointer'
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        padding: '24px',
+        borderRadius: '12px',
+        border: '2px solid #DCE8F5',
+        boxShadow: '0 2px 12px rgba(13, 110, 253, 0.06)',
+        textDecoration: 'none',
+        color: '#212529',
+        transition: 'all 0.3s ease',
+        cursor: 'pointer',
+        boxSizing: 'border-box'
     },
-    
     unitHeader: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '16px'
+        marginBottom: '12px',
+        gap: '8px',
+        flexWrap: 'wrap'
     },
     unitNumber: {
         fontSize: '18px',
@@ -435,8 +393,7 @@ const styles = {
         fontSize: '18px',
         color: '#0D6EFD',
         fontWeight: '700',
-        alignSelf: 'flex-end',
-        transition: 'transform 0.2s ease'
+        alignSelf: 'flex-end'
     },
     loadingContainer: {
         gridColumn: '1 / -1',
@@ -464,108 +421,32 @@ const styles = {
         gridColumn: '1 / -1',
         display: 'flex',
         justifyContent: 'center',
-        padding: '64px',
-        backgroundColor: 'rgba(255, 255, 255, 0.85)',
-        backdropFilter: 'blur(4px)',
-        WebkitBackdropFilter: 'blur(4px)',
+        padding: '48px 24px',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
         borderRadius: '12px',
         border: '2px dashed #DCE8F5'
     },
     emptyText: {
         color: '#6C757D',
         fontSize: '15px',
-        margin: 0
+        margin: 0,
+        textAlign: 'center'
     }
 };
 
-const styleSheet = document.createElement('style');
-styleSheet.textContent = `
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+if (typeof document !== 'undefined') {
+    const existing = document.getElementById('dashboard-keyframes');
+    if (!existing) {
+        const styleSheet = document.createElement('style');
+        styleSheet.id = 'dashboard-keyframes';
+        styleSheet.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(styleSheet);
     }
-    @keyframes neonPulseBlue {
-        0% { box-shadow: 0 0 8px rgba(13, 110, 253, 0.8), 0 0 20px rgba(13, 110, 253, 0.6), 0 0 40px rgba(13, 110, 253, 0.4); }
-        50% { box-shadow: 0 0 12px rgba(13, 110, 253, 1), 0 0 28px rgba(13, 110, 253, 0.8), 0 0 52px rgba(13, 110, 253, 0.5); }
-        100% { box-shadow: 0 0 8px rgba(13, 110, 253, 0.8), 0 0 20px rgba(13, 110, 253, 0.6), 0 0 40px rgba(13, 110, 253, 0.4); }
-    }
-    @keyframes neonPulseGray {
-        0% { box-shadow: 0 0 8px rgba(108, 117, 125, 0.8), 0 0 20px rgba(108, 117, 125, 0.6), 0 0 40px rgba(108, 117, 125, 0.4); }
-        50% { box-shadow: 0 0 12px rgba(108, 117, 125, 1), 0 0 28px rgba(108, 117, 125, 0.8), 0 0 52px rgba(108, 117, 125, 0.5); }
-        100% { box-shadow: 0 0 8px rgba(108, 117, 125, 0.8), 0 0 20px rgba(108, 117, 125, 0.6), 0 0 40px rgba(108, 117, 125, 0.4); }
-    }
-    @keyframes neonPulseRed {
-        0% { box-shadow: 0 0 8px rgba(220, 53, 69, 0.8), 0 0 20px rgba(220, 53, 69, 0.6), 0 0 40px rgba(220, 53, 69, 0.4); }
-        50% { box-shadow: 0 0 12px rgba(220, 53, 69, 1), 0 0 28px rgba(220, 53, 69, 0.8), 0 0 52px rgba(220, 53, 69, 0.5); }
-        100% { box-shadow: 0 0 8px rgba(220, 53, 69, 0.8), 0 0 20px rgba(220, 53, 69, 0.6), 0 0 40px rgba(220, 53, 69, 0.4); }
-    }
-    a[style*="backgroundColor: rgb(13, 110, 253)"]:hover,
-    a[style*="background-color: rgb(13, 110, 253)"]:hover {
-        transform: translateY(-4px) scale(1.04) !important;
-        animation: neonPulseBlue 1.2s ease-in-out infinite !important;
-        filter: brightness(1.15) !important;
-    }
-    a[style*="backgroundColor: rgb(108, 117, 125)"]:hover,
-    a[style*="background-color: rgb(108, 117, 125)"]:hover {
-        transform: translateY(-4px) scale(1.04) !important;
-        animation: neonPulseGray 1.2s ease-in-out infinite !important;
-        filter: brightness(1.15) !important;
-    }
-    button[style*="backgroundColor: rgb(220, 53, 69)"]:hover,
-    button[style*="background-color: rgb(220, 53, 69)"]:hover {
-        transform: translateY(-4px) scale(1.04) !important;
-        animation: neonPulseRed 1.2s ease-in-out infinite !important;
-        filter: brightness(1.15) !important;
-    }
-    button[style*="backgroundColor: rgb(233, 236, 239)"]:hover,
-    button[style*="background-color: rgb(233, 236, 239)"]:hover {
-        transform: translateY(-4px) scale(1.04) !important;
-        animation: neonPulseBlue 1.2s ease-in-out infinite !important;
-        background-color: #0D6EFD !important;
-        color: #FFFFFF !important;
-    }
-    select[style*="filterSelect"]:hover {
-        border-color: #0D6EFD !important;
-        box-shadow: 0 0 8px rgba(13, 110, 253, 0.5), 0 0 16px rgba(13, 110, 253, 0.3) !important;
-    }
-    a:hover {
-        opacity: 1;
-    }
-    button:hover {
-        opacity: 1;
-    }
-    @media (max-width: 768px) {
-        nav {
-            padding: 0 16px !important;
-            height: auto !important;
-            flex-wrap: wrap !important;
-        }
-        nav > div:last-child {
-            display: none !important;
-            flex-direction: column !important;
-            width: 100% !important;
-            padding: 16px 0 !important;
-            gap: 8px !important;
-        }
-        nav > div:last-child a,
-        nav > div:last-child button {
-            width: 100% !important;
-            justify-content: center !important;
-        }
-        nav > button:first-of-type {
-            display: block !important;
-        }
-        [style*="unitGrid"] {
-            grid-template-columns: 1fr !important;
-        }
-        [style*="container"] {
-            padding: 16px !important;
-        }
-        [style*="welcomeTitle"] {
-            font-size: 22px !important;
-        }
-    }
-`;
-document.head.appendChild(styleSheet);
+}
 
 export default Dashboard;

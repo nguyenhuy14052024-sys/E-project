@@ -21,6 +21,41 @@ import ManageUsers from './pages/Admin/ManageUsers';
 import { isAuthenticated } from './services/authService';
 import ForgotPassword from './pages/ForgotPassword';
 
+// Global responsive styles
+if (typeof document !== 'undefined') {
+    const globalStyle = document.createElement('style');
+    globalStyle.textContent = `
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        #root {
+            overflow-x: hidden;
+            max-width: 100vw;
+            width: 100%;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        @media (max-width: 768px) {
+            body {
+                font-size: 14px;
+            }
+        }
+    `;
+    document.head.appendChild(globalStyle);
+}
+
 const PrivateRoute = ({ children }) => {
     return isAuthenticated() ? children : <Navigate to="/login" />;
 };

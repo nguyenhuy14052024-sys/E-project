@@ -5,7 +5,7 @@ import { getDueFlashcards, getAllFlashcardsForReview, reviewFlashcard } from '..
 const ReviewPage = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    const mode = searchParams.get('mode') || 'due'; // 'due' hoặc 'all'
+    const mode = searchParams.get('mode') || 'due';
 
     const [flashcards, setFlashcards] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -22,7 +22,7 @@ const ReviewPage = () => {
         setLoading(true);
         setError('');
         try {
-            const data = mode === 'all' 
+            const data = mode === 'all'
                 ? await getAllFlashcardsForReview()
                 : await getDueFlashcards();
             setFlashcards(data.flashcards || []);
@@ -40,7 +40,6 @@ const ReviewPage = () => {
         const card = flashcards[currentIndex];
         try {
             await reviewFlashcard(card.id, quality);
-            
             if (currentIndex + 1 >= flashcards.length) {
                 setCompleted(true);
             } else {
@@ -52,9 +51,24 @@ const ReviewPage = () => {
         }
     };
 
-    if (loading) return <div style={styles.page}><div style={styles.container}>Đang tải...</div></div>;
+    if (loading) return (
+        <div style={styles.page}>
+            <div style={styles.container}>
+                <div style={styles.loadingWrapper}>
+                    <div style={styles.spinner}></div>
+                    <p style={styles.loadingText}>Đang chuẩn bị flashcard...</p>
+                </div>
+            </div>
+        </div>
+    );
 
-    if (error) return <div style={styles.page}><div style={styles.container} style={{ color: 'red' }}>{error}</div></div>;
+    if (error) return (
+        <div style={styles.page}>
+            <div style={styles.container}>
+                <div style={{ color: 'red', textAlign: 'center', padding: '40px' }}>{error}</div>
+            </div>
+        </div>
+    );
 
     if (completed || flashcards.length === 0) {
         return (
@@ -65,16 +79,16 @@ const ReviewPage = () => {
                     <div style={styles.completedBox}>
                         <h1 style={styles.completedTitle}>Hoàn thành!</h1>
                         <p style={styles.completedText}>
-                            {flashcards.length === 0 
-                                ? 'Không có flashcard nào để ôn tập.' 
+                            {flashcards.length === 0
+                                ? 'Không có flashcard nào để ôn tập.'
                                 : `Bạn đã ôn tập xong ${flashcards.length} flashcard.`}
                         </p>
                         <div style={styles.buttonGroup}>
                             <button onClick={() => navigate('/flashcards')} style={styles.button}>
                                 Quay lại Flashcard
                             </button>
-                            <button 
-                                onClick={() => navigate('/review?mode=all')} 
+                            <button
+                                onClick={() => navigate('/review?mode=all')}
                                 style={{ ...styles.button, ...styles.buttonSecondary }}
                             >
                                 Ôn lại tất cả
@@ -103,7 +117,7 @@ const ReviewPage = () => {
                     {showAnswer ? (
                         <div style={styles.answerBox}>
                             <p style={styles.definition}>{currentCard.definition}</p>
-                            {currentCard.example && <p style={styles.example}>📝 {currentCard.example}</p>}
+                            {currentCard.example && <p style={styles.example}>{currentCard.example}</p>}
                             <div style={styles.ratingButtons}>
                                 <button onClick={() => handleReview(0)} style={{ ...styles.ratingBtn, ...styles.againBtn }}>Again</button>
                                 <button onClick={() => handleReview(1)} style={{ ...styles.ratingBtn, ...styles.hardBtn }}>Hard</button>
@@ -128,7 +142,9 @@ const styles = {
         backgroundColor: '#F6F9FE',
         fontFamily: "'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        width: '100%',
+        maxWidth: '100vw'
     },
     bgShape1: {
         position: 'fixed',
@@ -153,12 +169,14 @@ const styles = {
         zIndex: 0
     },
     container: {
-        padding: '40px',
+        padding: '40px 20px',
         maxWidth: '600px',
+        width: '100%',
         margin: '0 auto',
         textAlign: 'center',
         position: 'relative',
-        zIndex: 1
+        zIndex: 1,
+        boxSizing: 'border-box'
     },
     progress: {
         fontSize: '14px',
@@ -167,7 +185,8 @@ const styles = {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        gap: '12px'
+        gap: '12px',
+        flexWrap: 'wrap'
     },
     modeBadge: {
         backgroundColor: '#E7F1FF',
@@ -179,36 +198,38 @@ const styles = {
     },
     card: {
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(4px)',
-        WebkitBackdropFilter: 'blur(4px)',
-        padding: '48px 40px',
+        padding: '40px 24px',
         borderRadius: '16px',
         border: '2px solid #DCE8F5',
         boxShadow: '0 4px 24px rgba(13, 110, 253, 0.10)',
-        minHeight: '320px',
+        minHeight: '300px',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        boxSizing: 'border-box'
     },
     word: {
-        fontSize: '32px',
+        fontSize: 'clamp(24px, 6vw, 32px)',
         fontWeight: '700',
         color: '#0D6EFD',
-        marginBottom: '24px'
+        marginBottom: '24px',
+        wordBreak: 'break-word'
     },
     answerBox: {
         marginTop: '20px'
     },
     definition: {
-        fontSize: '18px',
+        fontSize: 'clamp(15px, 4vw, 18px)',
         color: '#212529',
-        lineHeight: '1.6'
+        lineHeight: '1.6',
+        wordBreak: 'break-word'
     },
     example: {
-        fontSize: '16px',
+        fontSize: 'clamp(13px, 3vw, 16px)',
         color: '#6C757D',
         fontStyle: 'italic',
-        marginTop: '12px'
+        marginTop: '12px',
+        wordBreak: 'break-word'
     },
     showAnswerBtn: {
         padding: '14px 36px',
@@ -221,17 +242,19 @@ const styles = {
         fontWeight: '600',
         boxShadow: '0 4px 12px rgba(13, 110, 253, 0.35)',
         transition: 'all 0.25s ease',
-        alignSelf: 'center'
+        alignSelf: 'center',
+        maxWidth: '100%',
+        boxSizing: 'border-box'
     },
     ratingButtons: {
         display: 'flex',
-        gap: '12px',
+        gap: '10px',
         marginTop: '28px',
         justifyContent: 'center',
         flexWrap: 'wrap'
     },
     ratingBtn: {
-        padding: '12px 28px',
+        padding: '12px 22px',
         border: 'none',
         borderRadius: '10px',
         cursor: 'pointer',
@@ -239,7 +262,7 @@ const styles = {
         fontWeight: '600',
         color: 'white',
         transition: 'all 0.25s ease',
-        minWidth: '80px'
+        minWidth: '70px'
     },
     againBtn: { backgroundColor: '#DC3545', boxShadow: '0 2px 6px rgba(220, 53, 69, 0.25)' },
     hardBtn: { backgroundColor: '#FD7E14', boxShadow: '0 2px 6px rgba(253, 126, 20, 0.25)' },
@@ -247,15 +270,14 @@ const styles = {
     easyBtn: { backgroundColor: '#0D6EFD', boxShadow: '0 2px 6px rgba(13, 110, 253, 0.25)' },
     completedBox: {
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(4px)',
-        WebkitBackdropFilter: 'blur(4px)',
-        padding: '48px 40px',
+        padding: '48px 32px',
         borderRadius: '16px',
         border: '2px solid #DCE8F5',
-        boxShadow: '0 4px 24px rgba(13, 110, 253, 0.10)'
+        boxShadow: '0 4px 24px rgba(13, 110, 253, 0.10)',
+        boxSizing: 'border-box'
     },
     completedTitle: {
-        fontSize: '28px',
+        fontSize: 'clamp(22px, 5vw, 28px)',
         fontWeight: '700',
         color: '#212529',
         marginBottom: '12px'
@@ -281,12 +303,51 @@ const styles = {
         fontSize: '14px',
         fontWeight: '600',
         boxShadow: '0 2px 6px rgba(13, 110, 253, 0.25)',
-        transition: 'all 0.25s ease'
+        transition: 'all 0.25s ease',
+        maxWidth: '100%',
+        boxSizing: 'border-box'
     },
     buttonSecondary: {
         backgroundColor: '#28A745',
         boxShadow: '0 2px 6px rgba(40, 167, 69, 0.25)'
+    },
+    loadingWrapper: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '80px 20px',
+        gap: '20px'
+    },
+    spinner: {
+        width: '48px',
+        height: '48px',
+        border: '4px solid #DCE8F5',
+        borderTop: '4px solid #0D6EFD',
+        borderRadius: '50%',
+        animation: 'spin 0.8s linear infinite'
+    },
+    loadingText: {
+        color: '#6C757D',
+        fontSize: '15px',
+        fontWeight: '500',
+        margin: 0
     }
 };
+
+if (typeof document !== 'undefined') {
+    const existing = document.getElementById('review-keyframes');
+    if (!existing) {
+        const styleSheet = document.createElement('style');
+        styleSheet.id = 'review-keyframes';
+        styleSheet.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+    }
+}
 
 export default ReviewPage;

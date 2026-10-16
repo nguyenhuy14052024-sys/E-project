@@ -24,6 +24,7 @@ const flashcardRoutes = require('./src/routes/flashcardRoutes');
 const adminRoutes = require('./src/routes/adminRoutes');
 const dictionaryRoutes = require('./src/routes/dictionaryRoutes');
 const profileRoutes = require('./src/routes/profileRoutes');
+const levelTestRoutes = require('./src/routes/levelTestRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/units', unitRoutes);
@@ -32,6 +33,7 @@ app.use('/api/flashcards', flashcardRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/dictionary', dictionaryRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/level-tests', levelTestRoutes);
 
 // Test kết nối Database
 (async () => {

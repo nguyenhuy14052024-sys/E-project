@@ -56,6 +56,7 @@ const Dashboard = () => {
                     <Link to="/error-log" style={styles.navBtn}>Kho lỗi sai</Link>
                     <Link to="/flashcards" style={styles.navBtn}>Flashcard</Link>
                     <Link to="/review" style={styles.navBtn}>Ôn tập</Link>
+                    <Link to="/level-tests" style={styles.navBtn}>Level Test</Link>
                     {user.role === 'admin' && (
                         <Link to="/admin" style={styles.navBtnAdmin}>Admin</Link>
                     )}

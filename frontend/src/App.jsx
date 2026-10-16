@@ -20,6 +20,11 @@ import ManageQuestions from './pages/Admin/ManageQuestions';
 import ManageUsers from './pages/Admin/ManageUsers';
 import { isAuthenticated } from './services/authService';
 import ForgotPassword from './pages/ForgotPassword';
+import LevelTest from './pages/LevelTest';
+import ManageLevelTests from './pages/Admin/ManageLevelTests';
+import ManageLevelTestQuestions from './pages/Admin/ManageLevelTestQuestions';
+import LevelTestList from './pages/LevelTestList';
+
 
 // Global responsive styles
 if (typeof document !== 'undefined') {
@@ -131,6 +136,36 @@ function App() {
                         <ManageUsers />
                     </PrivateRoute>
                 } />
+                <Route path="/level-test/:testId" element={
+    <PrivateRoute>
+        <LevelTest />
+    </PrivateRoute>
+} />
+<Route path="/admin/level-tests" element={
+    <PrivateRoute>
+        <ManageLevelTests />
+    </PrivateRoute>
+} />
+<Route path="/level-test/:testId" element={
+    <PrivateRoute>
+        <LevelTest />
+    </PrivateRoute>
+} />
+<Route path="/admin/level-tests" element={
+    <PrivateRoute>
+        <ManageLevelTests />
+    </PrivateRoute>
+} />
+<Route path="/admin/level-tests/:testId" element={
+    <PrivateRoute>
+        <ManageLevelTestQuestions />
+    </PrivateRoute>
+} />
+<Route path="/level-tests" element={
+    <PrivateRoute>
+        <LevelTestList />
+    </PrivateRoute>
+} />
             </Routes>
         </Router>
     );

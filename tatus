@@ -1,0 +1,28 @@
+[33m02e5144[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m 13-10-2026
+[33m36cfc69[m Cập nhật giao diện Admin + Quên mật khẩu + Điều khoản + Admin cố định
+[33m75ef16f[m Cập nhật giao diện Admin + ManageUsers
+[33mecce0a7[m Cập nhật form soạn nội dung mới + Rich Text Editor + Giao diện bài học theo trình độ
+[33mc433ede[m 09-10-2026
+[33m04e28ee[m UXui
+[33md45992f[m xoatktest
+[33m8e6f3f0[m 20:10_05-10-2026
+[33m6f7e648[m Backup trước khi triển khai thuật toán
+[33mb1d56d4[m[33m ([m[1;31morigin/backup-truoc-thuat-toan[m[33m, [m[1;32mbackup-truoc-thuat-toan[m[33m)[m 16:11_03-10-2026
+[33m2f1469e[m Cập nhật PROJECT_SNAPSHOT.md
+[33mde8accb[m 14:40_03-10-2026
+[33me2134d6[m 01_10_2026
+[33mc541f9d[m 18_09_26
+[33mf4e1634[m 15_9_26(2)
+[33m8b0630b[m 15_9_26
+[33m411c81d[m 12_9_26
+[33m00a7f1c[m snapshot
+[33md6c1139[m 20_8_2026
+[33m04f1eae[m 18_6_2026
+[33m85f9221[m 10/8/2025
+[33m5dd9534[m 04-08-2026
+[33mc69ca43[m Hoàn thành Mini Test: API + Frontend
+[33m15a447b[m Hoàn thành Giai đoạn 1: Random, Shuffle, Filter câu hỏi
+[33ma267e67[m Hoàn thành Frontend cơ bản: Auth, Dashboard, Unit, Quiz
+[33mae0cf35[m Hoàn thành API Quiz và import dữ liệu mẫu
+[33m084055f[m Hoàn thành API Auth: register, login, profile
+[33m8b3efc5[m Initial commit: Backend setup with Models, Config, and App

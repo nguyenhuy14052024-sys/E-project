@@ -22,6 +22,14 @@ const AdminDashboard = () => {
             bgColor: '#D4EDDA'
         },
         {
+            title: 'Quản lý Level Test',
+            description: 'Tạo và quản lý bài test trình độ',
+            label: 'LEVEL TESTS',
+            path: '/admin/level-tests',
+            color: '#FD7E14',
+            bgColor: '#FFE8CC'
+        },
+        {
             title: 'Quản lý người dùng',
             description: 'Xem danh sách, nâng cấp Premium',
             label: 'USERS',
@@ -46,17 +54,17 @@ const AdminDashboard = () => {
 
                 <div style={styles.grid}>
                     {menuItems.map((item, index) => (
-                        <Link 
-                            key={index} 
-                            to={item.path} 
-                            style={{ 
-                                ...styles.card, 
-                                borderTopColor: item.color 
+                        <Link
+                            key={index}
+                            to={item.path}
+                            style={{
+                                ...styles.card,
+                                borderTopColor: item.color
                             }}
                         >
-                            <span 
-                                style={{ 
-                                    ...styles.label, 
+                            <span
+                                style={{
+                                    ...styles.label,
                                     color: item.color,
                                     backgroundColor: item.bgColor
                                 }}
@@ -81,7 +89,10 @@ const styles = {
         fontFamily: "'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
         position: 'relative',
         overflow: 'hidden',
-        padding: '40px 24px'
+        width: '100%',
+        maxWidth: '100vw',
+        boxSizing: 'border-box',
+        padding: '40px 20px'
     },
     bgShape1: {
         position: 'fixed',
@@ -107,18 +118,22 @@ const styles = {
     },
     container: {
         maxWidth: '1000px',
+        width: '100%',
         margin: '0 auto',
         position: 'relative',
-        zIndex: 1
+        zIndex: 1,
+        boxSizing: 'border-box'
     },
     header: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '40px'
+        marginBottom: '40px',
+        flexWrap: 'wrap',
+        gap: '12px'
     },
     title: {
-        fontSize: '32px',
+        fontSize: 'clamp(22px, 5vw, 32px)',
         fontWeight: '800',
         color: '#212529',
         margin: 0
@@ -136,7 +151,7 @@ const styles = {
     },
     grid: {
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
         gap: '24px'
     },
     card: {
@@ -144,7 +159,7 @@ const styles = {
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(8px)',
         WebkitBackdropFilter: 'blur(8px)',
-        padding: '32px',
+        padding: '28px 24px',
         borderRadius: '16px',
         border: '2px solid #DCE8F5',
         borderTop: '4px solid #0D6EFD',
@@ -155,7 +170,8 @@ const styles = {
         cursor: 'pointer',
         display: 'flex',
         flexDirection: 'column',
-        gap: '12px'
+        gap: '12px',
+        boxSizing: 'border-box'
     },
     label: {
         display: 'inline-block',
@@ -167,10 +183,11 @@ const styles = {
         width: 'fit-content'
     },
     cardTitle: {
-        fontSize: '20px',
+        fontSize: '18px',
         fontWeight: '700',
         margin: 0,
-        color: '#212529'
+        color: '#212529',
+        lineHeight: '1.3'
     },
     cardDesc: {
         color: '#6C757D',

@@ -1,5 +1,5 @@
 # DỰ ÁN E-LEARNING B2-C1 - TRẠNG THÁI HIỆN TẠI
-*Cập nhật lần cuối: 13/10/2026*
+*Cập nhật lần cuối: 16/10/2026*
 
 ## 1. CÔNG NGHỆ
 - Backend: Node.js + Express + PostgreSQL + Sequelize
@@ -33,6 +33,14 @@
 - Trang Điều khoản sử dụng (Terms)
 - Trang Chính sách bảo mật (Privacy)
 - Trang Quên mật khẩu (ForgotPassword)
+- **Level Test: Làm bài test trình độ theo chuẩn (Reading, Writing, Phonetics)**
+- **Level Test: Chia nhóm câu hỏi (PHONETICS, MULTIPLE CHOICE, READING, WRITING)**
+- **Level Test: Đồng hồ đếm ngược + tự động nộp bài khi hết giờ**
+- **Level Test: Bài đọc (ReadingPassage) đính kèm câu hỏi**
+- **Level Test: Admin quản lý bài test + câu hỏi + bài đọc**
+- **Level Test: Chứng nhận theo điểm (≥90% Xuất sắc, ≥80% Giỏi)**
+- **Level Test: Lịch sử làm bài (LevelTestAttempt)**
+- **Level Test: Hiển thị kết quả chi tiết từng câu (đúng/sai + giải thích)**
 - Biểu tượng con mắt ẩn/hiện mật khẩu
 - Thanh đo độ mạnh mật khẩu
 - Ô tích Đồng ý Điều khoản
@@ -56,10 +64,14 @@
 - FlashcardPage
 - ReviewPage
 - ProfilePage
+- **LevelTest**
+- **LevelTestList**
 - AdminDashboard
 - ManageUnits
 - ManageQuestions
 - ManageUsers
+- **ManageLevelTests**
+- **ManageLevelTestQuestions**
 
 ## 4. GIAO DIỆN CHƯA NÂNG CẤP
 - (Tất cả đã nâng cấp và responsive)
@@ -67,8 +79,6 @@
 ## 5. TÍNH NĂNG CHƯA LÀM
 - Đăng nhập Google (Passport)
 - Hoàn thiện xác thực email khi đăng ký
-- Bài test sau mỗi trình độ (Level Test)
-- Chứng nhận bài test (80% Giỏi, 90% Xuất sắc, dưới 60% Cố gắng hơn)
 - Nút báo cáo lỗi
 - Premium / Thanh toán
 - Deploy lên VPS
@@ -79,13 +89,13 @@
 ## 6. CẤU TRÚC CHÍNH
 - backend/config/ (db, redis, email, passport)
 - backend/scripts/ (createAdmin.js)
-- backend/src/controllers/ (auth, unit, quiz, flashcard, admin, dictionary, profile)
-- backend/src/models/ (User, Unit, Question, Progress, UserAnswer, Flashcard, Dictionary, Certificate)
-- backend/src/routes/ (auth, unit, quiz, flashcard, admin, dictionary, profile)
+- backend/src/controllers/ (auth, unit, quiz, flashcard, admin, dictionary, profile, **levelTest**)
+- backend/src/models/ (User, Unit, Question, Progress, UserAnswer, Flashcard, Dictionary, Certificate, **LevelTest, LevelTestQuestion, LevelTestAttempt, ReadingPassage**)
+- backend/src/routes/ (auth, unit, quiz, flashcard, admin, dictionary, profile, **levelTest**)
 - backend/src/middlewares/ (authMiddleware, isAdmin)
 - backend/src/services/ (dictionaryService)
-- frontend/src/pages/ (12 trang + 4 trang Admin)
-- frontend/src/services/ (api, auth, unit, flashcard, admin, dictionary, profile)
+- frontend/src/pages/ (16 trang + 6 trang Admin)
+- frontend/src/services/ (api, auth, unit, flashcard, admin, dictionary, profile, **levelTest**)
 - frontend/src/components/ (DictionaryPopup, CertificateBadge, CertificateNotification)
 - data_migration/raw_data/demo.json
 
@@ -111,6 +121,22 @@
 - GET /api/profile
 - GET /api/profile/certificates
 - POST /api/profile/certificates
+- **GET /api/level-tests (admin)**
+- **POST /api/level-tests (admin)**
+- **GET /api/level-tests/:id (admin)**
+- **PUT /api/level-tests/:id (admin)**
+- **DELETE /api/level-tests/:id (admin)**
+- **GET /api/level-tests/:testId/questions (admin)**
+- **POST /api/level-tests/questions (admin)**
+- **PUT /api/level-tests/questions/:id (admin)**
+- **DELETE /api/level-tests/questions/:id (admin)**
+- **POST /api/level-tests/passages (admin)**
+- **PUT /api/level-tests/passages/:id (admin)**
+- **DELETE /api/level-tests/passages/:id (admin)**
+- **GET /api/level-tests/take/:id (user)**
+- **POST /api/level-tests/submit (user)**
+- **GET /api/level-tests/my-attempts (user)**
+- **GET /api/level-tests/attempts/:id (user)**
 
 ## 8. CÁCH CHẠY
 - Backend: cd backend && node app.js
@@ -119,8 +145,8 @@
 
 ## 9. VIỆC CẦN LÀM TIẾP
 - [ ] Đăng nhập Google
-- [ ] Bài test sau mỗi trình độ
-- [ ] Chứng nhận bài test
+- [ ] Hoàn thiện xác thực email
+- [ ] Nút báo cáo lỗi
 - [ ] Soạn nội dung thật A1-C1
 - [ ] Premium / Thanh toán
 - [ ] Deploy

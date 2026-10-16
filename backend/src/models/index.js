@@ -6,8 +6,12 @@ const UserAnswer = require('./UserAnswer');
 const Flashcard = require('./Flashcard');
 const Dictionary = require('./Dictionary');
 const Certificate = require('./Certificate');
+const LevelTest = require('./LevelTest');
+const ReadingPassage = require('./ReadingPassage');
+const LevelTestQuestion = require('./LevelTestQuestion');
+const LevelTestAttempt = require('./LevelTestAttempt');
 
-// ==================== QUAN HỆ ====================
+// ==================== QUAN HỆ CŨ ====================
 
 // User - Progress (1-n)
 User.hasMany(Progress, { foreignKey: 'user_id' });
@@ -45,6 +49,28 @@ Certificate.belongsTo(User, { foreignKey: 'user_id' });
 Unit.hasMany(Certificate, { foreignKey: 'unit_id' });
 Certificate.belongsTo(Unit, { foreignKey: 'unit_id' });
 
+// ==================== QUAN HỆ LEVEL TEST ====================
+
+// LevelTest - LevelTestQuestion (1-n)
+LevelTest.hasMany(LevelTestQuestion, { foreignKey: 'level_test_id', as: 'questions' });
+LevelTestQuestion.belongsTo(LevelTest, { foreignKey: 'level_test_id' });
+
+// LevelTest - ReadingPassage (1-n)
+LevelTest.hasMany(ReadingPassage, { foreignKey: 'level_test_id', as: 'passages' });
+ReadingPassage.belongsTo(LevelTest, { foreignKey: 'level_test_id' });
+
+// ReadingPassage - LevelTestQuestion (1-n)
+ReadingPassage.hasMany(LevelTestQuestion, { foreignKey: 'passage_id', as: 'questions' });
+LevelTestQuestion.belongsTo(ReadingPassage, { foreignKey: 'passage_id' });
+
+// User - LevelTestAttempt (1-n)
+User.hasMany(LevelTestAttempt, { foreignKey: 'user_id' });
+LevelTestAttempt.belongsTo(User, { foreignKey: 'user_id' });
+
+// LevelTest - LevelTestAttempt (1-n)
+LevelTest.hasMany(LevelTestAttempt, { foreignKey: 'level_test_id' });
+LevelTestAttempt.belongsTo(LevelTest, { foreignKey: 'level_test_id' });
+
 module.exports = {
     User,
     Unit,
@@ -53,5 +79,9 @@ module.exports = {
     UserAnswer,
     Flashcard,
     Dictionary,
-    Certificate
+    Certificate,
+    LevelTest,
+    ReadingPassage,
+    LevelTestQuestion,
+    LevelTestAttempt
 };

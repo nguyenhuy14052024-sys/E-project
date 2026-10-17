@@ -66,7 +66,9 @@ const LevelTestList = () => {
                                 <div style={styles.meta}>
                                     <span>{test.duration} phút</span>
                                     <span>{test.total_score} điểm</span>
-                                    <span>{test.questionCount || 0} câu</span>
+                                    <span style={{ fontWeight: '600', color: test.questionCount > 0 ? '#28A745' : '#DC3545' }}>
+    {test.questionCount || 0} câu
+</span>
                                 </div>
                                 <button
                                     onClick={() => navigate(`/level-test/${test.id}`)}

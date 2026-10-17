@@ -1,5 +1,5 @@
 # DỰ ÁN E-LEARNING B2-C1 - TRẠNG THÁI HIỆN TẠI
-*Cập nhật lần cuối: 16/10/2026*
+*Cập nhật lần cuối: 17/10/2026*
 
 ## 1. CÔNG NGHỆ
 - Backend: Node.js + Express + PostgreSQL + Sequelize
@@ -37,10 +37,15 @@
 - **Level Test: Chia nhóm câu hỏi (PHONETICS, MULTIPLE CHOICE, READING, WRITING)**
 - **Level Test: Đồng hồ đếm ngược + tự động nộp bài khi hết giờ**
 - **Level Test: Bài đọc (ReadingPassage) đính kèm câu hỏi**
+- **Level Test: Câu hỏi của bài đọc nhập ngay trong form tạo passage (tích hợp)**
+- **Level Test: Hỗ trợ 3 loại câu hỏi chính (Trắc nghiệm A/B/C/D, True/False/Not Given, Viết-nhập nội dung)**
+- **Level Test: Form động — tự đổi input theo loại câu hỏi (A/B/C/D dropdown/radio/input text)**
 - **Level Test: Admin quản lý bài test + câu hỏi + bài đọc**
 - **Level Test: Chứng nhận theo điểm (≥90% Xuất sắc, ≥80% Giỏi)**
 - **Level Test: Lịch sử làm bài (LevelTestAttempt)**
 - **Level Test: Hiển thị kết quả chi tiết từng câu (đúng/sai + giải thích)**
+- **Level Test: Cho phép nộp bài trống (tính 0 điểm) — có popup xác nhận**
+- **Level Test: Hiển thị passage phía trên câu hỏi liên kết khi làm bài**
 - Biểu tượng con mắt ẩn/hiện mật khẩu
 - Thanh đo độ mạnh mật khẩu
 - Ô tích Đồng ý Điều khoản
@@ -83,7 +88,7 @@
 - Premium / Thanh toán
 - Deploy lên VPS
 - Soạn nội dung thật A1-C1
-- Loading component (icon nhảy)
+- Loading component (icon nhảy) — **tạm skip, sẽ xem lại sau khi deploy**
 - Từ điển: nghĩa Anh-Việt, phiên âm, audio
 
 ## 6. CẤU TRÚC CHÍNH
@@ -130,11 +135,11 @@
 - **POST /api/level-tests/questions (admin)**
 - **PUT /api/level-tests/questions/:id (admin)**
 - **DELETE /api/level-tests/questions/:id (admin)**
-- **POST /api/level-tests/passages (admin)**
-- **PUT /api/level-tests/passages/:id (admin)**
+- **POST /api/level-tests/passages (admin) — nhận `questions` array, tự tạo câu hỏi kèm**
+- **PUT /api/level-tests/passages/:id (admin) — xóa câu hỏi cũ + tạo lại nếu có `questions`**
 - **DELETE /api/level-tests/passages/:id (admin)**
 - **GET /api/level-tests/take/:id (user)**
-- **POST /api/level-tests/submit (user)**
+- **POST /api/level-tests/submit (user) — cho phép nộp trống, tính 0 điểm**
 - **GET /api/level-tests/my-attempts (user)**
 - **GET /api/level-tests/attempts/:id (user)**
 
@@ -150,3 +155,22 @@
 - [ ] Soạn nội dung thật A1-C1
 - [ ] Premium / Thanh toán
 - [ ] Deploy
+
+## 10. GHI CHÚ KỸ THUẬT — LEVEL TEST
+
+### 10.1. Ba loại câu hỏi chính
+| Loại | question_group | Input | Đáp án |
+|------|----------------|-------|--------|
+| Trắc nghiệm | reading_comprehension, cloze_test, sentence_completion, synonym_antonym, communication, error_identification | 4 ô A/B/C/D | Dropdown A/B/C/D |
+| True/False | true_false | Radio 3 lựa chọn cố định | Dropdown True/False/Not Given |
+| Viết/nhập | sentence_transformation, sentence_combination, pronunciation, word_stress | Input text | Input text |
+
+### 10.2. Tạo passage kèm câu hỏi
+- Form Admin: `ManageLevelTestQuestions.jsx` → section "Câu hỏi cho bài đọc này"
+- Backend: `createPassage` nhận `questions[]` → tạo passage → loop tạo `LevelTestQuestion` với `passage_id` → cập nhật `total_questions`
+- Câu hỏi render trong `LevelTest.jsx` theo nhóm, passage hiển thị 1 lần duy nhất phía trên câu hỏi đầu tiên thuộc passage đó
+
+### 10.3. Nộp bài trống
+- Backend `submitTest`: bỏ check `answers.length === 0`, dùng `safeAnswers = Array.isArray(answers) ? answers : []`
+- Frontend `handleSubmit`: thêm `window.confirm` cảnh báo nếu `answerList.length === 0`
+- Kết quả: user được phép nộp trống, tính 0 điểm, có popup xác nhận trước khi nộp

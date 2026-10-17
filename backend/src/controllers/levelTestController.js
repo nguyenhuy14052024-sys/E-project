@@ -294,12 +294,13 @@ const deleteQuestion = async (req, res) => {
 // Tạo bài đọc mới
 const createPassage = async (req, res) => {
     try {
-        const { level_test_id, title, content, image_url, image_width, source } = req.body;
+        const { level_test_id, title, content, image_url, image_width, source, questions } = req.body;
 
         if (!level_test_id || !content) {
             return res.status(400).json({ message: 'Vui lòng nhập level_test_id và content' });
         }
 
+        // 1. Tạo passage
         const passage = await ReadingPassage.create({
             level_test_id,
             title,
@@ -309,9 +310,42 @@ const createPassage = async (req, res) => {
             source
         });
 
+        // 2. Tạo câu hỏi kèm theo (nếu có)
+        const createdQuestions = [];
+        if (questions && Array.isArray(questions) && questions.length > 0) {
+            for (const q of questions) {
+                if (!q.question_group || !q.content || !q.correct_answer) {
+                    continue;
+                }
+
+                const newQuestion = await LevelTestQuestion.create({
+                    level_test_id,
+                    passage_id: passage.id,
+                    question_group: q.question_group,
+                    content: q.content,
+                    underlined: q.underlined || null,
+                    options: q.options || null,
+                    correct_answer: q.correct_answer,
+                    explanation: q.explanation || null,
+                    score: q.score || 1,
+                    order: q.order || 0
+                });
+                createdQuestions.push(newQuestion);
+            }
+
+            const totalQuestions = await LevelTestQuestion.count({
+                where: { level_test_id }
+            });
+            await LevelTest.update(
+                { total_questions: totalQuestions },
+                { where: { id: level_test_id } }
+            );
+        }
+
         res.status(201).json({
             message: 'Tạo bài đọc thành công',
-            passage
+            passage,
+            questions: createdQuestions
         });
 
     } catch (error) {
@@ -324,7 +358,7 @@ const createPassage = async (req, res) => {
 const updatePassage = async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, content, image_url, image_width, source } = req.body;
+        const { title, content, image_url, image_width, source, questions } = req.body;
 
         const passage = await ReadingPassage.findByPk(id);
         if (!passage) {
@@ -338,6 +372,41 @@ const updatePassage = async (req, res) => {
         if (source !== undefined) passage.source = source;
 
         await passage.save();
+
+        if (questions !== undefined) {
+            await LevelTestQuestion.destroy({
+                where: { passage_id: id }
+            });
+
+            if (Array.isArray(questions) && questions.length > 0) {
+                for (const q of questions) {
+                    if (!q.question_group || !q.content || !q.correct_answer) {
+                        continue;
+                    }
+
+                    await LevelTestQuestion.create({
+                        level_test_id: passage.level_test_id,
+                        passage_id: passage.id,
+                        question_group: q.question_group,
+                        content: q.content,
+                        underlined: q.underlined || null,
+                        options: q.options || null,
+                        correct_answer: q.correct_answer,
+                        explanation: q.explanation || null,
+                        score: q.score || 1,
+                        order: q.order || 0
+                    });
+                }
+            }
+
+            const totalQuestions = await LevelTestQuestion.count({
+                where: { level_test_id: passage.level_test_id }
+            });
+            await LevelTest.update(
+                { total_questions: totalQuestions },
+                { where: { id: passage.level_test_id } }
+            );
+        }
 
         res.status(200).json({
             message: 'Cập nhật bài đọc thành công',
@@ -415,16 +484,14 @@ const submitTest = async (req, res) => {
         const { userId } = req.user;
         const { testId, answers, timeSpent } = req.body;
 
-        console.log('📤 Submit test - testId:', testId);
-        console.log('📤 Submit test - answers count:', answers ? answers.length : 0);
-
-        if (!testId || !answers || answers.length === 0) {
-            return res.status(400).json({ message: 'Thiếu thông tin bài làm' });
+        if (!testId) {
+            return res.status(400).json({ message: 'Thiếu testId' });
         }
 
-        const test = await LevelTest.findByPk(testId);
-        console.log('📤 Found test:', test ? test.id : 'NOT FOUND');
+        // Cho phép answers rỗng (nộp trống) — sẽ tính 0 điểm
+        const safeAnswers = Array.isArray(answers) ? answers : [];
 
+        const test = await LevelTest.findByPk(testId);
         if (!test) {
             return res.status(404).json({ message: 'Không tìm thấy bài test' });
         }
@@ -437,7 +504,7 @@ const submitTest = async (req, res) => {
         let totalScore = 0;
         const results = [];
 
-        for (const answer of answers) {
+        for (const answer of safeAnswers) {
             const question = questions.find(q => q.id === answer.questionId);
             if (!question) continue;
 
@@ -445,12 +512,10 @@ const submitTest = async (req, res) => {
             let correctAnswerContent = question.correct_answer;
 
             if (question.options && Array.isArray(question.options) && question.options.length > 0) {
-                // correct_answer là "A", "B", "C", "D" → Lấy nội dung đáp án đúng
-                const correctIndex = question.correct_answer.charCodeAt(0) - 65; // A=0, B=1...
+                const correctIndex = question.correct_answer.charCodeAt(0) - 65;
                 correctAnswerContent = question.options[correctIndex] || question.correct_answer;
                 isCorrect = correctAnswerContent === answer.userAnswer;
             } else {
-                // Nếu không có options (gap_filling, sentence_transformation...)
                 isCorrect = question.correct_answer === answer.userAnswer;
             }
 
@@ -582,22 +647,18 @@ const getAttemptById = async (req, res) => {
 };
 
 module.exports = {
-    // Admin - Level Test
     getAllLevelTests,
     getLevelTestById,
     createLevelTest,
     updateLevelTest,
     deleteLevelTest,
-    // Admin - Question
     getQuestionsByTest,
     createQuestion,
     updateQuestion,
     deleteQuestion,
-    // Admin - Passage
     createPassage,
     updatePassage,
     deletePassage,
-    // User
     getTestForUser,
     submitTest,
     getMyAttempts,

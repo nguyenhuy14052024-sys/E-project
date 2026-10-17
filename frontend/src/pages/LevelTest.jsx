@@ -64,29 +64,38 @@ const LevelTest = () => {
     };
 
     const handleSubmit = async () => {
-    if (submitted) return;
+        if (submitted) return;
 
-    clearInterval(timerRef.current);
+        clearInterval(timerRef.current);
 
-    const answerList = Object.entries(answers).map(([questionId, userAnswer]) => ({
-        questionId,
-        userAnswer
-    }));
+        const answerList = Object.entries(answers).map(([questionId, userAnswer]) => ({
+            questionId,
+            userAnswer
+        }));
 
-    console.log('📤 testId:', testId);
-    console.log('📤 answerList:', answerList);
-    console.log('📤 timeSpent:', timeSpent);
+        // Cảnh báo nếu nộp trống (không chặn)
+        if (answerList.length === 0) {
+            const confirmed = window.confirm(
+                'Bạn chưa chọn đáp án nào. Vẫn nộp bài? (Bài sẽ được tính 0 điểm)'
+            );
+            if (!confirmed) return;
+        }
 
-    try {
-        const data = await submitTest(testId, answerList, timeSpent);
-        setResult(data);
-        setSubmitted(true);
-        window.scrollTo(0, 0);
-    } catch (err) {
-        console.error('❌ Submit error:', err);
-        setError('Lỗi nộp bài');
-    }
-};
+        console.log('📤 testId:', testId);
+        console.log('📤 answerList:', answerList);
+        console.log('📤 timeSpent:', timeSpent);
+
+        try {
+            const data = await submitTest(testId, answerList, timeSpent);
+            setResult(data);
+            setSubmitted(true);
+            window.scrollTo(0, 0);
+        } catch (err) {
+            console.error('❌ Submit error:', err);
+            setError('Lỗi nộp bài');
+        }
+    };
+
     const formatTime = (seconds) => {
         const m = Math.floor(seconds / 60);
         const s = seconds % 60;
@@ -198,9 +207,9 @@ const LevelTest = () => {
                             return (
                                 <div key={q.id} style={styles.questionBlock}>
                                     <div style={styles.questionText}>
-    <strong>{idx + 1}.</strong>
-    <span dangerouslySetInnerHTML={{ __html: ' ' + q.content }} />
-</div>
+                                        <strong>{idx + 1}.</strong>
+                                        <span dangerouslySetInnerHTML={{ __html: ' ' + q.content }} />
+                                    </div>
 
                                     {q.options && (
                                         <div style={styles.optionsList}>
@@ -349,12 +358,6 @@ const styles = {
         color: '#000',
         lineHeight: '1.7',
         margin: '0 0 10px 0'
-    },
-    underlinedNote: {
-        fontSize: '12px',
-        color: '#666',
-        fontStyle: 'italic',
-        marginLeft: '8px'
     },
     optionsList: {
         display: 'flex',

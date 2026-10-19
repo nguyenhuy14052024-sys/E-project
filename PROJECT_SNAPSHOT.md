@@ -186,3 +186,7 @@
 ### 9.6. Biểu đồ tiến độ
 - Backend: Tính toán `totalUnitsInLevel` và `completedUnitsInLevel` dựa vào `book_level` của user.
 - Frontend: Hiển thị thanh Progress Bar trong `ProfilePage.jsx`.
+
+## 5. TÍNH NĂNG CHƯA LÀM (Dự kiến làm sau Demo NCKHKT)
+- **Hộp thư Góp ý (Feedback Box):** Nút Floating góc phải màn hình. Lưu vào DB. Admin xem trong Admin Panel. (Dùng để thu thập dữ liệu người dùng).
+- **Chế độ Thư giãn (Micro-game):** Game "Rắn ăn táo" (HTML5 Canvas) hiển thị 30s ở trang Kết quả bài học. Ứng dụng Gamification và nguyên lý nghỉ ngơi của não bộ.

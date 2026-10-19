@@ -1,5 +1,5 @@
 # DỰ ÁN E-LEARNING B2-C1 - TRẠNG THÁI HIỆN TẠI
-*Cập nhật lần cuối: 17/10/2026*
+*Cập nhật lần cuối: 19/10/2026*
 
 ## 1. CÔNG NGHỆ
 - Backend: Node.js + Express + PostgreSQL + Sequelize
@@ -22,7 +22,7 @@
 - Admin Panel: CRUD Unit, Question, User
 - Dictionary: Tra từ (Hybrid fallback 3 API) - trong Grammar + Practice
 - Profile: Hồ sơ cá nhân, Rank, Streak, Điểm số
-- Certificate: Kho chứng nhận
+- **Certificate: Kho chứng nhận (Đã chống cấp trùng, không có 2 chứng nhận giống nhau)**
 - Tự động hóa: Cộng điểm, cấp chứng nhận, cập nhật Streak
 - Thông báo chứng nhận: Popup + Confetti khi nhận chứng nhận mới
 - Form soạn nội dung mới: chia trường (level, unit, tên, mô tả, độ khó, ghi chú, các phần)
@@ -40,12 +40,16 @@
 - **Level Test: Câu hỏi của bài đọc nhập ngay trong form tạo passage (tích hợp)**
 - **Level Test: Hỗ trợ 3 loại câu hỏi chính (Trắc nghiệm A/B/C/D, True/False/Not Given, Viết-nhập nội dung)**
 - **Level Test: Form động — tự đổi input theo loại câu hỏi (A/B/C/D dropdown/radio/input text)**
-- **Level Test: Admin quản lý bài test + câu hỏi + bài đọc**
+- **Level Test: Admin có thể tự do đặt tên Section và đổi thứ tự câu hỏi (nút lên/xuống)**
+- **Level Test: Sửa câu hỏi ngay tại chỗ (Inline Editing) không bị trượt trang**
+- **Level Test: Admin quản lý bài test + câu hỏi + bài đọc (hỗ trợ Link ảnh, Độ rộng ảnh, Nguồn)**
 - **Level Test: Chứng nhận theo điểm (≥90% Xuất sắc, ≥80% Giỏi)**
 - **Level Test: Lịch sử làm bài (LevelTestAttempt)**
 - **Level Test: Hiển thị kết quả chi tiết từng câu (đúng/sai + giải thích)**
 - **Level Test: Cho phép nộp bài trống (tính 0 điểm) — có popup xác nhận**
 - **Level Test: Hiển thị passage phía trên câu hỏi liên kết khi làm bài**
+- **Level Test: Định dạng văn bản (gạch chân âm tiết) cho câu hỏi Phát âm / Trọng âm**
+- **Profile: Biểu đồ tiến độ theo trình độ (VD: Đã hoàn thành 3/12 bài)**
 - Biểu tượng con mắt ẩn/hiện mật khẩu
 - Thanh đo độ mạnh mật khẩu
 - Ô tích Đồng ý Điều khoản
@@ -69,38 +73,42 @@
 - FlashcardPage
 - ReviewPage
 - ProfilePage
-- **LevelTest**
-- **LevelTestList**
+- LevelTest
+- LevelTestList
 - AdminDashboard
 - ManageUnits
 - ManageQuestions
 - ManageUsers
-- **ManageLevelTests**
-- **ManageLevelTestQuestions**
+- ManageLevelTests
+- ManageLevelTestQuestions
 
 ## 4. GIAO DIỆN CHƯA NÂNG CẤP
 - (Tất cả đã nâng cấp và responsive)
 
-## 5. TÍNH NĂNG CHƯA LÀM
+## 5. TÍNH NĂNG CHƯA LÀM (SẮP TỚI)
+- **Form phỏng vấn người dùng (Onboarding Survey):** Mascot dễ thương, hỏi mục tiêu, trình độ, khó khăn để Admin khai thác dữ liệu.
+- **Upload ảnh từ máy tính:** Hiện tại mới chỉ hỗ trợ dán link ảnh (URL).
 - Đăng nhập Google (Passport)
 - Hoàn thiện xác thực email khi đăng ký
 - Nút báo cáo lỗi
 - Premium / Thanh toán
 - Deploy lên VPS
 - Soạn nội dung thật A1-C1
-- Loading component (icon nhảy) — **tạm skip, sẽ xem lại sau khi deploy**
+- Loading component (icon nhảy) — tạm skip
 - Từ điển: nghĩa Anh-Việt, phiên âm, audio
+- Xử lý Token hết hạn (Axios Interceptor bắt lỗi 401 -> tự động đăng xuất)
+- Tăng thời hạn JWT (7d lên 30d) để giảm việc user phải đăng nhập lại
 
 ## 6. CẤU TRÚC CHÍNH
 - backend/config/ (db, redis, email, passport)
 - backend/scripts/ (createAdmin.js)
-- backend/src/controllers/ (auth, unit, quiz, flashcard, admin, dictionary, profile, **levelTest**)
-- backend/src/models/ (User, Unit, Question, Progress, UserAnswer, Flashcard, Dictionary, Certificate, **LevelTest, LevelTestQuestion, LevelTestAttempt, ReadingPassage**)
-- backend/src/routes/ (auth, unit, quiz, flashcard, admin, dictionary, profile, **levelTest**)
+- backend/src/controllers/ (auth, unit, quiz, flashcard, admin, dictionary, profile, levelTest)
+- backend/src/models/ (User, Unit, Question, Progress, UserAnswer, Flashcard, Dictionary, Certificate, LevelTest, LevelTestQuestion, LevelTestAttempt, ReadingPassage)
+- backend/src/routes/ (auth, unit, quiz, flashcard, admin, dictionary, profile, levelTest)
 - backend/src/middlewares/ (authMiddleware, isAdmin)
 - backend/src/services/ (dictionaryService)
 - frontend/src/pages/ (16 trang + 6 trang Admin)
-- frontend/src/services/ (api, auth, unit, flashcard, admin, dictionary, profile, **levelTest**)
+- frontend/src/services/ (api, auth, unit, flashcard, admin, dictionary, profile, levelTest)
 - frontend/src/components/ (DictionaryPopup, CertificateBadge, CertificateNotification)
 - data_migration/raw_data/demo.json
 
@@ -123,54 +131,58 @@
 - GET /api/admin/units/:unitId/questions, POST /api/admin/questions, PUT /api/admin/questions/:id, DELETE /api/admin/questions/:id
 - GET /api/admin/users, PUT /api/admin/users/:id
 - GET /api/dictionary/:word
-- GET /api/profile
+- GET /api/profile (Đã trả về thêm `totalUnitsInLevel`, `completedUnitsInLevel`)
 - GET /api/profile/certificates
 - POST /api/profile/certificates
-- **GET /api/level-tests (admin)**
-- **POST /api/level-tests (admin)**
-- **GET /api/level-tests/:id (admin)**
-- **PUT /api/level-tests/:id (admin)**
-- **DELETE /api/level-tests/:id (admin)**
-- **GET /api/level-tests/:testId/questions (admin)**
-- **POST /api/level-tests/questions (admin)**
-- **PUT /api/level-tests/questions/:id (admin)**
-- **DELETE /api/level-tests/questions/:id (admin)**
-- **POST /api/level-tests/passages (admin) — nhận `questions` array, tự tạo câu hỏi kèm**
-- **PUT /api/level-tests/passages/:id (admin) — xóa câu hỏi cũ + tạo lại nếu có `questions`**
-- **DELETE /api/level-tests/passages/:id (admin)**
-- **GET /api/level-tests/take/:id (user)**
-- **POST /api/level-tests/submit (user) — cho phép nộp trống, tính 0 điểm**
-- **GET /api/level-tests/my-attempts (user)**
-- **GET /api/level-tests/attempts/:id (user)**
+- GET /api/level-tests (admin)
+- POST /api/level-tests (admin)
+- GET /api/level-tests/:id (admin)
+- PUT /api/level-tests/:id (admin)
+- DELETE /api/level-tests/:id (admin)
+- GET /api/level-tests/:testId/questions (admin)
+- POST /api/level-tests/questions (admin)
+- PUT /api/level-tests/questions/:id (admin)
+- DELETE /api/level-tests/questions/:id (admin)
+- POST /api/level-tests/passages (admin) — nhận `questions` array, tự tạo câu hỏi kèm
+- PUT /api/level-tests/passages/:id (admin) — xóa câu hỏi cũ + tạo lại nếu có `questions`
+- DELETE /api/level-tests/passages/:id (admin)
+- GET /api/level-tests/take/:id (user)
+- POST /api/level-tests/submit (user) — cho phép nộp trống, tính 0 điểm
+- GET /api/level-tests/my-attempts (user)
+- GET /api/level-tests/attempts/:id (user)
 
 ## 8. CÁCH CHẠY
 - Backend: cd backend && node app.js
 - Frontend: cd frontend && npm run dev
 - Tạo admin: cd backend && node scripts/createAdmin.js
 
-## 9. VIỆC CẦN LÀM TIẾP
-- [ ] Đăng nhập Google
-- [ ] Hoàn thiện xác thực email
-- [ ] Nút báo cáo lỗi
-- [ ] Soạn nội dung thật A1-C1
-- [ ] Premium / Thanh toán
-- [ ] Deploy
+## 9. GHI CHÚ KỸ THUẬT — LEVEL TEST & PROFILE
 
-## 10. GHI CHÚ KỸ THUẬT — LEVEL TEST
-
-### 10.1. Ba loại câu hỏi chính
+### 9.1. Ba loại câu hỏi chính
 | Loại | question_group | Input | Đáp án |
 |------|----------------|-------|--------|
-| Trắc nghiệm | reading_comprehension, cloze_test, sentence_completion, synonym_antonym, communication, error_identification | 4 ô A/B/C/D | Dropdown A/B/C/D |
+| Trắc nghiệm | reading_comprehension, cloze_test, sentence_completion, synonym_antonym, communication, error_identification, pronunciation, word_stress | 4 ô A/B/C/D (Hỗ trợ gạch chân) | Dropdown A/B/C/D |
 | True/False | true_false | Radio 3 lựa chọn cố định | Dropdown True/False/Not Given |
-| Viết/nhập | sentence_transformation, sentence_combination, pronunciation, word_stress | Input text | Input text |
+| Viết/nhập | sentence_transformation, sentence_combination | Input text (có Tiền tố/Hậu tố) | Input text |
 
-### 10.2. Tạo passage kèm câu hỏi
-- Form Admin: `ManageLevelTestQuestions.jsx` → section "Câu hỏi cho bài đọc này"
-- Backend: `createPassage` nhận `questions[]` → tạo passage → loop tạo `LevelTestQuestion` với `passage_id` → cập nhật `total_questions`
-- Câu hỏi render trong `LevelTest.jsx` theo nhóm, passage hiển thị 1 lần duy nhất phía trên câu hỏi đầu tiên thuộc passage đó
+### 9.2. Tạo passage kèm câu hỏi
+- Form Admin: Section "Câu hỏi cho bài đọc này" (hỗ trợ Link ảnh, Độ rộng, Nguồn).
+- Backend: `createPassage` nhận `questions[]` → tạo passage → loop tạo `LevelTestQuestion` với `passage_id` → cập nhật `total_questions`.
+- Câu hỏi render trong `LevelTest.jsx` theo nhóm, passage hiển thị 1 lần duy nhất phía trên câu hỏi đầu tiên thuộc passage đó.
 
-### 10.3. Nộp bài trống
+### 9.3. Section và Thứ tự (Admin)
+- Admin có thể tự do nhập tên Section (VD: SECTION A: PHONETICS).
+- Admin có thể dùng nút ↑ ↓ để đổi thứ tự câu hỏi trực tiếp trên giao diện (tự động lưu vào DB).
+- Nút "Sửa" mở form ngay tại chỗ, không bị trượt trang.
+
+### 9.4. Nộp bài trống
 - Backend `submitTest`: bỏ check `answers.length === 0`, dùng `safeAnswers = Array.isArray(answers) ? answers : []`
 - Frontend `handleSubmit`: thêm `window.confirm` cảnh báo nếu `answerList.length === 0`
-- Kết quả: user được phép nộp trống, tính 0 điểm, có popup xác nhận trước khi nộp
+- Kết quả: user được phép nộp trống, tính 0 điểm.
+
+### 9.5. Chống trùng chứng nhận
+- Hàm `issueCertificate` trong `profileController.js`: Kiểm tra `user_id`, `type`, `title` trước khi tạo mới. Nếu đã tồn tại, trả về `null`.
+
+### 9.6. Biểu đồ tiến độ
+- Backend: Tính toán `totalUnitsInLevel` và `completedUnitsInLevel` dựa vào `book_level` của user.
+- Frontend: Hiển thị thanh Progress Bar trong `ProfilePage.jsx`.

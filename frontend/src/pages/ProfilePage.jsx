@@ -100,12 +100,35 @@ const ProfilePage = () => {
                     </div>
                 </div>
 
+                {/* BIỂU ĐỒ TIẾN ĐỘ THEO TRÌNH ĐỘ */}
+                <div style={styles.levelProgressSection}>
+                    <h3 style={styles.sectionTitle}>Tiến độ trình độ {user.level || 'B2'}</h3>
+                    <div style={styles.progressCard}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                            <span style={{ fontWeight: '600', color: '#212529' }}>
+                                Đã hoàn thành: {stats.completedUnitsInLevel || 0} / {stats.totalUnitsInLevel || 0} bài
+                            </span>
+                            <span style={{ fontWeight: 'bold', color: '#0D6EFD' }}>
+                                {stats.totalUnitsInLevel > 0 ? Math.round((stats.completedUnitsInLevel / stats.totalUnitsInLevel) * 100) : 0}%
+                            </span>
+                        </div>
+                        <div style={{ height: '16px', backgroundColor: '#E9ECEF', borderRadius: '8px', overflow: 'hidden' }}>
+                            <div style={{ 
+                                height: '100%', 
+                                width: `${stats.totalUnitsInLevel > 0 ? (stats.completedUnitsInLevel / stats.totalUnitsInLevel) * 100 : 0}%`, 
+                                backgroundColor: '#28A745',
+                                transition: 'width 0.5s ease-in-out'
+                            }} />
+                        </div>
+                    </div>
+                </div>
+
                 <div style={styles.statsSection}>
-                    <h3 style={styles.sectionTitle}>Thống kê</h3>
+                    <h3 style={styles.sectionTitle}>Thống kê chung</h3>
                     <div style={styles.statsGrid}>
                         <div style={styles.statCard}>
                             <div style={styles.statValue}>{stats.completedUnits}/{stats.totalUnits}</div>
-                            <div style={styles.statLabel}>Unit hoàn thành</div>
+                            <div style={styles.statLabel}>Tổng Unit hoàn thành</div>
                         </div>
                         <div style={styles.statCard}>
                             <div style={styles.statValue}>{stats.totalFlashcards}</div>
@@ -288,6 +311,16 @@ const styles = {
         fontSize: '14px',
         color: '#FD7E14',
         fontWeight: '500'
+    },
+    levelProgressSection: {
+        marginBottom: '24px'
+    },
+    progressCard: {
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        padding: '20px',
+        borderRadius: '12px',
+        border: '2px solid #DCE8F5',
+        boxShadow: '0 2px 12px rgba(13, 110, 253, 0.06)'
     },
     statsSection: {
         marginBottom: '24px'

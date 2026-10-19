@@ -26,22 +26,139 @@ const QUESTION_GROUPS = [
     { value: 'sentence_combination', label: 'Nối câu' }
 ];
 
-// Helper: kiểm tra có phải trắc nghiệm A/B/C/D không
 const isMultipleChoiceGroup = (group) => {
-    return ['reading_comprehension', 'cloze_test', 'sentence_completion',
-        'synonym_antonym', 'communication', 'error_identification'].includes(group);
+    return ['reading_comprehension', 'cloze_test', 'sentence_completion', 'synonym_antonym', 'communication', 'error_identification', 'pronunciation', 'word_stress'].includes(group);
 };
 
-// Helper: tạo câu hỏi rỗng
-const createEmptyQuestion = () => ({
-    question_group: 'reading_comprehension',
-    content: '',
-    options: ['', '', '', ''],
-    correct_answer: 'A',
-    explanation: '',
-    score: 1,
-    order: 0
-});
+const isFillInBlankGroup = (group) => {
+    return ['sentence_transformation', 'sentence_completion', 'sentence_combination'].includes(group);
+};
+
+// Component nhỏ để render form sửa tại chỗ cho câu hỏi độc lập
+const InlineQuestionForm = ({ initialData, onSave, onCancel }) => {
+    const [formData, setFormData] = useState(initialData);
+    const [error, setError] = useState('');
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        const isMC = isMultipleChoiceGroup(formData.question_group);
+        let filteredOptions = null;
+        if (isMC) {
+            filteredOptions = formData.options.filter(o => o && o.trim() !== '');
+            if (filteredOptions.length < 2) filteredOptions = null;
+        }
+
+        try {
+            await onSave({
+                ...formData,
+                options: filteredOptions
+            });
+        } catch (err) {
+            setError(err.message || 'Lỗi lưu câu hỏi');
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit} style={styles.form}>
+            {error && <div style={styles.error}>{error}</div>}
+            <div style={styles.formRow}>
+                <div style={styles.formGroup}>
+                    <label style={styles.label}>Dạng bài</label>
+                    <select
+                        value={formData.question_group}
+                        onChange={(e) => {
+                            const newGroup = e.target.value;
+                            const isMC = isMultipleChoiceGroup(newGroup);
+                            const defaultAnswer = isMC ? 'A' : (newGroup === 'true_false' ? 'True' : '');
+                            setFormData({ ...formData, question_group: newGroup, correct_answer: defaultAnswer });
+                        }}
+                        style={styles.input}
+                    >
+                        {QUESTION_GROUPS.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
+                    </select>
+                </div>
+                <div style={styles.formGroup}>
+                    <label style={styles.label}>Tên Phần (Section)</label>
+                    <input type="text" value={formData.section || ''} onChange={(e) => setFormData({ ...formData, section: e.target.value })} style={styles.input} />
+                </div>
+                <div style={styles.formGroup}>
+                    <label style={styles.label}>Điểm</label>
+                    <input type="number" value={formData.score} onChange={(e) => setFormData({ ...formData, score: parseFloat(e.target.value) })} style={styles.input} step="0.5" min="0.5" />
+                </div>
+                <div style={styles.formGroup}>
+                    <label style={styles.label}>Thứ tự</label>
+                    <input type="number" value={formData.order} onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) })} style={styles.input} min="1" />
+                </div>
+            </div>
+
+            <div style={styles.formGroup}>
+                <label style={styles.label}>Nội dung câu hỏi *</label>
+                <ReactQuill theme="snow" value={formData.content} onChange={(val) => setFormData({ ...formData, content: val })} modules={{ toolbar: [['bold', 'italic', 'underline', 'strike'], [{ color: [] }, { background: [] }], ['clean']] }} style={styles.quill} />
+            </div>
+
+            {isFillInBlankGroup(formData.question_group) && (
+                <div style={styles.formRow}>
+                    <div style={styles.formGroup}>
+                        <label style={styles.label}>Tiền tố (Chữ đứng trước)</label>
+                        <input type="text" value={formData.prefix || ''} onChange={(e) => setFormData({ ...formData, prefix: e.target.value })} style={styles.input} placeholder="VD: She said" />
+                    </div>
+                    <div style={styles.formGroup}>
+                        <label style={styles.label}>Hậu tố (Chữ đứng sau)</label>
+                        <input type="text" value={formData.suffix || ''} onChange={(e) => setFormData({ ...formData, suffix: e.target.value })} style={styles.input} placeholder="VD: in the morning." />
+                    </div>
+                </div>
+            )}
+
+            {/* ĐÃ SỬA LỖI: Dùng formData thay vì q, dùng ReactQuill cho Lựa chọn */}
+            {isMultipleChoiceGroup(formData.question_group) && (
+                <div style={styles.formGroup}>
+                    <label style={styles.label}>Các lựa chọn (A/B/C/D) - Có thể gạch chân âm tiết</label>
+                    <div style={styles.optionsGrid}>
+                        {['A', 'B', 'C', 'D'].map((label, idx) => (
+                            <div key={idx} style={{ marginBottom: '10px' }}>
+                                <span style={styles.optionLabel}>{label}.</span>
+                                <ReactQuill
+                                    theme="snow"
+                                    value={formData.options[idx] || ''}
+                                    onChange={(val) => { const newOpts = [...formData.options]; newOpts[idx] = val; setFormData({ ...formData, options: newOpts }); }}
+                                    modules={{ toolbar: [['underline', 'clean']] }}
+                                    style={{ backgroundColor: 'white', height: '80px', marginTop: '4px' }}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            <div style={styles.formRow}>
+                <div style={styles.formGroup}>
+                    <label style={styles.label}>Đáp án đúng *</label>
+                    {isMultipleChoiceGroup(formData.question_group) ? (
+                        <select value={formData.correct_answer} onChange={(e) => setFormData({ ...formData, correct_answer: e.target.value })} style={styles.input}>
+                            <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
+                        </select>
+                    ) : formData.question_group === 'true_false' ? (
+                        <select value={formData.correct_answer} onChange={(e) => setFormData({ ...formData, correct_answer: e.target.value })} style={styles.input}>
+                            <option value="True">True</option><option value="False">False</option><option value="Not Given">Not Given</option>
+                        </select>
+                    ) : (
+                        <input type="text" value={formData.correct_answer} onChange={(e) => setFormData({ ...formData, correct_answer: e.target.value })} style={styles.input} />
+                    )}
+                </div>
+                <div style={styles.formGroup}>
+                    <label style={styles.label}>Giải thích đáp án</label>
+                    <textarea value={formData.explanation} onChange={(e) => setFormData({ ...formData, explanation: e.target.value })} style={styles.textarea} rows="2" />
+                </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                <button type="submit" style={styles.submitButton}>Lưu thay đổi</button>
+                <button type="button" onClick={onCancel} style={styles.backButton}>Hủy</button>
+            </div>
+        </form>
+    );
+};
 
 const ManageLevelTestQuestions = () => {
     const { testId } = useParams();
@@ -52,35 +169,21 @@ const ManageLevelTestQuestions = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    // Form câu hỏi độc lập
-    const [showQuestionForm, setShowQuestionForm] = useState(false);
+    // State quản lý việc sửa tại chỗ
     const [editingQuestionId, setEditingQuestionId] = useState(null);
+
+    // Form câu hỏi mới (thêm mới)
+    const [showQuestionForm, setShowQuestionForm] = useState(false);
     const [questionData, setQuestionData] = useState({
-        question_group: 'pronunciation',
-        content: '',
-        options: ['', '', '', ''],
-        correct_answer: 'A',
-        explanation: '',
-        score: 1,
-        order: 0,
-        passage_id: ''
+        question_group: 'pronunciation', section: 'SECTION A', content: '', prefix: '', suffix: '', options: ['', '', '', ''], correct_answer: 'A', explanation: '', score: 1, order: 0, passage_id: ''
     });
 
     // Form bài đọc
     const [showPassageForm, setShowPassageForm] = useState(false);
     const [editingPassageId, setEditingPassageId] = useState(null);
-    const [passageData, setPassageData] = useState({
-        title: '',
-        content: '',
-        image_url: '',
-        image_width: '100%',
-        source: '',
-        questions: []
-    });
+    const [passageData, setPassageData] = useState({ title: '', content: '', image_url: '', image_width: '100%', source: '', questions: [] });
 
-    useEffect(() => {
-        fetchTest();
-    }, [testId]);
+    useEffect(() => { fetchTest(); }, [testId]);
 
     const fetchTest = async () => {
         setLoading(true);
@@ -89,11 +192,6 @@ const ManageLevelTestQuestions = () => {
             setTest(data.test);
             setQuestions(data.test.questions || []);
             setPassages(data.test.passages || []);
-            console.log('🔍 Fetched:', {
-                passages: data.test.passages?.length || 0,
-                questions: data.test.questions?.length || 0,
-                questionsWithPassage: data.test.questions?.filter(q => q.passage_id).length || 0
-            });
         } catch (err) {
             setError('Lỗi tải bài test');
         } finally {
@@ -103,215 +201,95 @@ const ManageLevelTestQuestions = () => {
 
     // ==================== CÂU HỎI ĐỘC LẬP ====================
 
-    const resetQuestionForm = () => {
-        setQuestionData({
-            question_group: 'pronunciation',
-            content: '',
-            options: ['', '', '', ''],
-            correct_answer: 'A',
-            explanation: '',
-            score: 1,
-            order: questions.length + 1,
-            passage_id: ''
-        });
-        setEditingQuestionId(null);
-        setShowQuestionForm(false);
-    };
-
-    const handleQuestionSubmit = async (e) => {
+    const handleCreateQuestion = async (e) => {
         e.preventDefault();
         setError('');
-
-        // Chuẩn bị options
         const isMC = isMultipleChoiceGroup(questionData.question_group);
         let filteredOptions = null;
         if (isMC) {
-            filteredOptions = questionData.options.filter(o => o.trim() !== '');
+            filteredOptions = questionData.options.filter(o => o && o.trim() !== '');
             if (filteredOptions.length < 2) filteredOptions = null;
         }
 
-        const submitData = {
-            ...questionData,
-            level_test_id: testId,
-            options: filteredOptions,
-            passage_id: questionData.passage_id || null
-        };
-
         try {
-            if (editingQuestionId) {
-                await updateQuestion(editingQuestionId, submitData);
-            } else {
-                await createQuestion(submitData);
-            }
-            resetQuestionForm();
+            await createQuestion({ ...questionData, level_test_id: testId, options: filteredOptions });
+            setShowQuestionForm(false);
+            setQuestionData({ question_group: 'pronunciation', section: 'SECTION A', content: '', prefix: '', suffix: '', options: ['', '', '', ''], correct_answer: 'A', explanation: '', score: 1, order: questions.length + 1, passage_id: '' });
             fetchTest();
         } catch (err) {
             setError(err.message || 'Lỗi lưu câu hỏi');
         }
     };
 
-    const handleEditQuestion = (q) => {
-        setEditingQuestionId(q.id);
-        const opts = q.options || [];
-        setQuestionData({
-            question_group: q.question_group,
-            content: q.content,
-            options: [opts[0] || '', opts[1] || '', opts[2] || '', opts[3] || ''],
-            correct_answer: q.correct_answer,
-            explanation: q.explanation || '',
-            score: q.score || 1,
-            order: q.order || 0,
-            passage_id: q.passage_id || ''
-        });
-        setShowQuestionForm(true);
+    const handleUpdateQuestionInline = async (id, submitData) => {
+        const scrollPosition = window.scrollY;
+        try {
+            await updateQuestion(id, { ...submitData, level_test_id: testId });
+            setEditingQuestionId(null); 
+            await fetchTest();
+            setTimeout(() => {
+                window.scrollTo({ top: scrollPosition, behavior: 'instant' });
+            }, 50);
+        } catch (err) {
+            console.error(err);
+            alert('Lỗi cập nhật câu hỏi');
+        }
     };
 
-    const handleDeleteQuestion = async (id) => {
-        if (window.confirm('Xóa câu hỏi này?')) {
-            try {
-                await deleteQuestion(id);
-                fetchTest();
-            } catch (err) {
-                setError('Lỗi xóa câu hỏi');
-            }
+    // ==================== ĐIỀU CHỈNH THỨ TỰ ====================
+    
+    const moveQuestion = async (index, direction) => {
+        const newQuestions = [...questions.filter(q => !q.passage_id)];
+        const targetIndex = index + direction;
+        if (targetIndex < 0 || targetIndex >= newQuestions.length) return;
+
+        const temp = newQuestions[index];
+        newQuestions[index] = newQuestions[targetIndex];
+        newQuestions[targetIndex] = temp;
+
+        try {
+            await updateQuestion(newQuestions[index].id, { order: index + 1 });
+            await updateQuestion(newQuestions[targetIndex].id, { order: targetIndex + 1 });
+            fetchTest();
+        } catch (err) {
+            alert('Lỗi khi đổi thứ tự');
         }
     };
 
     // ==================== BÀI ĐỌC ====================
-
-    const resetPassageForm = () => {
-        setPassageData({
-            title: '', content: '', image_url: '',
-            image_width: '100%', source: '', questions: []
-        });
-        setEditingPassageId(null);
-        setShowPassageForm(false);
-    };
-
+    
     const handlePassageSubmit = async (e) => {
         e.preventDefault();
         setError('');
-
-        const validQuestions = (passageData.questions || [])
-            .filter(q => {
-                const hasContent = q.content && q.content.trim() !== '' && q.content !== '<p><br></p>';
-                const hasAnswer = q.correct_answer && String(q.correct_answer).trim() !== '';
-                return hasContent && hasAnswer;
-            })
-            .map((q, idx) => {
-                const isMC = isMultipleChoiceGroup(q.question_group);
-                let options = null;
-                if (isMC && q.options) {
-                    const filtered = q.options.filter(o => o.trim() !== '');
-                    if (filtered.length >= 2) options = filtered;
-                }
-                return {
-                    question_group: q.question_group,
-                    content: q.content,
-                    options,
-                    correct_answer: q.correct_answer,
-                    explanation: q.explanation || null,
-                    score: q.score || 1,
-                    order: idx + 1
-                };
-            });
-
-        const submitData = {
-            level_test_id: testId,
-            title: passageData.title,
-            content: passageData.content,
-            image_url: passageData.image_url,
-            image_width: passageData.image_width,
-            source: passageData.source,
-            questions: validQuestions
-        };
-
-        console.log('📤 Submit passage:', JSON.stringify(submitData, null, 2));
+        const validQuestions = (passageData.questions || []).filter(q => q.content && q.content.trim() !== '' && q.content !== '<p><br></p>' && q.correct_answer).map((q, idx) => {
+            const isMC = isMultipleChoiceGroup(q.question_group);
+            let options = null;
+            if (isMC && q.options) {
+                const filtered = q.options.filter(o => o && o.trim() !== '');
+                if (filtered.length >= 2) options = filtered;
+            }
+            return { ...q, options, order: idx + 1 };
+        });
 
         try {
             if (editingPassageId) {
-                await updatePassage(editingPassageId, submitData);
+                await updatePassage(editingPassageId, { ...passageData, questions: validQuestions });
             } else {
-                await createPassage(submitData);
+                await createPassage({ ...passageData, level_test_id: testId, questions: validQuestions });
             }
-            resetPassageForm();
+            setShowPassageForm(false);
+            setEditingPassageId(null);
+            setPassageData({ title: '', content: '', image_url: '', image_width: '100%', source: '', questions: [] });
             fetchTest();
         } catch (err) {
             setError(err.message || 'Lỗi lưu bài đọc');
         }
     };
 
-    const handleEditPassage = (p) => {
-        setEditingPassageId(p.id);
-        const linkedQuestions = questions.filter(q => q.passage_id === p.id);
-        setPassageData({
-            title: p.title || '',
-            content: p.content || '',
-            image_url: p.image_url || '',
-            image_width: p.image_width || '100%',
-            source: p.source || '',
-            questions: linkedQuestions.map(q => ({
-                question_group: q.question_group,
-                content: q.content,
-                options: q.options || ['', '', '', ''],
-                correct_answer: q.correct_answer,
-                explanation: q.explanation || '',
-                score: q.score || 1,
-                order: q.order || 0
-            }))
-        });
-        setShowPassageForm(true);
-    };
-
-    const handleDeletePassage = async (id) => {
-        if (window.confirm('Xóa bài đọc này? Tất cả câu hỏi liên quan cũng sẽ bị xóa.')) {
-            try {
-                await deletePassage(id);
-                fetchTest();
-            } catch (err) {
-                setError('Lỗi xóa bài đọc');
-            }
-        }
-    };
-
-    // ==================== QUẢN LÝ CÂU HỎI TRONG PASSAGE ====================
-
-    const addPassageQuestion = () => {
-        setPassageData({
-            ...passageData,
-            questions: [...(passageData.questions || []), createEmptyQuestion()]
-        });
-    };
-
-    const removePassageQuestion = (index) => {
-        setPassageData({
-            ...passageData,
-            questions: (passageData.questions || []).filter((_, i) => i !== index)
-        });
-    };
-
-    const updatePassageQuestion = (index, field, value) => {
-        const newQuestions = [...(passageData.questions || [])];
-        newQuestions[index] = { ...newQuestions[index], [field]: value };
-        setPassageData({ ...passageData, questions: newQuestions });
-    };
-
-    const updatePassageQuestionOption = (qIndex, optIndex, value) => {
-        const newQuestions = [...(passageData.questions || [])];
-        const newOptions = [...(newQuestions[qIndex].options || ['', '', '', ''])];
-        newOptions[optIndex] = value;
-        newQuestions[qIndex] = { ...newQuestions[qIndex], options: newOptions };
-        setPassageData({ ...passageData, questions: newQuestions });
-    };
-
-    const updateOption = (index, value) => {
-        const newOptions = [...questionData.options];
-        newOptions[index] = value;
-        setQuestionData({ ...questionData, options: newOptions });
-    };
-
     if (loading) return <div style={styles.page}><div style={styles.container}>Đang tải...</div></div>;
     if (!test) return <div style={styles.page}><div style={styles.container}>Không tìm thấy bài test</div></div>;
+
+    const independentQuestions = questions.filter(q => !q.passage_id).sort((a,b) => (a.order||0) - (b.order||0));
 
     return (
         <div style={styles.page}>
@@ -319,69 +297,152 @@ const ManageLevelTestQuestions = () => {
                 <div style={styles.header}>
                     <div>
                         <h1 style={styles.title}>{test.title}</h1>
-                        <p style={styles.subtitle}>
-                            Level {test.book_level} | {test.total_score} điểm | {test.duration} phút
-                        </p>
+                        <p style={styles.subtitle}>Level {test.book_level} | {test.total_score} điểm | {test.duration} phút</p>
                     </div>
-                    <button onClick={() => navigate('/admin/level-tests')} style={styles.backButton}>
-                        ← Về danh sách
-                    </button>
+                    <button onClick={() => navigate('/admin/level-tests')} style={styles.backButton}>← Về danh sách</button>
                 </div>
 
                 {error && <div style={styles.error}>{error}</div>}
+
+                {/* ==================== CÂU HỎI ĐỘC LẬP ==================== */}
+                <div style={styles.section}>
+                    <div style={styles.sectionHeader}>
+                        <h2 style={styles.sectionTitle}>Câu hỏi độc lập ({independentQuestions.length})</h2>
+                        <button onClick={() => { setShowQuestionForm(!showQuestionForm); setEditingQuestionId(null); }} style={styles.addButton}>
+                            {showQuestionForm ? 'Đóng' : '+ Thêm câu hỏi mới'}
+                        </button>
+                    </div>
+
+                    {/* Form thêm mới */}
+                    {showQuestionForm && (
+                        <form onSubmit={handleCreateQuestion} style={styles.form}>
+                            <div style={styles.formRow}>
+                                <div style={styles.formGroup}>
+                                    <label style={styles.label}>Dạng bài</label>
+                                    <select value={questionData.question_group} onChange={(e) => setQuestionData({ ...questionData, question_group: e.target.value })} style={styles.input}>
+                                        {QUESTION_GROUPS.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
+                                    </select>
+                                </div>
+                                <div style={styles.formGroup}>
+                                    <label style={styles.label}>Tên Phần (Section)</label>
+                                    <input type="text" value={questionData.section} onChange={(e) => setQuestionData({ ...questionData, section: e.target.value })} style={styles.input} placeholder="VD: SECTION A" />
+                                </div>
+                                <div style={styles.formGroup}>
+                                    <label style={styles.label}>Điểm</label>
+                                    <input type="number" value={questionData.score} onChange={(e) => setQuestionData({ ...questionData, score: parseFloat(e.target.value) })} style={styles.input} step="0.5" />
+                                </div>
+                            </div>
+                            <div style={styles.formGroup}>
+                                <label style={styles.label}>Nội dung câu hỏi *</label>
+                                <ReactQuill theme="snow" value={questionData.content} onChange={(val) => setQuestionData({ ...questionData, content: val })} modules={{ toolbar: [['bold', 'italic', 'underline', 'strike'], [{ color: [] }, { background: [] }], ['clean']] }} style={styles.quill} />
+                            </div>
+                            {isFillInBlankGroup(questionData.question_group) && (
+                                <div style={styles.formRow}>
+                                    <div style={styles.formGroup}><label style={styles.label}>Tiền tố</label><input type="text" value={questionData.prefix} onChange={(e) => setQuestionData({ ...questionData, prefix: e.target.value })} style={styles.input} /></div>
+                                    <div style={styles.formGroup}><label style={styles.label}>Hậu tố</label><input type="text" value={questionData.suffix} onChange={(e) => setQuestionData({ ...questionData, suffix: e.target.value })} style={styles.input} /></div>
+                                </div>
+                            )}
+
+                            {/* ĐÃ SỬA LỖI: Dùng ReactQuill cho Lựa chọn */}
+                            {isMultipleChoiceGroup(questionData.question_group) && (
+                                <div style={styles.formGroup}>
+                                    <label style={styles.label}>Các lựa chọn (A/B/C/D) - Có thể gạch chân âm tiết</label>
+                                    <div style={styles.optionsGrid}>
+                                        {['A', 'B', 'C', 'D'].map((label, idx) => (
+                                            <div key={idx} style={{ marginBottom: '10px' }}>
+                                                <span style={styles.optionLabel}>{label}.</span>
+                                                <ReactQuill
+                                                    theme="snow"
+                                                    value={questionData.options[idx]}
+                                                    onChange={(val) => { const o = [...questionData.options]; o[idx] = val; setQuestionData({ ...questionData, options: o }); }}
+                                                    modules={{ toolbar: [['underline', 'clean']] }}
+                                                    style={{ backgroundColor: 'white', height: '80px', marginTop: '4px' }}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                            
+                            <div style={styles.formRow}>
+                                <div style={styles.formGroup}>
+                                    <label style={styles.label}>Đáp án đúng *</label>
+                                    {isMultipleChoiceGroup(questionData.question_group) ? (
+                                        <select value={questionData.correct_answer} onChange={(e) => setQuestionData({ ...questionData, correct_answer: e.target.value })} style={styles.input}><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select>
+                                    ) : questionData.question_group === 'true_false' ? (
+                                        <select value={questionData.correct_answer} onChange={(e) => setQuestionData({ ...questionData, correct_answer: e.target.value })} style={styles.input}><option value="True">True</option><option value="False">False</option><option value="Not Given">Not Given</option></select>
+                                    ) : (
+                                        <input type="text" value={questionData.correct_answer} onChange={(e) => setQuestionData({ ...questionData, correct_answer: e.target.value })} style={styles.input} />
+                                    )}
+                                </div>
+                                <div style={styles.formGroup}><label style={styles.label}>Giải thích</label><textarea value={questionData.explanation} onChange={(e) => setQuestionData({ ...questionData, explanation: e.target.value })} style={styles.textarea} rows="2" /></div>
+                            </div>
+                            <button type="submit" style={styles.submitButton}>Thêm câu hỏi</button>
+                        </form>
+                    )}
+
+                    {/* DANH SÁCH CÂU HỎI ĐỘC LẬP (Hỗ trợ Sửa tại chỗ và Đổi thứ tự) */}
+                    {independentQuestions.length > 0 && (
+                        <div style={styles.questionList}>
+                            {independentQuestions.map((q, idx) => (
+                                <div key={q.id} style={styles.questionCard}>
+                                    {editingQuestionId === q.id ? (
+                                        <InlineQuestionForm 
+                                            initialData={{ ...q, options: q.options || ['', '', '', ''] }} 
+                                            onSave={(data) => handleUpdateQuestionInline(q.id, data)}
+                                            onCancel={() => setEditingQuestionId(null)}
+                                        />
+                                    ) : (
+                                        <>
+                                            <div style={styles.questionHeader}>
+                                                <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+                                                    <span style={styles.questionNumber}>Câu {idx + 1}</span>
+                                                    <span style={styles.questionGroup}>{q.section || 'SECTION A'}</span>
+                                                    
+                                                    {/* Nút đổi thứ tự */}
+                                                    <div style={{ display: 'flex', gap: '4px' }}>
+                                                        <button onClick={() => moveQuestion(idx, -1)} disabled={idx === 0} style={styles.moveBtn}>↑</button>
+                                                        <button onClick={() => moveQuestion(idx, 1)} disabled={idx === independentQuestions.length - 1} style={styles.moveBtn}>↓</button>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <button onClick={() => setEditingQuestionId(q.id)} style={styles.editButton}>Sửa</button>
+                                                    <button onClick={() => { if(window.confirm('Xóa?')) { deleteQuestion(q.id).then(fetchTest); } }} style={styles.deleteButton}>Xóa</button>
+                                                </div>
+                                            </div>
+                                            <div style={styles.questionContent} dangerouslySetInnerHTML={{ __html: q.content }} />
+                                            <p style={styles.correctAnswer}>Đáp án: <strong>{q.correct_answer}</strong> | Điểm: {q.score}</p>
+                                        </>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
 
                 {/* ==================== BÀI ĐỌC ==================== */}
                 <div style={styles.section}>
                     <div style={styles.sectionHeader}>
                         <h2 style={styles.sectionTitle}>Bài đọc ({passages.length})</h2>
-                        <button
-                            onClick={() => { resetPassageForm(); setShowPassageForm(!showPassageForm); }}
-                            style={styles.addButton}
-                        >
+                        <button onClick={() => { setShowPassageForm(!showPassageForm); }} style={styles.addButton}>
                             {showPassageForm ? 'Đóng' : '+ Thêm bài đọc'}
                         </button>
                     </div>
 
                     {showPassageForm && (
                         <form onSubmit={handlePassageSubmit} style={styles.form}>
-                            <div style={styles.formGroup}>
-                                <label style={styles.label}>Tiêu đề</label>
-                                <input
-                                    type="text"
-                                    value={passageData.title}
-                                    onChange={(e) => setPassageData({ ...passageData, title: e.target.value })}
-                                    style={styles.input}
-                                    placeholder="VD: The History of Coffee"
-                                />
-                            </div>
-                            <div style={styles.formGroup}>
-                                <label style={styles.label}>Nội dung *</label>
-                                <textarea
-                                    value={passageData.content}
-                                    onChange={(e) => setPassageData({ ...passageData, content: e.target.value })}
-                                    style={styles.textarea}
-                                    rows="6"
-                                    required
-                                />
-                            </div>
+                            <div style={styles.formGroup}><label style={styles.label}>Tiêu đề</label><input type="text" value={passageData.title} onChange={(e) => setPassageData({ ...passageData, title: e.target.value })} style={styles.input} /></div>
+                            <div style={styles.formGroup}><label style={styles.label}>Nội dung *</label><ReactQuill theme="snow" value={passageData.content} onChange={(val) => setPassageData({ ...passageData, content: val })} style={styles.quill} /></div>
+                            
+                            {/* LINK ẢNH VÀ ĐỘ RỘNG ẢNH */}
                             <div style={styles.formRow}>
                                 <div style={styles.formGroup}>
                                     <label style={styles.label}>Link ảnh</label>
-                                    <input
-                                        type="text"
-                                        value={passageData.image_url}
-                                        onChange={(e) => setPassageData({ ...passageData, image_url: e.target.value })}
-                                        style={styles.input}
-                                        placeholder="https://..."
-                                    />
+                                    <input type="text" value={passageData.image_url || ''} onChange={(e) => setPassageData({ ...passageData, image_url: e.target.value })} style={styles.input} placeholder="https://..." />
                                 </div>
                                 <div style={styles.formGroup}>
                                     <label style={styles.label}>Độ rộng ảnh</label>
-                                    <select
-                                        value={passageData.image_width}
-                                        onChange={(e) => setPassageData({ ...passageData, image_width: e.target.value })}
-                                        style={styles.input}
-                                    >
+                                    <select value={passageData.image_width || '100%'} onChange={(e) => setPassageData({ ...passageData, image_width: e.target.value })} style={styles.input}>
                                         <option value="25%">25%</option>
                                         <option value="50%">50%</option>
                                         <option value="75%">75%</option>
@@ -389,400 +450,94 @@ const ManageLevelTestQuestions = () => {
                                     </select>
                                 </div>
                             </div>
+
+                            {/* NGUỒN */}
                             <div style={styles.formGroup}>
                                 <label style={styles.label}>Nguồn (chữ nhỏ)</label>
-                                <input
-                                    type="text"
-                                    value={passageData.source}
-                                    onChange={(e) => setPassageData({ ...passageData, source: e.target.value })}
-                                    style={styles.input}
-                                    placeholder="VD: Adapted from BBC News"
-                                />
+                                <input type="text" value={passageData.source || ''} onChange={(e) => setPassageData({ ...passageData, source: e.target.value })} style={styles.input} placeholder="VD: Adapted from BBC News" />
                             </div>
 
-                            {/* CÂU HỎI KÈM BÀI ĐỌC */}
+                            {/* PHẦN CÂU HỎI KÈM BÀI ĐỌC */}
                             <div style={styles.passageQuestionsSection}>
                                 <div style={styles.passageQuestionsHeader}>
-                                    <label style={styles.label}>
-                                        Câu hỏi cho bài đọc này ({(passageData.questions || []).length})
-                                    </label>
-                                    <button
-                                        type="button"
-                                        onClick={addPassageQuestion}
-                                        style={styles.addSmallButton}
-                                    >
-                                        + Thêm câu hỏi
-                                    </button>
+                                    <label style={styles.label}>Câu hỏi cho bài đọc ({(passageData.questions || []).length})</label>
+                                    <button type="button" onClick={() => setPassageData({ ...passageData, questions: [...(passageData.questions || []), { question_group: 'reading_comprehension', section: 'SECTION A', content: '', prefix: '', suffix: '', options: ['', '', '', ''], correct_answer: 'A', explanation: '', score: 1 }] })} style={styles.addSmallButton}>+ Thêm câu hỏi</button>
                                 </div>
-
                                 {(passageData.questions || []).map((q, qIndex) => (
                                     <div key={qIndex} style={styles.passageQuestionCard}>
-                                        <div style={styles.passageQuestionHeader}>
-                                            <strong>Câu hỏi #{qIndex + 1}</strong>
-                                            <button
-                                                type="button"
-                                                onClick={() => removePassageQuestion(qIndex)}
-                                                style={styles.deleteButton}
-                                            >
-                                                Xóa
-                                            </button>
-                                        </div>
-
+                                        <div style={styles.passageQuestionHeader}><strong>Câu hỏi #{qIndex + 1}</strong><button type="button" onClick={() => setPassageData({ ...passageData, questions: passageData.questions.filter((_, i) => i !== qIndex) })} style={styles.deleteButton}>Xóa</button></div>
                                         <div style={styles.formRow}>
                                             <div style={styles.formGroup}>
                                                 <label style={styles.label}>Dạng câu hỏi</label>
-                                                <select
-                                                    value={q.question_group}
-                                                    onChange={(e) => {
-                                                        const newGroup = e.target.value;
-                                                        const isMC = isMultipleChoiceGroup(newGroup);
-                                                        const defaultAnswer = isMC ? 'A' : (newGroup === 'true_false' ? 'True' : '');
-                                                        const newQuestions = [...(passageData.questions || [])];
-                                                        newQuestions[qIndex] = {
-                                                            ...newQuestions[qIndex],
-                                                            question_group: newGroup,
-                                                            correct_answer: defaultAnswer
-                                                        };
-                                                        setPassageData({ ...passageData, questions: newQuestions });
-                                                    }}
-                                                    style={styles.input}
-                                                >
-                                                    {QUESTION_GROUPS.map(g => (
-                                                        <option key={g.value} value={g.value}>{g.label}</option>
-                                                    ))}
+                                                <select value={q.question_group} onChange={(e) => {
+                                                    const ng = e.target.value; const nQ = [...passageData.questions];
+                                                    nQ[qIndex].question_group = ng; nQ[qIndex].correct_answer = isMultipleChoiceGroup(ng) ? 'A' : (ng === 'true_false' ? 'True' : '');
+                                                    setPassageData({ ...passageData, questions: nQ });
+                                                }} style={styles.input}>
+                                                    {QUESTION_GROUPS.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
                                                 </select>
                                             </div>
-                                            <div style={styles.formGroup}>
-                                                <label style={styles.label}>Điểm</label>
-                                                <input
-                                                    type="number"
-                                                    value={q.score || 1}
-                                                    onChange={(e) => updatePassageQuestion(qIndex, 'score', parseFloat(e.target.value) || 1)}
-                                                    style={styles.input}
-                                                    step="0.5"
-                                                    min="0.5"
-                                                />
+                                            <div style={styles.formGroup}><label style={styles.label}>Section</label><input type="text" value={q.section || 'SECTION A'} onChange={(e) => { const nQ = [...passageData.questions]; nQ[qIndex].section = e.target.value; setPassageData({ ...passageData, questions: nQ }); }} style={styles.input} /></div>
+                                        </div>
+                                        <div style={styles.formGroup}><label style={styles.label}>Nội dung *</label><ReactQuill theme="snow" value={q.content} onChange={(val) => { const nQ = [...passageData.questions]; nQ[qIndex].content = val; setPassageData({ ...passageData, questions: nQ }); }} style={styles.quill} /></div>
+                                        
+                                        {isFillInBlankGroup(q.question_group) && (
+                                            <div style={styles.formRow}>
+                                                <div style={styles.formGroup}><label style={styles.label}>Tiền tố</label><input type="text" value={q.prefix} onChange={(e) => { const nQ = [...passageData.questions]; nQ[qIndex].prefix = e.target.value; setPassageData({ ...passageData, questions: nQ }); }} style={styles.input} /></div>
+                                                <div style={styles.formGroup}><label style={styles.label}>Hậu tố</label><input type="text" value={q.suffix} onChange={(e) => { const nQ = [...passageData.questions]; nQ[qIndex].suffix = e.target.value; setPassageData({ ...passageData, questions: nQ }); }} style={styles.input} /></div>
                                             </div>
-                                        </div>
+                                        )}
 
-                                        <div style={styles.formGroup}>
-                                            <label style={styles.label}>Nội dung câu hỏi *</label>
-                                            <ReactQuill
-                                                theme="snow"
-                                                value={q.content || ''}
-                                                onChange={(val) => updatePassageQuestion(qIndex, 'content', val)}
-                                                placeholder="Nhập nội dung câu hỏi..."
-                                                modules={{
-                                                    toolbar: [
-                                                        ['bold', 'italic', 'underline', 'strike'],
-                                                        [{ color: [] }, { background: [] }],
-                                                        ['clean']
-                                                    ]
-                                                }}
-                                                style={styles.quill}
-                                            />
-                                        </div>
-
-                                        {/* Trắc nghiệm A/B/C/D */}
+                                        {/* ĐÃ SỬA LỖI: Dùng ReactQuill cho Lựa chọn ở form bài đọc */}
                                         {isMultipleChoiceGroup(q.question_group) && (
                                             <div style={styles.formGroup}>
-                                                <label style={styles.label}>Các lựa chọn (A/B/C/D)</label>
-                                                {['A', 'B', 'C', 'D'].map((label, optIdx) => (
-                                                    <div key={optIdx} style={styles.optionRow}>
-                                                        <span style={styles.optionLabel}>{label}.</span>
-                                                        <input
-                                                            type="text"
-                                                            value={(q.options || ['', '', '', ''])[optIdx] || ''}
-                                                            onChange={(e) => updatePassageQuestionOption(qIndex, optIdx, e.target.value)}
-                                                            style={styles.input}
-                                                            placeholder={`Lựa chọn ${label}`}
-                                                        />
-                                                    </div>
-                                                ))}
+                                                <label style={styles.label}>Các lựa chọn (A/B/C/D) - Có thể gạch chân âm tiết</label>
+                                                <div style={styles.optionsGrid}>
+                                                    {['A', 'B', 'C', 'D'].map((label, optIdx) => (
+                                                        <div key={optIdx} style={{ marginBottom: '10px' }}>
+                                                            <span style={styles.optionLabel}>{label}.</span>
+                                                            <ReactQuill
+                                                                theme="snow"
+                                                                value={(q.options || ['', '', '', ''])[optIdx] || ''}
+                                                                onChange={(val) => { const nQ = [...passageData.questions]; const newOpts = [...(nQ[qIndex].options || ['', '', '', ''])]; newOpts[optIdx] = val; nQ[qIndex].options = newOpts; setPassageData({ ...passageData, questions: nQ }); }}
+                                                                modules={{ toolbar: [['underline', 'clean']] }}
+                                                                style={{ backgroundColor: 'white', height: '80px', marginTop: '4px' }}
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
                                         )}
 
-                                        {/* True/False hint */}
-                                        {q.question_group === 'true_false' && (
-                                            <div style={styles.hintBox}>
-                                                Câu hỏi True/False/Not Given — người dùng chọn 1 trong 3 đáp án cố định.
-                                            </div>
-                                        )}
-
-                                        {/* Đáp án đúng */}
                                         <div style={styles.formGroup}>
-                                            <label style={styles.label}>Đáp án đúng *</label>
+                                            <label style={styles.label}>Đáp án đúng</label>
                                             {isMultipleChoiceGroup(q.question_group) ? (
-                                                <select
-                                                    value={q.correct_answer || 'A'}
-                                                    onChange={(e) => updatePassageQuestion(qIndex, 'correct_answer', e.target.value)}
-                                                    style={styles.input}
-                                                >
-                                                    <option value="A">A</option>
-                                                    <option value="B">B</option>
-                                                    <option value="C">C</option>
-                                                    <option value="D">D</option>
-                                                </select>
+                                                <select value={q.correct_answer} onChange={(e) => { const nQ = [...passageData.questions]; nQ[qIndex].correct_answer = e.target.value; setPassageData({ ...passageData, questions: nQ }); }} style={styles.input}><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select>
                                             ) : q.question_group === 'true_false' ? (
-                                                <select
-                                                    value={q.correct_answer || 'True'}
-                                                    onChange={(e) => updatePassageQuestion(qIndex, 'correct_answer', e.target.value)}
-                                                    style={styles.input}
-                                                >
-                                                    <option value="True">True</option>
-                                                    <option value="False">False</option>
-                                                    <option value="Not Given">Not Given</option>
-                                                </select>
+                                                <select value={q.correct_answer} onChange={(e) => { const nQ = [...passageData.questions]; nQ[qIndex].correct_answer = e.target.value; setPassageData({ ...passageData, questions: nQ }); }} style={styles.input}><option value="True">True</option><option value="False">False</option><option value="Not Given">Not Given</option></select>
                                             ) : (
-                                                <input
-                                                    type="text"
-                                                    value={q.correct_answer || ''}
-                                                    onChange={(e) => updatePassageQuestion(qIndex, 'correct_answer', e.target.value)}
-                                                    style={styles.input}
-                                                    placeholder="Nhập đáp án đúng"
-                                                />
+                                                <input type="text" value={q.correct_answer} onChange={(e) => { const nQ = [...passageData.questions]; nQ[qIndex].correct_answer = e.target.value; setPassageData({ ...passageData, questions: nQ }); }} style={styles.input} />
                                             )}
-                                        </div>
-
-                                        <div style={styles.formGroup}>
-                                            <label style={styles.label}>Giải thích đáp án</label>
-                                            <textarea
-                                                value={q.explanation || ''}
-                                                onChange={(e) => updatePassageQuestion(qIndex, 'explanation', e.target.value)}
-                                                style={styles.textarea}
-                                                rows="2"
-                                            />
                                         </div>
                                     </div>
                                 ))}
                             </div>
-
-                            <button type="submit" style={styles.submitButton}>
-                                {editingPassageId ? 'Cập nhật bài đọc' : 'Thêm bài đọc'}
-                            </button>
+                            <button type="submit" style={styles.submitButton}>{editingPassageId ? 'Cập nhật bài đọc' : 'Thêm bài đọc'}</button>
                         </form>
                     )}
 
                     {passages.length > 0 && (
                         <div style={styles.passageList}>
-                            {passages.map(p => {
-                                const linkedQuestions = questions.filter(q => q.passage_id === p.id);
-                                return (
-                                    <div key={p.id} style={styles.passageCard}>
-                                        <div style={styles.passageHeader}>
-                                            <strong>{p.title || '(Không tiêu đề)'}</strong>
-                                            <div>
-                                                <button onClick={() => handleEditPassage(p)} style={styles.editButton}>Sửa</button>
-                                                <button onClick={() => handleDeletePassage(p.id)} style={styles.deleteButton}>Xóa</button>
-                                            </div>
-                                        </div>
-                                        <p style={styles.passageContent}>{p.content.substring(0, 120)}...</p>
-                                        {p.source && <p style={styles.passageSource}>Source: {p.source}</p>}
-                                        <p style={styles.passageQuestionCount}>
-                                            📝 {linkedQuestions.length} câu hỏi
-                                        </p>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    )}
-                </div>
-
-                {/* ==================== CÂU HỎI ĐỘC LẬP ==================== */}
-                <div style={styles.section}>
-                    <div style={styles.sectionHeader}>
-                        <h2 style={styles.sectionTitle}>
-                            Câu hỏi độc lập ({questions.filter(q => !q.passage_id).length})
-                        </h2>
-                        <button
-                            onClick={() => { resetQuestionForm(); setShowQuestionForm(!showQuestionForm); }}
-                            style={styles.addButton}
-                        >
-                            {showQuestionForm ? 'Đóng' : '+ Thêm câu hỏi'}
-                        </button>
-                    </div>
-
-                    {showQuestionForm && (
-                        <form onSubmit={handleQuestionSubmit} style={styles.form}>
-                            <div style={styles.formRow}>
-                                <div style={styles.formGroup}>
-                                    <label style={styles.label}>Dạng bài</label>
-                                    <select
-                                        value={questionData.question_group}
-                                        onChange={(e) => {
-                                            const newGroup = e.target.value;
-                                            const isMC = isMultipleChoiceGroup(newGroup);
-                                            const defaultAnswer = isMC ? 'A' : (newGroup === 'true_false' ? 'True' : '');
-                                            setQuestionData({
-                                                ...questionData,
-                                                question_group: newGroup,
-                                                correct_answer: defaultAnswer
-                                            });
-                                        }}
-                                        style={styles.input}
-                                    >
-                                        {QUESTION_GROUPS.map(g => (
-                                            <option key={g.value} value={g.value}>{g.label}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div style={styles.formGroup}>
-                                    <label style={styles.label}>Điểm</label>
-                                    <input
-                                        type="number"
-                                        value={questionData.score}
-                                        onChange={(e) => setQuestionData({ ...questionData, score: parseFloat(e.target.value) })}
-                                        style={styles.input}
-                                        step="0.5"
-                                        min="0.5"
-                                    />
-                                </div>
-                                <div style={styles.formGroup}>
-                                    <label style={styles.label}>Thứ tự</label>
-                                    <input
-                                        type="number"
-                                        value={questionData.order}
-                                        onChange={(e) => setQuestionData({ ...questionData, order: parseInt(e.target.value) })}
-                                        style={styles.input}
-                                        min="1"
-                                    />
-                                </div>
-                            </div>
-
-                            <div style={styles.formGroup}>
-                                <label style={styles.label}>Nội dung câu hỏi *</label>
-                                <ReactQuill
-                                    theme="snow"
-                                    value={questionData.content}
-                                    onChange={(value) => setQuestionData({ ...questionData, content: value })}
-                                    placeholder="Nhập nội dung câu hỏi..."
-                                    modules={{
-                                        toolbar: [
-                                            ['bold', 'italic', 'underline', 'strike'],
-                                            [{ color: [] }, { background: [] }],
-                                            ['clean']
-                                        ]
-                                    }}
-                                    style={styles.quill}
-                                />
-                            </div>
-
-                            {/* Các lựa chọn — chỉ hiện nếu là trắc nghiệm */}
-                            {isMultipleChoiceGroup(questionData.question_group) && (
-                                <div style={styles.formGroup}>
-                                    <label style={styles.label}>Các lựa chọn (A/B/C/D)</label>
-                                    {['A', 'B', 'C', 'D'].map((label, idx) => (
-                                        <div key={idx} style={styles.optionRow}>
-                                            <span style={styles.optionLabel}>{label}.</span>
-                                            <input
-                                                type="text"
-                                                value={questionData.options[idx]}
-                                                onChange={(e) => updateOption(idx, e.target.value)}
-                                                style={styles.input}
-                                                placeholder={`Lựa chọn ${label}`}
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-
-                            {/* True/False hint */}
-                            {questionData.question_group === 'true_false' && (
-                                <div style={styles.hintBox}>
-                                    Câu hỏi True/False/Not Given — người dùng chọn 1 trong 3 đáp án cố định.
-                                </div>
-                            )}
-
-                            <div style={styles.formRow}>
-                                <div style={styles.formGroup}>
-                                    <label style={styles.label}>Đáp án đúng *</label>
-                                    {isMultipleChoiceGroup(questionData.question_group) ? (
-                                        <select
-                                            value={questionData.correct_answer}
-                                            onChange={(e) => setQuestionData({ ...questionData, correct_answer: e.target.value })}
-                                            style={styles.input}
-                                        >
-                                            <option value="A">A</option>
-                                            <option value="B">B</option>
-                                            <option value="C">C</option>
-                                            <option value="D">D</option>
-                                        </select>
-                                    ) : questionData.question_group === 'true_false' ? (
-                                        <select
-                                            value={questionData.correct_answer}
-                                            onChange={(e) => setQuestionData({ ...questionData, correct_answer: e.target.value })}
-                                            style={styles.input}
-                                        >
-                                            <option value="True">True</option>
-                                            <option value="False">False</option>
-                                            <option value="Not Given">Not Given</option>
-                                        </select>
-                                    ) : (
-                                        <input
-                                            type="text"
-                                            value={questionData.correct_answer}
-                                            onChange={(e) => setQuestionData({ ...questionData, correct_answer: e.target.value })}
-                                            style={styles.input}
-                                            placeholder="Nhập đáp án đúng"
-                                        />
-                                    )}
-                                </div>
-                                <div style={styles.formGroup}>
-                                    <label style={styles.label}>Bài đọc liên quan (nếu có)</label>
-                                    <select
-                                        value={questionData.passage_id}
-                                        onChange={(e) => setQuestionData({ ...questionData, passage_id: e.target.value })}
-                                        style={styles.input}
-                                    >
-                                        <option value="">-- Không --</option>
-                                        {passages.map(p => (
-                                            <option key={p.id} value={p.id}>{p.title || '(Không tiêu đề)'}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div style={styles.formGroup}>
-                                <label style={styles.label}>Giải thích đáp án</label>
-                                <textarea
-                                    value={questionData.explanation}
-                                    onChange={(e) => setQuestionData({ ...questionData, explanation: e.target.value })}
-                                    style={styles.textarea}
-                                    rows="2"
-                                />
-                            </div>
-
-                            <button type="submit" style={styles.submitButton}>
-                                {editingQuestionId ? 'Cập nhật câu hỏi' : 'Thêm câu hỏi'}
-                            </button>
-                        </form>
-                    )}
-
-                    {questions.filter(q => !q.passage_id).length > 0 && (
-                        <div style={styles.questionList}>
-                            {questions.filter(q => !q.passage_id).map((q, idx) => (
-                                <div key={q.id} style={styles.questionCard}>
-                                    <div style={styles.questionHeader}>
-                                        <span style={styles.questionNumber}>Câu {idx + 1}</span>
-                                        <span style={styles.questionGroup}>
-                                            {QUESTION_GROUPS.find(g => g.value === q.question_group)?.label || q.question_group}
-                                        </span>
+                            {passages.map(p => (
+                                <div key={p.id} style={styles.passageCard}>
+                                    <div style={styles.passageHeader}>
+                                        <strong>{p.title || '(Không tiêu đề)'}</strong>
                                         <div>
-                                            <button onClick={() => handleEditQuestion(q)} style={styles.editButton}>Sửa</button>
-                                            <button onClick={() => handleDeleteQuestion(q.id)} style={styles.deleteButton}>Xóa</button>
+                                            <button onClick={() => { setEditingPassageId(p.id); setPassageData({...p, questions: questions.filter(q => q.passage_id === p.id)}); setShowPassageForm(true); }} style={styles.editButton}>Sửa</button>
+                                            <button onClick={() => { if(window.confirm('Xóa?')) { deletePassage(p.id).then(fetchTest); } }} style={styles.deleteButton}>Xóa</button>
                                         </div>
                                     </div>
-                                    <div style={styles.questionContent} dangerouslySetInnerHTML={{ __html: q.content }} />
-                                    {q.options && q.options.length > 0 && (
-                                        <div style={styles.optionsDisplay}>
-                                            {q.options.map((opt, i) => (
-                                                <span key={i} style={styles.optionDisplay}>
-                                                    {String.fromCharCode(65 + i)}. {opt}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    )}
-                                    <p style={styles.correctAnswer}>Đáp án: <strong>{q.correct_answer}</strong> | Điểm: {q.score}</p>
+                                    <div style={styles.passageContent} dangerouslySetInnerHTML={{ __html: p.content.substring(0, 100) + '...' }} />
                                 </div>
                             ))}
                         </div>
@@ -812,15 +567,14 @@ const styles = {
     input: { padding: '10px 14px', border: '1px solid #CED4DA', borderRadius: '8px', fontSize: '14px', outline: 'none', backgroundColor: 'white', width: '100%', boxSizing: 'border-box' },
     textarea: { padding: '10px 14px', border: '1px solid #CED4DA', borderRadius: '8px', fontSize: '14px', outline: 'none', backgroundColor: 'white', fontFamily: 'inherit', resize: 'vertical', width: '100%', boxSizing: 'border-box' },
     quill: { backgroundColor: 'white', borderRadius: '8px', marginBottom: '8px', minHeight: '100px' },
-    optionRow: { display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' },
-    optionLabel: { fontWeight: '700', color: '#0D6EFD', width: '24px' },
+    optionsGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '6px' },
+    optionItem: { display: 'flex', alignItems: 'center', gap: '6px' },
+    optionLabel: { fontWeight: '700', color: '#0D6EFD', width: '20px' },
     submitButton: { padding: '12px', backgroundColor: '#28A745', color: 'white', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '600', cursor: 'pointer' },
     passageList: { display: 'flex', flexDirection: 'column', gap: '12px' },
     passageCard: { backgroundColor: '#F8F9FA', padding: '16px', borderRadius: '8px', border: '1px solid #DCE8F5' },
     passageHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', gap: '8px', flexWrap: 'wrap' },
     passageContent: { fontSize: '13px', color: '#495057', margin: '4px 0', lineHeight: '1.5' },
-    passageSource: { fontSize: '12px', color: '#6C757D', fontStyle: 'italic', margin: 0 },
-    passageQuestionCount: { fontSize: '12px', color: '#28A745', marginTop: '6px', fontWeight: '600' },
     passageQuestionsSection: { marginTop: '20px', padding: '16px', backgroundColor: '#FFFFFF', borderRadius: '8px', border: '2px dashed #DCE8F5' },
     passageQuestionsHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' },
     passageQuestionCard: { backgroundColor: '#F8F9FA', padding: '16px', borderRadius: '8px', border: '1px solid #DCE8F5', marginBottom: '12px', display: 'flex', flexDirection: 'column', gap: '10px' },
@@ -831,10 +585,9 @@ const styles = {
     questionNumber: { fontWeight: '700', color: '#0D6EFD' },
     questionGroup: { fontSize: '11px', backgroundColor: '#E7F1FF', color: '#0D6EFD', padding: '3px 10px', borderRadius: '20px', fontWeight: '600' },
     questionContent: { fontSize: '14px', color: '#212529', margin: '8px 0', lineHeight: '1.6' },
-    optionsDisplay: { display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '6px' },
-    optionDisplay: { fontSize: '13px', color: '#495057', backgroundColor: 'white', padding: '4px 10px', borderRadius: '4px', border: '1px solid #DCE8F5' },
     correctAnswer: { fontSize: '13px', color: '#28A745', marginTop: '8px', fontWeight: '600' },
     hintBox: { padding: '10px 14px', backgroundColor: '#FFF3CD', color: '#856404', borderRadius: '6px', fontSize: '13px' },
+    moveBtn: { padding: '2px 8px', backgroundColor: '#E9ECEF', border: '1px solid #CED4DA', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', color: '#333' },
     editButton: { padding: '4px 10px', backgroundColor: '#FFC107', color: '#333', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', marginRight: '6px' },
     deleteButton: { padding: '4px 10px', backgroundColor: '#DC3545', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' },
     error: { backgroundColor: '#F8D7DA', color: '#721C24', padding: '12px 16px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px' }

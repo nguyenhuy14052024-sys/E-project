@@ -29,6 +29,23 @@ const getProfile = async (req, res) => {
             where: { user_id: userId, is_correct: true }
         });
 
+        // Tính toán tiến độ theo trình độ hiện tại của User
+        // (Nếu bạn chưa có trường 'level' trong User, mặc định lấy 'B2')
+        const userLevel = user.level || 'B2'; 
+        
+        const totalUnitsInLevel = await Unit.count({
+            where: { book_level: userLevel }
+        });
+
+        const completedUnitsInLevel = await Progress.count({
+            where: { user_id: userId, status: 'completed' },
+            include: [{
+                model: Unit,
+                where: { book_level: userLevel },
+                attributes: []
+            }]
+        });
+
         res.status(200).json({
             message: 'Lấy profile thành công',
             user,
@@ -38,7 +55,9 @@ const getProfile = async (req, res) => {
                 totalFlashcards,
                 totalAnswers,
                 correctAnswers,
-                accuracy: totalAnswers > 0 ? Math.round((correctAnswers / totalAnswers) * 100) : 0
+                accuracy: totalAnswers > 0 ? Math.round((correctAnswers / totalAnswers) * 100) : 0,
+                totalUnitsInLevel: totalUnitsInLevel,
+                completedUnitsInLevel: completedUnitsInLevel
             }
         });
 
@@ -127,20 +146,37 @@ const updatePoints = async (userId, pointsToAdd) => {
     await user.update({ points: newPoints, rank: newRank });
 };
 
+// HÀM CHỐNG CẤP TRÙNG CHỨNG NHẬN
 const issueCertificate = async (userId, type, title, description, unitId = null) => {
-    const code = `CERT-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+    try {
+        // 1. Kiểm tra xem user đã có chứng nhận này chưa
+        const whereClause = { user_id: userId, type, title };
+        if (unitId) whereClause.unit_id = unitId;
 
-    const certificate = await Certificate.create({
-        user_id: userId,
-        type,
-        title,
-        description,
-        unit_id: unitId,
-        code,
-        earned_at: new Date()
-    });
+        const existingCertificate = await Certificate.findOne({ where: whereClause });
 
-    return certificate;
+        // 2. Nếu đã có, không cấp lại, trả về null
+        if (existingCertificate) {
+            return null; 
+        }
+
+        // 3. Nếu chưa có, tạo mới
+        const code = `CERT-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+        const certificate = await Certificate.create({
+            user_id: userId,
+            type,
+            title,
+            description,
+            unit_id: unitId,
+            code,
+            earned_at: new Date()
+        });
+
+        return certificate;
+    } catch (error) {
+        console.error('Issue certificate error:', error);
+        return null;
+    }
 };
 
 const checkStreak = async (userId) => {

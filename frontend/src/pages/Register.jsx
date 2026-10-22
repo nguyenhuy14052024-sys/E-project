@@ -59,9 +59,10 @@ const Register = () => {
 
         setLoading(true);
 
-        try {
+         try {
             await register(formData.username, formData.email, formData.password);
-            navigate('/dashboard');
+            // Chuyển hướng sang Onboarding sau khi đăng ký
+            navigate('/onboarding');
         } catch (err) {
             setError(err.message || 'Đăng ký thất bại');
         } finally {

@@ -36,6 +36,14 @@ const AdminDashboard = () => {
             path: '/admin/users',
             color: '#6F42C1',
             bgColor: '#E2D9F3'
+        },
+                {
+            title: 'Hộp thư Góp ý',
+            description: 'Đọc phản hồi từ người dùng',
+            label: 'FEEDBACKS',
+            path: '/admin/feedbacks',
+            color: '#FD7E14',
+            bgColor: '#FFE8CC'
         }
     ];
 

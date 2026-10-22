@@ -1,3 +1,5 @@
+const UserProfile = require('./UserProfile');
+const Feedback = require('./Feedback');
 const User = require('./User');
 const Unit = require('./Unit');
 const Question = require('./Question');
@@ -71,6 +73,14 @@ LevelTestAttempt.belongsTo(User, { foreignKey: 'user_id' });
 LevelTest.hasMany(LevelTestAttempt, { foreignKey: 'level_test_id' });
 LevelTestAttempt.belongsTo(LevelTest, { foreignKey: 'level_test_id' });
 
+// ==================== QUAN HỆ FEEDBACK ====================
+User.hasMany(Feedback, { foreignKey: 'user_id' });
+Feedback.belongsTo(User, { foreignKey: 'user_id' });
+
+// ==================== QUAN HỆ USER PROFILE (MỚI) ====================
+User.hasOne(UserProfile, { foreignKey: 'user_id' });
+UserProfile.belongsTo(User, { foreignKey: 'user_id' });
+
 module.exports = {
     User,
     Unit,
@@ -83,5 +93,7 @@ module.exports = {
     LevelTest,
     ReadingPassage,
     LevelTestQuestion,
-    LevelTestAttempt
+    LevelTestAttempt,
+    Feedback,
+    UserProfile // <-- Đã export thành công
 };

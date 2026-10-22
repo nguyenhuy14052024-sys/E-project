@@ -1,5 +1,5 @@
 # DỰ ÁN E-LEARNING B2-C1 - TRẠNG THÁI HIỆN TẠI
-*Cập nhật lần cuối: 19/10/2026*
+*Cập nhật lần cuối: 22/10/2026*
 
 ## 1. CÔNG NGHỆ
 - Backend: Node.js + Express + PostgreSQL + Sequelize
@@ -22,7 +22,7 @@
 - Admin Panel: CRUD Unit, Question, User
 - Dictionary: Tra từ (Hybrid fallback 3 API) - trong Grammar + Practice
 - Profile: Hồ sơ cá nhân, Rank, Streak, Điểm số
-- **Certificate: Kho chứng nhận (Đã chống cấp trùng, không có 2 chứng nhận giống nhau)**
+- Certificate: Kho chứng nhận (Đã chống cấp trùng, không có 2 chứng nhận giống nhau)
 - Tự động hóa: Cộng điểm, cấp chứng nhận, cập nhật Streak
 - Thông báo chứng nhận: Popup + Confetti khi nhận chứng nhận mới
 - Form soạn nội dung mới: chia trường (level, unit, tên, mô tả, độ khó, ghi chú, các phần)
@@ -33,130 +33,86 @@
 - Trang Điều khoản sử dụng (Terms)
 - Trang Chính sách bảo mật (Privacy)
 - Trang Quên mật khẩu (ForgotPassword)
-- **Level Test: Làm bài test trình độ theo chuẩn (Reading, Writing, Phonetics)**
-- **Level Test: Chia nhóm câu hỏi (PHONETICS, MULTIPLE CHOICE, READING, WRITING)**
-- **Level Test: Đồng hồ đếm ngược + tự động nộp bài khi hết giờ**
-- **Level Test: Bài đọc (ReadingPassage) đính kèm câu hỏi**
-- **Level Test: Câu hỏi của bài đọc nhập ngay trong form tạo passage (tích hợp)**
-- **Level Test: Hỗ trợ 3 loại câu hỏi chính (Trắc nghiệm A/B/C/D, True/False/Not Given, Viết-nhập nội dung)**
-- **Level Test: Form động — tự đổi input theo loại câu hỏi (A/B/C/D dropdown/radio/input text)**
-- **Level Test: Admin có thể tự do đặt tên Section và đổi thứ tự câu hỏi (nút lên/xuống)**
-- **Level Test: Sửa câu hỏi ngay tại chỗ (Inline Editing) không bị trượt trang**
-- **Level Test: Admin quản lý bài test + câu hỏi + bài đọc (hỗ trợ Link ảnh, Độ rộng ảnh, Nguồn)**
-- **Level Test: Chứng nhận theo điểm (≥90% Xuất sắc, ≥80% Giỏi)**
-- **Level Test: Lịch sử làm bài (LevelTestAttempt)**
-- **Level Test: Hiển thị kết quả chi tiết từng câu (đúng/sai + giải thích)**
-- **Level Test: Cho phép nộp bài trống (tính 0 điểm) — có popup xác nhận**
-- **Level Test: Hiển thị passage phía trên câu hỏi liên kết khi làm bài**
-- **Level Test: Định dạng văn bản (gạch chân âm tiết) cho câu hỏi Phát âm / Trọng âm**
-- **Profile: Biểu đồ tiến độ theo trình độ (VD: Đã hoàn thành 3/12 bài)**
+- Level Test: Làm bài test trình độ theo chuẩn (Reading, Writing, Phonetics)
+- Level Test: Chia nhóm câu hỏi (PHONETICS, MULTIPLE CHOICE, READING, WRITING)
+- Level Test: Đồng hồ đếm ngược + tự động nộp bài khi hết giờ
+- Level Test: Bài đọc (ReadingPassage) đính kèm câu hỏi
+- Level Test: Câu hỏi của bài đọc nhập ngay trong form tạo passage (tích hợp)
+- Level Test: Hỗ trợ 3 loại câu hỏi chính (Trắc nghiệm A/B/C/D, True/False/Not Given, Viết-nhập nội dung)
+- Level Test: Form động — tự đổi input theo loại câu hỏi (A/B/C/D dropdown/radio/input text)
+- Level Test: Admin có thể tự do đặt tên Section và đổi thứ tự câu hỏi (nút lên/xuống)
+- Level Test: Sửa câu hỏi ngay tại chỗ (Inline Editing) không bị trượt trang
+- Level Test: Admin quản lý bài test + câu hỏi + bài đọc (hỗ trợ Link ảnh, Độ rộng ảnh, Nguồn)
+- Level Test: Chứng nhận theo điểm (≥90% Xuất sắc, ≥80% Giỏi)
+- Level Test: Lịch sử làm bài (LevelTestAttempt)
+- Level Test: Hiển thị kết quả chi tiết từng câu (đúng/sai + giải thích)
+- Level Test: Cho phép nộp bài trống (tính 0 điểm) — có popup xác nhận
+- Level Test: Hiển thị passage phía trên câu hỏi liên kết khi làm bài
+- Level Test: Định dạng văn bản (gạch chân âm tiết) cho câu hỏi Phát âm / Trọng âm
+- Profile: Biểu đồ tiến độ theo trình độ (VD: Đã hoàn thành 3/12 bài)
+- **Feedback: Hộp thư Góp ý (Nút lơ lửng 💡 gửi góp ý, Admin xem trong Admin Panel)**
+- **Onboarding: Form phỏng vấn người dùng (Giao diện Mascot, 5 câu hỏi, lưu vào DB)**
 - Biểu tượng con mắt ẩn/hiện mật khẩu
 - Thanh đo độ mạnh mật khẩu
 - Ô tích Đồng ý Điều khoản
 - Admin cố định (tạo qua script createAdmin.js)
 - Xóa nút Đổi Role khỏi giao diện Admin
-- **Sửa lỗi tràn giao diện trên mobile cho tất cả các trang**
+- Sửa lỗi tràn giao diện trên mobile cho tất cả các trang
 
 ## 3. GIAO DIỆN ĐÃ NÂNG CẤP VÀ RESPONSIVE
-- Home
-- Login
-- Register
-- ForgotPassword
-- ResetPassword
-- Terms
-- Privacy
-- Dashboard
-- GrammarSection
-- PracticeZone
-- MiniTest
-- ErrorLog
-- FlashcardPage
-- ReviewPage
-- ProfilePage
-- LevelTest
-- LevelTestList
-- AdminDashboard
-- ManageUnits
-- ManageQuestions
-- ManageUsers
-- ManageLevelTests
-- ManageLevelTestQuestions
+- Home, Login, Register, ForgotPassword, ResetPassword
+- Terms, Privacy, Dashboard, GrammarSection, PracticeZone
+- MiniTest, ErrorLog, FlashcardPage, ReviewPage, ProfilePage
+- LevelTest, LevelTestList
+- **Onboarding (Giao diện Mascot)**
+- AdminDashboard, ManageUnits, ManageQuestions, ManageUsers
+- ManageLevelTests, ManageLevelTestQuestions
+- **ManageFeedbacks**
 
 ## 4. GIAO DIỆN CHƯA NÂNG CẤP
 - (Tất cả đã nâng cấp và responsive)
 
 ## 5. TÍNH NĂNG CHƯA LÀM (SẮP TỚI)
-- **Form phỏng vấn người dùng (Onboarding Survey):** Mascot dễ thương, hỏi mục tiêu, trình độ, khó khăn để Admin khai thác dữ liệu.
-- **Upload ảnh từ máy tính:** Hiện tại mới chỉ hỗ trợ dán link ảnh (URL).
+- **Sửa logic chuyển hướng Login/Register:** Gọi API `getOnboardingStatus` để check xem user đã làm form phỏng vấn chưa. Nếu làm rồi thì vào Dashboard, chưa làm thì sang Onboarding. (Đã code sẵn API, chỉ cần sửa Frontend).
+- Upload ảnh từ máy tính (Hiện tại mới hỗ trợ dán link ảnh URL).
+- **Micro-game:** Tích hợp game Rắn ăn táo (HTML5 Canvas) ở trang kết quả bài học.
 - Đăng nhập Google (Passport)
 - Hoàn thiện xác thực email khi đăng ký
-- Nút báo cáo lỗi
+- Nút báo cáo lỗi (User report câu hỏi sai)
 - Premium / Thanh toán
 - Deploy lên VPS
 - Soạn nội dung thật A1-C1
 - Loading component (icon nhảy) — tạm skip
 - Từ điển: nghĩa Anh-Việt, phiên âm, audio
 - Xử lý Token hết hạn (Axios Interceptor bắt lỗi 401 -> tự động đăng xuất)
-- Tăng thời hạn JWT (7d lên 30d) để giảm việc user phải đăng nhập lại
+- Tăng thời hạn JWT (7d lên 30d)
 
-## 6. CẤU TRÚC CHÍNH
+## 6. CẤU TRÚC CHÍNH (CẬP NHẬT MỚI)
 - backend/config/ (db, redis, email, passport)
 - backend/scripts/ (createAdmin.js)
-- backend/src/controllers/ (auth, unit, quiz, flashcard, admin, dictionary, profile, levelTest)
-- backend/src/models/ (User, Unit, Question, Progress, UserAnswer, Flashcard, Dictionary, Certificate, LevelTest, LevelTestQuestion, LevelTestAttempt, ReadingPassage)
-- backend/src/routes/ (auth, unit, quiz, flashcard, admin, dictionary, profile, levelTest)
+- backend/src/controllers/ (auth, unit, quiz, flashcard, admin, dictionary, profile, levelTest, **feedback, onboarding**)
+- backend/src/models/ (User, Unit, Question, Progress, UserAnswer, Flashcard, Dictionary, Certificate, LevelTest, LevelTestQuestion, LevelTestAttempt, ReadingPassage, **Feedback, UserProfile**)
+- backend/src/routes/ (auth, unit, quiz, flashcard, admin, dictionary, profile, levelTest, **feedback, onboarding**)
 - backend/src/middlewares/ (authMiddleware, isAdmin)
 - backend/src/services/ (dictionaryService)
-- frontend/src/pages/ (16 trang + 6 trang Admin)
-- frontend/src/services/ (api, auth, unit, flashcard, admin, dictionary, profile, levelTest)
-- frontend/src/components/ (DictionaryPopup, CertificateBadge, CertificateNotification)
+- frontend/src/pages/ (17 trang + 7 trang Admin + **Onboarding**)
+- frontend/src/services/ (api, auth, unit, flashcard, admin, dictionary, profile, levelTest, **feedback, onboarding**)
+- frontend/src/components/ (DictionaryPopup, CertificateBadge, CertificateNotification, **FeedbackPopup**)
 - data_migration/raw_data/demo.json
 
-## 7. API HIỆN CÓ
-- POST /api/auth/register, /login
-- GET /api/auth/profile
-- POST /api/auth/forgot-password
-- POST /api/auth/reset-password/:token
-- GET /api/auth/verify-email/:token
-- GET /api/units?level=B2, /api/units/:id
-- GET /api/quizzes/:unitId?type=
-- POST /api/quizzes/submit, /api/quizzes/generate
-- GET /api/quizzes/errors
-- POST /api/flashcards
-- GET /api/flashcards, /api/flashcards/:id, /api/flashcards/due, /api/flashcards/all
-- PUT /api/flashcards/:id
-- DELETE /api/flashcards/:id
-- POST /api/flashcards/:id/review
-- GET /api/admin/units, POST /api/admin/units, PUT /api/admin/units/:id, DELETE /api/admin/units/:id
-- GET /api/admin/units/:unitId/questions, POST /api/admin/questions, PUT /api/admin/questions/:id, DELETE /api/admin/questions/:id
-- GET /api/admin/users, PUT /api/admin/users/:id
-- GET /api/dictionary/:word
-- GET /api/profile (Đã trả về thêm `totalUnitsInLevel`, `completedUnitsInLevel`)
-- GET /api/profile/certificates
-- POST /api/profile/certificates
-- GET /api/level-tests (admin)
-- POST /api/level-tests (admin)
-- GET /api/level-tests/:id (admin)
-- PUT /api/level-tests/:id (admin)
-- DELETE /api/level-tests/:id (admin)
-- GET /api/level-tests/:testId/questions (admin)
-- POST /api/level-tests/questions (admin)
-- PUT /api/level-tests/questions/:id (admin)
-- DELETE /api/level-tests/questions/:id (admin)
-- POST /api/level-tests/passages (admin) — nhận `questions` array, tự tạo câu hỏi kèm
-- PUT /api/level-tests/passages/:id (admin) — xóa câu hỏi cũ + tạo lại nếu có `questions`
-- DELETE /api/level-tests/passages/:id (admin)
-- GET /api/level-tests/take/:id (user)
-- POST /api/level-tests/submit (user) — cho phép nộp trống, tính 0 điểm
-- GET /api/level-tests/my-attempts (user)
-- GET /api/level-tests/attempts/:id (user)
+## 7. API HIỆN CÓ (CẬP NHẬT MỚI)
+- *(Các API cũ giữ nguyên)*
+- **POST /api/feedbacks** (User gửi góp ý)
+- **GET /api/feedbacks** (Admin xem góp ý)
+- **POST /api/onboarding** (Lưu thông tin phỏng vấn)
+- **GET /api/onboarding/status** (Lấy trạng thái phỏng vấn)
 
 ## 8. CÁCH CHẠY
 - Backend: cd backend && node app.js
 - Frontend: cd frontend && npm run dev
 - Tạo admin: cd backend && node scripts/createAdmin.js
 
-## 9. GHI CHÚ KỸ THUẬT — LEVEL TEST & PROFILE
+## 9. GHI CHÚ KỸ THUẬT — LEVEL TEST & PROFILE & ONBOARDING
 
 ### 9.1. Ba loại câu hỏi chính
 | Loại | question_group | Input | Đáp án |
@@ -187,6 +143,17 @@
 - Backend: Tính toán `totalUnitsInLevel` và `completedUnitsInLevel` dựa vào `book_level` của user.
 - Frontend: Hiển thị thanh Progress Bar trong `ProfilePage.jsx`.
 
-## 5. TÍNH NĂNG CHƯA LÀM (Dự kiến làm sau Demo NCKHKT)
-- **Hộp thư Góp ý (Feedback Box):** Nút Floating góc phải màn hình. Lưu vào DB. Admin xem trong Admin Panel. (Dùng để thu thập dữ liệu người dùng).
-- **Chế độ Thư giãn (Micro-game):** Game "Rắn ăn táo" (HTML5 Canvas) hiển thị 30s ở trang Kết quả bài học. Ứng dụng Gamification và nguyên lý nghỉ ngơi của não bộ.
+### 9.7. Hộp thư Góp ý (Feedback)
+- Tạo bảng `feedbacks` (id, user_id, content, page_url, status).
+- Nút lơ lửng 💡 ở góc phải màn hình (`FeedbackPopup.jsx`).
+- Admin xem tại `/admin/feedbacks` (`ManageFeedbacks.jsx`).
+
+### 9.8. Form phỏng vấn (Onboarding)
+- Tạo bảng `user_profiles` lưu `goals`, `current_level`, `pain_points`, `specific_goals`, `referral_source`, `is_onboarded`.
+- Giao diện Mascot 5 bước tại `Onboarding.jsx`.
+- **Lưu ý:** Cần sửa logic chuyển hướng ở `Login.jsx` và `Register.jsx` để gọi API `getOnboardingStatus` và check `is_onboarded` trước khi quyết định chuyển sang Onboarding hay Dashboard.
+
+## 14. CHIẾN LƯỢC KINH DOANH (FREEMIUM)
+- **Gói Free (Miễn phí):** Truy cập toàn bộ Unit, Practice, Mini Test. Giới hạn 100 Flashcard. Có quảng cáo nhỏ. Chứng nhận có watermark.
+- **Gói Premium:** Không giới hạn flashcard, Dark mode, Biểu đồ thống kê chuyên sâu, Không quảng cáo. Không chặn nội dung học thuật cốt lõi.
+- **Dự án NCKHKT:** Sẽ tích hợp thêm Micro-game (Rắn ăn táo) và Hộp thư góp ý (đã hoàn thành) để tăng tính tương tác và thu thập phản hồi.

@@ -18,23 +18,20 @@ import AdminDashboard from './pages/Admin/AdminDashboard';
 import ManageUnits from './pages/Admin/ManageUnits';
 import ManageQuestions from './pages/Admin/ManageQuestions';
 import ManageUsers from './pages/Admin/ManageUsers';
+import ManageFeedbacks from './pages/Admin/ManageFeedbacks';
 import { isAuthenticated } from './services/authService';
 import ForgotPassword from './pages/ForgotPassword';
 import LevelTest from './pages/LevelTest';
 import ManageLevelTests from './pages/Admin/ManageLevelTests';
 import ManageLevelTestQuestions from './pages/Admin/ManageLevelTestQuestions';
 import LevelTestList from './pages/LevelTestList';
+import FeedbackPopup from './components/FeedbackPopup';
+import Onboarding from './pages/Onboarding'; // Đảm bảo đã import
 
-
-// Global responsive styles
 if (typeof document !== 'undefined') {
     const globalStyle = document.createElement('style');
     globalStyle.textContent = `
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         html, body {
             overflow-x: hidden;
             max-width: 100vw;
@@ -43,20 +40,9 @@ if (typeof document !== 'undefined') {
             padding: 0;
             font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
-        #root {
-            overflow-x: hidden;
-            max-width: 100vw;
-            width: 100%;
-        }
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-        @media (max-width: 768px) {
-            body {
-                font-size: 14px;
-            }
-        }
+        #root { overflow-x: hidden; max-width: 100vw; width: 100%; }
+        img { max-width: 100%; height: auto; }
+        @media (max-width: 768px) { body { font-size: 14px; } }
     `;
     document.head.appendChild(globalStyle);
 }
@@ -68,7 +54,11 @@ const PrivateRoute = ({ children }) => {
 function App() {
     return (
         <Router>
+            <FeedbackPopup />
             <Routes>
+                {/* Route cho Onboarding (Đặt lên đầu) */}
+                <Route path="/onboarding" element={<PrivateRoute><Onboarding /></PrivateRoute>} />
+                
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
@@ -76,96 +66,26 @@ function App() {
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/reset-password/:token" element={<ResetPassword />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/dashboard" element={
-                    <PrivateRoute>
-                        <Dashboard />
-                    </PrivateRoute>
-                } />
-                <Route path="/learn/:unitId" element={
-                    <PrivateRoute>
-                        <GrammarSection />
-                    </PrivateRoute>
-                } />
-                <Route path="/practice/:unitId" element={
-                    <PrivateRoute>
-                        <PracticeZone />
-                    </PrivateRoute>
-                } />
-                <Route path="/mini-test" element={
-                    <PrivateRoute>
-                        <MiniTest />
-                    </PrivateRoute>
-                } />
-                <Route path="/error-log" element={
-                    <PrivateRoute>
-                        <ErrorLog />
-                    </PrivateRoute>
-                } />
-                <Route path="/flashcards" element={
-                    <PrivateRoute>
-                        <FlashcardPage />
-                    </PrivateRoute>
-                } />
-                <Route path="/review" element={
-                    <PrivateRoute>
-                        <ReviewPage />
-                    </PrivateRoute>
-                } />
-                <Route path="/profile" element={
-                    <PrivateRoute>
-                        <ProfilePage />
-                    </PrivateRoute>
-                } />
-                <Route path="/admin" element={
-                    <PrivateRoute>
-                        <AdminDashboard />
-                    </PrivateRoute>
-                } />
-                <Route path="/admin/units" element={
-                    <PrivateRoute>
-                        <ManageUnits />
-                    </PrivateRoute>
-                } />
-                <Route path="/admin/questions" element={
-                    <PrivateRoute>
-                        <ManageQuestions />
-                    </PrivateRoute>
-                } />
-                <Route path="/admin/users" element={
-                    <PrivateRoute>
-                        <ManageUsers />
-                    </PrivateRoute>
-                } />
-                <Route path="/level-test/:testId" element={
-    <PrivateRoute>
-        <LevelTest />
-    </PrivateRoute>
-} />
-<Route path="/admin/level-tests" element={
-    <PrivateRoute>
-        <ManageLevelTests />
-    </PrivateRoute>
-} />
-<Route path="/level-test/:testId" element={
-    <PrivateRoute>
-        <LevelTest />
-    </PrivateRoute>
-} />
-<Route path="/admin/level-tests" element={
-    <PrivateRoute>
-        <ManageLevelTests />
-    </PrivateRoute>
-} />
-<Route path="/admin/level-tests/:testId" element={
-    <PrivateRoute>
-        <ManageLevelTestQuestions />
-    </PrivateRoute>
-} />
-<Route path="/level-tests" element={
-    <PrivateRoute>
-        <LevelTestList />
-    </PrivateRoute>
-} />
+                
+                <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+                <Route path="/learn/:unitId" element={<PrivateRoute><GrammarSection /></PrivateRoute>} />
+                <Route path="/practice/:unitId" element={<PrivateRoute><PracticeZone /></PrivateRoute>} />
+                <Route path="/mini-test" element={<PrivateRoute><MiniTest /></PrivateRoute>} />
+                <Route path="/error-log" element={<PrivateRoute><ErrorLog /></PrivateRoute>} />
+                <Route path="/flashcards" element={<PrivateRoute><FlashcardPage /></PrivateRoute>} />
+                <Route path="/review" element={<PrivateRoute><ReviewPage /></PrivateRoute>} />
+                <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+                
+                <Route path="/level-tests" element={<PrivateRoute><LevelTestList /></PrivateRoute>} />
+                <Route path="/level-test/:testId" element={<PrivateRoute><LevelTest /></PrivateRoute>} />
+                
+                <Route path="/admin" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
+                <Route path="/admin/units" element={<PrivateRoute><ManageUnits /></PrivateRoute>} />
+                <Route path="/admin/questions" element={<PrivateRoute><ManageQuestions /></PrivateRoute>} />
+                <Route path="/admin/users" element={<PrivateRoute><ManageUsers /></PrivateRoute>} />
+                <Route path="/admin/level-tests" element={<PrivateRoute><ManageLevelTests /></PrivateRoute>} />
+                <Route path="/admin/level-tests/:testId" element={<PrivateRoute><ManageLevelTestQuestions /></PrivateRoute>} />
+                <Route path="/admin/feedbacks" element={<PrivateRoute><ManageFeedbacks /></PrivateRoute>} />
             </Routes>
         </Router>
     );

@@ -26,23 +26,33 @@ import ManageLevelTests from './pages/Admin/ManageLevelTests';
 import ManageLevelTestQuestions from './pages/Admin/ManageLevelTestQuestions';
 import LevelTestList from './pages/LevelTestList';
 import FeedbackPopup from './components/FeedbackPopup';
-import Onboarding from './pages/Onboarding'; // Đảm bảo đã import
+import Onboarding from './pages/Onboarding';
 
 if (typeof document !== 'undefined') {
     const globalStyle = document.createElement('style');
     globalStyle.textContent = `
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body {
-            overflow-x: hidden;
+                html, body {
+            overflow-x: clip; /* Đổi hidden thành clip để không phá sticky */
             max-width: 100vw;
             width: 100%;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            /* ... */
         }
-        #root { overflow-x: hidden; max-width: 100vw; width: 100%; }
+        #root { overflow-x: clip; max-width: 100vw; width: 100%; }
         img { max-width: 100%; height: auto; }
         @media (max-width: 768px) { body { font-size: 14px; } }
+
+        /* CSS cho React Quill Sticky Toolbar */
+        .ql-toolbar.ql-snow {
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 100 !important;
+            background-color: white !important;
+            border-bottom: 1px solid #ccc !important;
+        }
+        .ql-container.ql-snow {
+            border-top: none !important;
+        }
     `;
     document.head.appendChild(globalStyle);
 }
@@ -56,7 +66,6 @@ function App() {
         <Router>
             <FeedbackPopup />
             <Routes>
-                {/* Route cho Onboarding (Đặt lên đầu) */}
                 <Route path="/onboarding" element={<PrivateRoute><Onboarding /></PrivateRoute>} />
                 
                 <Route path="/" element={<Home />} />

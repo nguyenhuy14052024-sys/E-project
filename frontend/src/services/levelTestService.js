@@ -51,9 +51,20 @@ export const getAttemptById = async (id) => {
 // ==================== ADMIN ====================
 
 // Lấy danh sách Level Test
+// Lấy danh sách Level Test (Dành cho Admin)
 export const getAllLevelTests = async () => {
     try {
         const response = await api.get('/level-tests');
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || { message: 'Lỗi lấy danh sách Level Test' };
+    }
+};
+
+// Lấy danh sách Level Test (Dành cho User - Không cần quyền Admin)
+export const getLevelTestsForUser = async () => {
+    try {
+        const response = await api.get('/level-tests/list-for-user');
         return response.data;
     } catch (error) {
         throw error.response?.data || { message: 'Lỗi lấy danh sách Level Test' };

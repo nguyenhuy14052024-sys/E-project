@@ -11,7 +11,12 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(helmet());
-app.use(cors());
+// Cho phép tất cả trong lúc dev, nhưng nếu muốn bảo mật thì giới hạn lại:
+const corsOptions = {
+  origin: ['http://localhost:5173', 'https://*.trycloudflare.com'], // Link Cloudflare nếu cần
+  credentials: true,
+};
+app.use(cors(corsOptions));
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -44,7 +49,7 @@ app.use('/api/onboarding', onboardingRoutes);
     try {
         await sequelize.authenticate();
         console.log('✅ PostgreSQL connected successfully');
-        await sequelize.sync({ alter: true });
+        await sequelize.sync();
         console.log('✅ Database synced');
     } catch (error) {
         console.error('❌ PostgreSQL connection error:', error);

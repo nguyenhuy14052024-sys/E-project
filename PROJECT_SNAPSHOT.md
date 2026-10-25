@@ -1,5 +1,5 @@
 # DỰ ÁN E-LEARNING B2-C1 - TRẠNG THÁI HIỆN TẠI
-*Cập nhật lần cuối: 22/10/2026*
+*Cập nhật lần cuối: 25/10/2026*
 
 ## 1. CÔNG NGHỆ
 - Backend: Node.js + Express + PostgreSQL + Sequelize
@@ -14,15 +14,16 @@
 - Quên mật khẩu + Reset password qua email (Resend)
 - Xác thực email (API đã có)
 - Unit: Xem danh sách, chi tiết theo trình độ (A1-C1)
+- **Bài tập văn bản (Text-based Exercise):** Admin có thể soạn bài tập tự luận/trắc nghiệm dạng văn bản (Rich Text) ngay trong Unit. Hiển thị ở trang làm bài. (MỚI)
 - Quiz: 6 loại câu hỏi, random, hoán vị, lọc theo loại
 - Mini Test: Random từ nhiều Unit
 - Error Log: Xem và ôn lại câu sai
 - Flashcard: CRUD + Spaced Repetition (SM-2)
 - Review: Trang ôn tập flashcard đến hạn + Ôn lại tất cả
-- Admin Panel: CRUD Unit, Question, User
+- Admin Panel: CRUD Unit, Question, User, Feedback
 - Dictionary: Tra từ (Hybrid fallback 3 API) - trong Grammar + Practice
 - Profile: Hồ sơ cá nhân, Rank, Streak, Điểm số
-- Certificate: Kho chứng nhận (Đã chống cấp trùng, không có 2 chứng nhận giống nhau)
+- **Certificate: Kho chứng nhận (Đã chống cấp trùng, không có 2 chứng nhận giống nhau)**
 - Tự động hóa: Cộng điểm, cấp chứng nhận, cập nhật Streak
 - Thông báo chứng nhận: Popup + Confetti khi nhận chứng nhận mới
 - Form soạn nội dung mới: chia trường (level, unit, tên, mô tả, độ khó, ghi chú, các phần)
@@ -39,9 +40,9 @@
 - Level Test: Bài đọc (ReadingPassage) đính kèm câu hỏi
 - Level Test: Câu hỏi của bài đọc nhập ngay trong form tạo passage (tích hợp)
 - Level Test: Hỗ trợ 3 loại câu hỏi chính (Trắc nghiệm A/B/C/D, True/False/Not Given, Viết-nhập nội dung)
-- Level Test: Form động — tự đổi input theo loại câu hỏi (A/B/C/D dropdown/radio/input text)
+- Level Test: Form động — tự đổi input theo loại câu hỏi
 - Level Test: Admin có thể tự do đặt tên Section và đổi thứ tự câu hỏi (nút lên/xuống)
-- Level Test: Sửa câu hỏi ngay tại chỗ (Inline Editing) không bị trượt trang
+- Level Test: Sửa câu hỏi ngay tại chỗ (Inline Editing)
 - Level Test: Admin quản lý bài test + câu hỏi + bài đọc (hỗ trợ Link ảnh, Độ rộng ảnh, Nguồn)
 - Level Test: Chứng nhận theo điểm (≥90% Xuất sắc, ≥80% Giỏi)
 - Level Test: Lịch sử làm bài (LevelTestAttempt)
@@ -64,10 +65,10 @@
 - Terms, Privacy, Dashboard, GrammarSection, PracticeZone
 - MiniTest, ErrorLog, FlashcardPage, ReviewPage, ProfilePage
 - LevelTest, LevelTestList
-- **Onboarding (Giao diện Mascot)**
+- Onboarding (Giao diện Mascot)
 - AdminDashboard, ManageUnits, ManageQuestions, ManageUsers
 - ManageLevelTests, ManageLevelTestQuestions
-- **ManageFeedbacks**
+- ManageFeedbacks
 
 ## 4. GIAO DIỆN CHƯA NÂNG CẤP
 - (Tất cả đã nâng cấp và responsive)
@@ -81,7 +82,7 @@
 - Nút báo cáo lỗi (User report câu hỏi sai)
 - Premium / Thanh toán
 - Deploy lên VPS
-- Soạn nội dung thật A1-C1
+- Soạn nội dung thật A1-C1 (Đang tiến hành)
 - Loading component (icon nhảy) — tạm skip
 - Từ điển: nghĩa Anh-Việt, phiên âm, audio
 - Xử lý Token hết hạn (Axios Interceptor bắt lỗi 401 -> tự động đăng xuất)
@@ -90,14 +91,14 @@
 ## 6. CẤU TRÚC CHÍNH (CẬP NHẬT MỚI)
 - backend/config/ (db, redis, email, passport)
 - backend/scripts/ (createAdmin.js)
-- backend/src/controllers/ (auth, unit, quiz, flashcard, admin, dictionary, profile, levelTest, **feedback, onboarding**)
-- backend/src/models/ (User, Unit, Question, Progress, UserAnswer, Flashcard, Dictionary, Certificate, LevelTest, LevelTestQuestion, LevelTestAttempt, ReadingPassage, **Feedback, UserProfile**)
-- backend/src/routes/ (auth, unit, quiz, flashcard, admin, dictionary, profile, levelTest, **feedback, onboarding**)
+- backend/src/controllers/ (auth, unit, quiz, flashcard, admin, dictionary, profile, levelTest, feedback, onboarding)
+- backend/src/models/ (User, Unit, Question, Progress, UserAnswer, Flashcard, Dictionary, Certificate, LevelTest, LevelTestQuestion, LevelTestAttempt, ReadingPassage, Feedback, UserProfile)
+- backend/src/routes/ (auth, unit, quiz, flashcard, admin, dictionary, profile, levelTest, feedback, onboarding)
 - backend/src/middlewares/ (authMiddleware, isAdmin)
 - backend/src/services/ (dictionaryService)
-- frontend/src/pages/ (17 trang + 7 trang Admin + **Onboarding**)
-- frontend/src/services/ (api, auth, unit, flashcard, admin, dictionary, profile, levelTest, **feedback, onboarding**)
-- frontend/src/components/ (DictionaryPopup, CertificateBadge, CertificateNotification, **FeedbackPopup**)
+- frontend/src/pages/ (17 trang + 7 trang Admin + Onboarding)
+- frontend/src/services/ (api, auth, unit, flashcard, admin, dictionary, profile, levelTest, feedback, onboarding)
+- frontend/src/components/ (DictionaryPopup, CertificateBadge, CertificateNotification, FeedbackPopup)
 - data_migration/raw_data/demo.json
 
 ## 7. API HIỆN CÓ (CẬP NHẬT MỚI)
@@ -152,6 +153,11 @@
 - Tạo bảng `user_profiles` lưu `goals`, `current_level`, `pain_points`, `specific_goals`, `referral_source`, `is_onboarded`.
 - Giao diện Mascot 5 bước tại `Onboarding.jsx`.
 - **Lưu ý:** Cần sửa logic chuyển hướng ở `Login.jsx` và `Register.jsx` để gọi API `getOnboardingStatus` và check `is_onboarded` trước khi quyết định chuyển sang Onboarding hay Dashboard.
+
+### 9.9. Bài tập văn bản (Exercise Parts)
+- Thêm trường `exercise_parts` (JSON) vào bảng `units`.
+- Admin soạn bài tập dạng Rich Text (giống hệt `parts` của nội dung).
+- Trang User (`PracticeZone.jsx`): Nếu `unit.exercise_parts` có dữ liệu, hiển thị giao diện văn bản thay vì câu hỏi trắc nghiệm. Nếu không, hiển thị trắc nghiệm cũ.
 
 ## 14. CHIẾN LƯỢC KINH DOANH (FREEMIUM)
 - **Gói Free (Miễn phí):** Truy cập toàn bộ Unit, Practice, Mini Test. Giới hạn 100 Flashcard. Có quảng cáo nhỏ. Chứng nhận có watermark.

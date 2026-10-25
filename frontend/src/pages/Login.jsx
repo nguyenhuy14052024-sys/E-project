@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../services/authService';
+import { getOnboardingStatus } from '../services/onboardingService';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -17,8 +18,21 @@ const Login = () => {
 
         try {
             await login(email, password);
-            // Chuyển hướng sang Onboarding
-            navigate('/onboarding');
+            
+            // Kiểm tra xem user đã làm form phỏng vấn chưa
+            try {
+                const status = await getOnboardingStatus();
+                if (status.is_onboarded) {
+                    navigate('/dashboard');
+                } else {
+                    navigate('/onboarding');
+                }
+            } catch (statusError) {
+                // Nếu API check trạng thái bị lỗi, mặc định cho vào Dashboard để không chặn user
+                console.error("Lỗi kiểm tra onboarding:", statusError);
+                navigate('/dashboard');
+            }
+            
         } catch (err) {
             setError(err.message || 'Đăng nhập thất bại');
         } finally {
@@ -101,7 +115,6 @@ const Login = () => {
 };
 
 const styles = {
-    // ... (Giữ nguyên toàn bộ styles cũ của bạn)
     page: { minHeight: '100vh', backgroundColor: '#F6F9FE', fontFamily: "'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", position: 'relative', overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center' },
     bgShape1: { position: 'fixed', top: '-180px', right: '-180px', width: '520px', height: '520px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(13, 110, 253, 0.15) 0%, rgba(13, 110, 253, 0) 70%)', pointerEvents: 'none', zIndex: 0 },
     bgShape2: { position: 'fixed', bottom: '-200px', left: '-150px', width: '600px', height: '600px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(13, 110, 253, 0.10) 0%, rgba(13, 110, 253, 0) 70%)', pointerEvents: 'none', zIndex: 0 },

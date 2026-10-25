@@ -3,7 +3,7 @@ const { Unit, Question } = require('../models');
 // Lấy danh sách tất cả Unit (có filter theo level)
 const getUnits = async (req, res) => {
     try {
-        const { level } = req.query; // Lấy tham số ?level=B2 hoặc ?level=C1
+        const { level } = req.query;
 
         const whereClause = {};
         if (level) {
@@ -30,14 +30,27 @@ const getUnits = async (req, res) => {
     }
 };
 
-// Lấy chi tiết 1 Unit (kèm lý thuyết và số lượng câu hỏi)
+// Lấy chi tiết 1 Unit (kèm lý thuyết, bài tập và số lượng câu hỏi)
 const getUnitById = async (req, res) => {
     try {
         const { id } = req.params;
 
-       const unit = await Unit.findByPk(id, {
-    attributes: ['id', 'book_level', 'unit_number', 'title', 'type', 'description', 'content_html', 'difficulty', 'note', 'parts']
-});
+        const unit = await Unit.findByPk(id, {
+            // ĐÃ THÊM 'exercise_parts' VÀO ĐÂY
+            attributes: [
+                'id', 
+                'book_level', 
+                'unit_number', 
+                'title', 
+                'type', 
+                'description', 
+                'content_html', 
+                'difficulty', 
+                'note', 
+                'parts',
+                'exercise_parts' 
+            ]
+        });
 
         if (!unit) {
             return res.status(404).json({

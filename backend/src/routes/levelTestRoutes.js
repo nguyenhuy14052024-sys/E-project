@@ -27,6 +27,9 @@ router.get('/attempts/:id', authMiddleware, getAttemptById);
 router.get('/take/:id', authMiddleware, getTestForUser);
 router.post('/submit', authMiddleware, submitTest);
 
+// THÊM ROUTE MỚI CHO USER LẤY DANH SÁCH BÀI TEST
+router.get('/list-for-user', authMiddleware, getAllLevelTests);
+
 // ==================== ADMIN ROUTES ====================
 router.get('/', authMiddleware, isAdmin, getAllLevelTests);
 router.post('/', authMiddleware, isAdmin, createLevelTest);

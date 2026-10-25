@@ -30,16 +30,18 @@ const Unit = sequelize.define('Unit', {
     difficulty: {
         type: DataTypes.INTEGER,
         defaultValue: 1,
-        validate: {
-            min: 1,
-            max: 3
-        }
+        validate: { min: 1, max: 3 }
     },
     note: {
         type: DataTypes.TEXT,
         allowNull: true
     },
     parts: {
+        type: DataTypes.JSON,
+        allowNull: true
+    },
+    // THÊM TRƯỜNG MỚI Ở ĐÂY
+    exercise_parts: {
         type: DataTypes.JSON,
         allowNull: true
     },

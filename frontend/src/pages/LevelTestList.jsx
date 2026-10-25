@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAllLevelTests } from '../services/levelTestService';
+import { getLevelTestsForUser } from '../services/levelTestService';
 
 const LevelTestList = () => {
     const navigate = useNavigate();
@@ -15,7 +15,7 @@ const LevelTestList = () => {
     const fetchTests = async () => {
         setLoading(true);
         try {
-            const data = await getAllLevelTests();
+            const data = await getLevelTestsForUser();
             setTests(data.tests || []);
         } catch (err) {
             console.error(err);

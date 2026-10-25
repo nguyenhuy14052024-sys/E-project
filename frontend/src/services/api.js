@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:5000/api',
+    // Phải là link Backend public
+    baseURL: 'http://localhost:5000/api', 
     headers: {
         'Content-Type': 'application/json'
     }

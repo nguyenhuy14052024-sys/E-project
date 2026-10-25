@@ -143,27 +143,6 @@ const GrammarSection = () => {
                         />
                     )}
 
-                    {/* PHẦN BÀI TẬP (MỚI) */}
-                    {unit.exercise_parts && Array.isArray(unit.exercise_parts) && unit.exercise_parts.length > 0 && (
-                        <div style={{ marginTop: '48px', paddingTop: '32px', borderTop: '2px solid #E9ECEF' }}>
-                            <h2 style={{ fontSize: '24px', fontWeight: '700', color: theme.primary, marginBottom: '24px' }}>
-                                Bài tập thực hành
-                            </h2>
-                            {unit.exercise_parts.map((part, index) => (
-                                <div key={index} style={{ marginBottom: '30px' }}>
-                                    {part.title && (
-                                        <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#212529', marginBottom: '12px' }}>
-                                            {part.title}
-                                        </h3>
-                                    )}
-                                    <div 
-                                        style={{ fontSize: '16px', color: '#343A40', lineHeight: '1.9', paddingLeft: '16px' }}
-                                        dangerouslySetInnerHTML={{ __html: part.content }} 
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    )}
 
                     <div style={styles.ctaWrapper}>
                         <button 

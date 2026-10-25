@@ -67,7 +67,7 @@ const getQuestions = async (req, res) => {
     }
 };
 
-// Nộp bài và chấm điểm
+// Nộp bài và chấm điểm (ĐÃ XÓA CẤP CHỨNG NHẬN)
 const submitQuiz = async (req, res) => {
     try {
         const { userId } = req.user;
@@ -141,85 +141,15 @@ const submitQuiz = async (req, res) => {
             });
         }
 
-        // Khai báo biến newCertificate (CHỈ 1 LẦN DUY NHẤT)
-        let newCertificate = null;
+        // ĐÃ XÓA TOÀN BỘ LOGIC CẤP CHỨNG NHẬN UNIT/MINI TEST/COURSE Ở ĐÂY
 
-        // Cấp chứng nhận nếu đạt 100%
-        if (correctCount === totalQuestions) {
-            newCertificate = await issueCertificate(
-                userId,
-                'unit',
-                `Hoàn thành Unit`,
-                `Đạt 100% câu hỏi đúng`,
-                unitId
-            );
-        }
-
-        // Kiểm tra Mini Test (nếu làm nhiều câu từ nhiều Unit)
-        const uniqueUnits = [...new Set(answers.map(a => {
-            const q = questions.find(q => q.id === a.questionId);
-            return q ? q.unit_id : null;
-        }).filter(Boolean))];
-
-        if (uniqueUnits.length >= 3 && score >= 90) {
-            await issueCertificate(
-                userId,
-                'mini_test',
-                'Mini Test xuất sắc',
-                `Đạt ${score}% với câu hỏi từ ${uniqueUnits.length} Unit`
-            );
-            console.log('📝 Đã cấp chứng nhận Mini Test');
-        }
-
-        // Kiểm tra hoàn thành khóa học (tất cả Unit của level đã completed)
-        const unit = await Unit.findByPk(unitId);
-        if (unit) {
-            const totalUnitsInLevel = await Unit.count({
-                where: { book_level: unit.book_level }
-            });
-            
-            const completedUnitsInLevel = await Progress.count({
-                where: {
-                    user_id: userId,
-                    status: 'completed'
-                },
-                include: [{
-                    model: Unit,
-                    where: { book_level: unit.book_level },
-                    attributes: []
-                }]
-            });
-            
-            if (completedUnitsInLevel === totalUnitsInLevel && totalUnitsInLevel > 0) {
-                // Kiểm tra đã có chứng nhận khóa học chưa
-                const existingCert = await Certificate.findOne({
-                    where: {
-                        user_id: userId,
-                        type: 'course',
-                        title: `Hoàn thành khóa học ${unit.book_level}`
-                    }
-                });
-                
-                if (!existingCert) {
-                    await issueCertificate(
-                        userId,
-                        'course',
-                        `Hoàn thành khóa học ${unit.book_level}`,
-                        `Hoàn thành tất cả ${totalUnitsInLevel} Unit trình độ ${unit.book_level}`
-                    );
-                    console.log('🎓 Đã cấp chứng nhận khóa học:', unit.book_level);
-                }
-            }
-        }
-
-        // Trả về response CUỐI CÙNG
         res.status(200).json({
             message: 'Nộp bài thành công',
             score: Math.round(score * 100) / 100,
             correctCount,
             totalQuestions,
             pointsEarned,
-            newCertificate,
+            newCertificate: null, // Luôn trả về null
             results
         });
 

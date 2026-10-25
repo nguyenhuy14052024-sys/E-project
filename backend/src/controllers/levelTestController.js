@@ -6,9 +6,7 @@ const { issueCertificate } = require('./profileController');
 
 const getAllLevelTests = async (req, res) => {
     try {
-        const tests = await LevelTest.findAll({
-            order: [['book_level', 'ASC'], ['createdAt', 'DESC']]
-        });
+        const tests = await LevelTest.findAll({ order: [['book_level', 'ASC'], ['createdAt', 'DESC']] });
         const testsWithCount = await Promise.all(tests.map(async (test) => {
             const questionCount = await LevelTestQuestion.count({ where: { level_test_id: test.id } });
             const attemptCount = await LevelTestAttempt.count({ where: { level_test_id: test.id } });
@@ -193,7 +191,6 @@ const createPassage = async (req, res) => {
         if (questions && Array.isArray(questions) && questions.length > 0) {
             for (const q of questions) {
                 if (!q.question_group || !q.content || !q.correct_answer) continue;
-
                 const newQuestion = await LevelTestQuestion.create({
                     level_test_id, passage_id: passage.id,
                     question_group: q.question_group, section: q.section || 'SECTION A',
@@ -341,10 +338,30 @@ const submitTest = async (req, res) => {
         });
 
         let newCertificate = null;
-        if (score >= 90) {
-            newCertificate = await issueCertificate(userId, 'level_test', `Chứng nhận Xuất sắc - ${test.book_level}`, `Đạt ${Math.round(score)}% bài test trình độ ${test.book_level}`);
-        } else if (score >= 80) {
-            newCertificate = await issueCertificate(userId, 'level_test', `Chứng nhận Giỏi - ${test.book_level}`, `Đạt ${Math.round(score)}% bài test trình độ ${test.book_level}`);
+        
+        // Logic chứng nhận mới: >= 85% + Học vượt
+        if (score >= 85) {
+            newCertificate = await issueCertificate(
+                userId,
+                'level_test',
+                `Chứng nhận Hoàn thành trình độ ${test.book_level}`,
+                `Đạt ${Math.round(score)}% bài test trình độ ${test.book_level}`
+            );
+
+            const levelsOrder = ['A1', 'A2', 'B1', 'B2', 'C1'];
+            const currentLevelIndex = levelsOrder.indexOf(test.book_level);
+
+            if (currentLevelIndex > 0) {
+                for (let i = 0; i < currentLevelIndex; i++) {
+                    const lowerLevel = levelsOrder[i];
+                    await issueCertificate(
+                        userId,
+                        'level_test',
+                        `Chứng nhận Hoàn thành trình độ ${lowerLevel}`,
+                        `Được công nhận tự động do đã hoàn thành bài test trình độ ${test.book_level}`
+                    );
+                }
+            }
         }
 
         res.status(200).json({

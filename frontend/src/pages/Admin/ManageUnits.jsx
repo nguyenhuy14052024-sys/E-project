@@ -20,7 +20,7 @@ const ManageUnits = () => {
         difficulty: 1,
         note: '',
         parts: [],
-        exercise_parts: [] // <-- THÊM MỚI
+        exercise_parts: []
     });
 
     useEffect(() => {
@@ -81,7 +81,7 @@ const ManageUnits = () => {
             difficulty: unit.difficulty || 1,
             note: unit.note || '',
             parts: cleanParts,
-            exercise_parts: cleanExerciseParts // <-- LOAD DỮ LIỆU
+            exercise_parts: cleanExerciseParts
         });
         setShowForm(true);
     };
@@ -107,7 +107,7 @@ const ManageUnits = () => {
             difficulty: 1,
             note: '',
             parts: [],
-            exercise_parts: [] // <-- RESET
+            exercise_parts: []
         });
         setShowForm(false);
         setEditingId(null);
@@ -235,32 +235,33 @@ const ManageUnits = () => {
                 </form>
             )}
 
-            {/* Bảng danh sách (Giữ nguyên) */}
             {units.length === 0 ? (
                 <div style={styles.emptyState}>Chưa có Unit nào</div>
             ) : (
-                <table style={styles.table}>
-                    <thead>
-                        <tr>
-                            <th style={styles.th}>Level</th><th style={styles.th}>Unit</th><th style={styles.th}>Tên</th><th style={styles.th}>Loại</th><th style={styles.th}>Độ khó</th><th style={styles.th}>Hành động</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {units.map((unit) => (
-                            <tr key={unit.id}>
-                                <td style={styles.td}><span style={styles.levelBadge}>{unit.book_level}</span></td>
-                                <td style={styles.td}>{unit.unit_number}</td>
-                                <td style={styles.td}>{unit.title}</td>
-                                <td style={styles.td}>{unit.type}</td>
-                                <td style={styles.td}>{unit.difficulty === 1 ? 'Dễ' : unit.difficulty === 2 ? 'Trung bình' : 'Khó'}</td>
-                                <td style={styles.td}>
-                                    <button onClick={() => handleEdit(unit)} style={styles.editButton}>Sửa</button>
-                                    <button onClick={() => handleDelete(unit.id)} style={styles.deleteButton}>Xóa</button>
-                                </td>
+                <div style={styles.tableWrapper}>
+                    <table style={styles.table}>
+                        <thead>
+                            <tr>
+                                <th style={styles.th}>Level</th><th style={styles.th}>Unit</th><th style={styles.th}>Tên</th><th style={styles.th}>Loại</th><th style={styles.th}>Độ khó</th><th style={styles.th}>Hành động</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {units.map((unit) => (
+                                <tr key={unit.id}>
+                                    <td style={styles.td}><span style={styles.levelBadge}>{unit.book_level}</span></td>
+                                    <td style={styles.td}>{unit.unit_number}</td>
+                                    <td style={styles.td}>{unit.title}</td>
+                                    <td style={styles.td}>{unit.type}</td>
+                                    <td style={styles.td}>{unit.difficulty === 1 ? 'Dễ' : unit.difficulty === 2 ? 'Trung bình' : 'Khó'}</td>
+                                    <td style={styles.td}>
+                                        <button onClick={() => handleEdit(unit)} style={styles.editButton}>Sửa</button>
+                                        <button onClick={() => handleDelete(unit.id)} style={styles.deleteButton}>Xóa</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
         </div>
     );
@@ -285,7 +286,8 @@ const styles = {
     removeButton: { padding: '6px 12px', backgroundColor: '#DC3545', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' },
     addPartButton: { padding: '10px 20px', backgroundColor: '#17A2B8', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', marginRight: '10px', marginTop: '12px' },
     submitButton: { padding: '12px 30px', backgroundColor: '#28A745', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '15px', fontWeight: '600', marginTop: '12px' },
-    table: { width: '100%', borderCollapse: 'collapse', backgroundColor: 'white', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' },
+    tableWrapper: { width: '100%', overflowX: 'auto', backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' },
+    table: { width: '100%', borderCollapse: 'collapse', minWidth: '700px' },
     th: { backgroundColor: '#F8F9FA', padding: '12px', textAlign: 'left', borderBottom: '2px solid #DCE8F5', fontSize: '14px' },
     td: { padding: '12px', borderBottom: '1px solid #EEE', fontSize: '14px' },
     levelBadge: { display: 'inline-block', padding: '3px 10px', backgroundColor: '#0D6EFD', color: 'white', borderRadius: '3px', fontSize: '12px' },

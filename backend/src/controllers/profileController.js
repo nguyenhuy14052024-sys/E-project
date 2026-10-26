@@ -31,7 +31,13 @@ const getProfile = async (req, res) => {
 
         // Tính toán tiến độ theo trình độ hiện tại của User
         // (Nếu bạn chưa có trường 'level' trong User, mặc định lấy 'B2')
-        const userLevel = user.level || 'B2'; 
+        // Lấy trình độ từ Unit đã hoàn thành gần nhất, hoặc mặc định là A1
+const lastCompletedUnit = await Progress.findOne({
+    where: { user_id: userId, status: 'completed' },
+    include: [{ model: Unit, attributes: ['book_level'] }],
+    order: [['updatedAt', 'DESC']]
+});
+const userLevel = lastCompletedUnit?.Unit?.book_level || 'A1';
         
         const totalUnitsInLevel = await Unit.count({
             where: { book_level: userLevel }

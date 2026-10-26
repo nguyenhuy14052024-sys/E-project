@@ -34,7 +34,19 @@ const isFillInBlankGroup = (group) => {
     return ['sentence_transformation', 'sentence_completion', 'sentence_combination'].includes(group);
 };
 
-// Component nhỏ để render form sửa tại chỗ cho câu hỏi độc lập
+const createEmptyQuestion = () => ({
+    question_group: 'reading_comprehension',
+    section: 'SECTION A',
+    content: '',
+    prefix: '',
+    suffix: '',
+    options: ['', '', '', ''],
+    correct_answer: 'A',
+    explanation: '',
+    score: 1,
+    order: 0
+});
+
 const InlineQuestionForm = ({ initialData, onSave, onCancel }) => {
     const [formData, setFormData] = useState(initialData);
     const [error, setError] = useState('');
@@ -50,10 +62,7 @@ const InlineQuestionForm = ({ initialData, onSave, onCancel }) => {
         }
 
         try {
-            await onSave({
-                ...formData,
-                options: filteredOptions
-            });
+            await onSave({ ...formData, options: filteredOptions });
         } catch (err) {
             setError(err.message || 'Lỗi lưu câu hỏi');
         }
@@ -65,16 +74,12 @@ const InlineQuestionForm = ({ initialData, onSave, onCancel }) => {
             <div style={styles.formRow}>
                 <div style={styles.formGroup}>
                     <label style={styles.label}>Dạng bài</label>
-                    <select
-                        value={formData.question_group}
-                        onChange={(e) => {
-                            const newGroup = e.target.value;
-                            const isMC = isMultipleChoiceGroup(newGroup);
-                            const defaultAnswer = isMC ? 'A' : (newGroup === 'true_false' ? 'True' : '');
-                            setFormData({ ...formData, question_group: newGroup, correct_answer: defaultAnswer });
-                        }}
-                        style={styles.input}
-                    >
+                    <select value={formData.question_group} onChange={(e) => {
+                        const newGroup = e.target.value;
+                        const isMC = isMultipleChoiceGroup(newGroup);
+                        const defaultAnswer = isMC ? 'A' : (newGroup === 'true_false' ? 'True' : '');
+                        setFormData({ ...formData, question_group: newGroup, correct_answer: defaultAnswer });
+                    }} style={styles.input}>
                         {QUESTION_GROUPS.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
                     </select>
                 </div>
@@ -100,17 +105,16 @@ const InlineQuestionForm = ({ initialData, onSave, onCancel }) => {
             {isFillInBlankGroup(formData.question_group) && (
                 <div style={styles.formRow}>
                     <div style={styles.formGroup}>
-                        <label style={styles.label}>Tiền tố (Chữ đứng trước)</label>
+                        <label style={styles.label}>Tiền tố</label>
                         <input type="text" value={formData.prefix || ''} onChange={(e) => setFormData({ ...formData, prefix: e.target.value })} style={styles.input} placeholder="VD: She said" />
                     </div>
                     <div style={styles.formGroup}>
-                        <label style={styles.label}>Hậu tố (Chữ đứng sau)</label>
+                        <label style={styles.label}>Hậu tố</label>
                         <input type="text" value={formData.suffix || ''} onChange={(e) => setFormData({ ...formData, suffix: e.target.value })} style={styles.input} placeholder="VD: in the morning." />
                     </div>
                 </div>
             )}
 
-            {/* ĐÃ SỬA LỖI: Dùng formData thay vì q, dùng ReactQuill cho Lựa chọn */}
             {isMultipleChoiceGroup(formData.question_group) && (
                 <div style={styles.formGroup}>
                     <label style={styles.label}>Các lựa chọn (A/B/C/D) - Có thể gạch chân âm tiết</label>
@@ -118,13 +122,7 @@ const InlineQuestionForm = ({ initialData, onSave, onCancel }) => {
                         {['A', 'B', 'C', 'D'].map((label, idx) => (
                             <div key={idx} style={{ marginBottom: '10px' }}>
                                 <span style={styles.optionLabel}>{label}.</span>
-                                <ReactQuill
-                                    theme="snow"
-                                    value={formData.options[idx] || ''}
-                                    onChange={(val) => { const newOpts = [...formData.options]; newOpts[idx] = val; setFormData({ ...formData, options: newOpts }); }}
-                                    modules={{ toolbar: [['underline', 'clean']] }}
-                                    style={{ backgroundColor: 'white', height: '80px', marginTop: '4px' }}
-                                />
+                                <ReactQuill theme="snow" value={formData.options[idx] || ''} onChange={(val) => { const newOpts = [...formData.options]; newOpts[idx] = val; setFormData({ ...formData, options: newOpts }); }} modules={{ toolbar: [['underline', 'clean']] }} style={{ backgroundColor: 'white', height: '80px', marginTop: '4px' }} />
                             </div>
                         ))}
                     </div>
@@ -169,16 +167,13 @@ const ManageLevelTestQuestions = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    // State quản lý việc sửa tại chỗ
     const [editingQuestionId, setEditingQuestionId] = useState(null);
 
-    // Form câu hỏi mới (thêm mới)
     const [showQuestionForm, setShowQuestionForm] = useState(false);
     const [questionData, setQuestionData] = useState({
         question_group: 'pronunciation', section: 'SECTION A', content: '', prefix: '', suffix: '', options: ['', '', '', ''], correct_answer: 'A', explanation: '', score: 1, order: 0, passage_id: ''
     });
 
-    // Form bài đọc
     const [showPassageForm, setShowPassageForm] = useState(false);
     const [editingPassageId, setEditingPassageId] = useState(null);
     const [passageData, setPassageData] = useState({ title: '', content: '', image_url: '', image_width: '100%', source: '', questions: [] });
@@ -198,8 +193,6 @@ const ManageLevelTestQuestions = () => {
             setLoading(false);
         }
     };
-
-    // ==================== CÂU HỎI ĐỘC LẬP ====================
 
     const handleCreateQuestion = async (e) => {
         e.preventDefault();
@@ -236,17 +229,13 @@ const ManageLevelTestQuestions = () => {
         }
     };
 
-    // ==================== ĐIỀU CHỈNH THỨ TỰ ====================
-    
     const moveQuestion = async (index, direction) => {
         const newQuestions = [...questions.filter(q => !q.passage_id)];
         const targetIndex = index + direction;
         if (targetIndex < 0 || targetIndex >= newQuestions.length) return;
-
         const temp = newQuestions[index];
         newQuestions[index] = newQuestions[targetIndex];
         newQuestions[targetIndex] = temp;
-
         try {
             await updateQuestion(newQuestions[index].id, { order: index + 1 });
             await updateQuestion(newQuestions[targetIndex].id, { order: targetIndex + 1 });
@@ -256,8 +245,6 @@ const ManageLevelTestQuestions = () => {
         }
     };
 
-    // ==================== BÀI ĐỌC ====================
-    
     const handlePassageSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -304,7 +291,6 @@ const ManageLevelTestQuestions = () => {
 
                 {error && <div style={styles.error}>{error}</div>}
 
-                {/* ==================== CÂU HỎI ĐỘC LẬP ==================== */}
                 <div style={styles.section}>
                     <div style={styles.sectionHeader}>
                         <h2 style={styles.sectionTitle}>Câu hỏi độc lập ({independentQuestions.length})</h2>
@@ -313,7 +299,6 @@ const ManageLevelTestQuestions = () => {
                         </button>
                     </div>
 
-                    {/* Form thêm mới */}
                     {showQuestionForm && (
                         <form onSubmit={handleCreateQuestion} style={styles.form}>
                             <div style={styles.formRow}>
@@ -342,8 +327,6 @@ const ManageLevelTestQuestions = () => {
                                     <div style={styles.formGroup}><label style={styles.label}>Hậu tố</label><input type="text" value={questionData.suffix} onChange={(e) => setQuestionData({ ...questionData, suffix: e.target.value })} style={styles.input} /></div>
                                 </div>
                             )}
-
-                            {/* ĐÃ SỬA LỖI: Dùng ReactQuill cho Lựa chọn */}
                             {isMultipleChoiceGroup(questionData.question_group) && (
                                 <div style={styles.formGroup}>
                                     <label style={styles.label}>Các lựa chọn (A/B/C/D) - Có thể gạch chân âm tiết</label>
@@ -351,13 +334,7 @@ const ManageLevelTestQuestions = () => {
                                         {['A', 'B', 'C', 'D'].map((label, idx) => (
                                             <div key={idx} style={{ marginBottom: '10px' }}>
                                                 <span style={styles.optionLabel}>{label}.</span>
-                                                <ReactQuill
-                                                    theme="snow"
-                                                    value={questionData.options[idx]}
-                                                    onChange={(val) => { const o = [...questionData.options]; o[idx] = val; setQuestionData({ ...questionData, options: o }); }}
-                                                    modules={{ toolbar: [['underline', 'clean']] }}
-                                                    style={{ backgroundColor: 'white', height: '80px', marginTop: '4px' }}
-                                                />
+                                                <ReactQuill theme="snow" value={questionData.options[idx]} onChange={(val) => { const o = [...questionData.options]; o[idx] = val; setQuestionData({ ...questionData, options: o }); }} modules={{ toolbar: [['underline', 'clean']] }} style={{ backgroundColor: 'white', height: '80px', marginTop: '4px' }} />
                                             </div>
                                         ))}
                                     </div>
@@ -381,7 +358,6 @@ const ManageLevelTestQuestions = () => {
                         </form>
                     )}
 
-                    {/* DANH SÁCH CÂU HỎI ĐỘC LẬP (Hỗ trợ Sửa tại chỗ và Đổi thứ tự) */}
                     {independentQuestions.length > 0 && (
                         <div style={styles.questionList}>
                             {independentQuestions.map((q, idx) => (
@@ -398,8 +374,6 @@ const ManageLevelTestQuestions = () => {
                                                 <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
                                                     <span style={styles.questionNumber}>Câu {idx + 1}</span>
                                                     <span style={styles.questionGroup}>{q.section || 'SECTION A'}</span>
-                                                    
-                                                    {/* Nút đổi thứ tự */}
                                                     <div style={{ display: 'flex', gap: '4px' }}>
                                                         <button onClick={() => moveQuestion(idx, -1)} disabled={idx === 0} style={styles.moveBtn}>↑</button>
                                                         <button onClick={() => moveQuestion(idx, 1)} disabled={idx === independentQuestions.length - 1} style={styles.moveBtn}>↓</button>
@@ -420,7 +394,6 @@ const ManageLevelTestQuestions = () => {
                     )}
                 </div>
 
-                {/* ==================== BÀI ĐỌC ==================== */}
                 <div style={styles.section}>
                     <div style={styles.sectionHeader}>
                         <h2 style={styles.sectionTitle}>Bài đọc ({passages.length})</h2>
@@ -434,7 +407,6 @@ const ManageLevelTestQuestions = () => {
                             <div style={styles.formGroup}><label style={styles.label}>Tiêu đề</label><input type="text" value={passageData.title} onChange={(e) => setPassageData({ ...passageData, title: e.target.value })} style={styles.input} /></div>
                             <div style={styles.formGroup}><label style={styles.label}>Nội dung *</label><ReactQuill theme="snow" value={passageData.content} onChange={(val) => setPassageData({ ...passageData, content: val })} style={styles.quill} /></div>
                             
-                            {/* LINK ẢNH VÀ ĐỘ RỘNG ẢNH */}
                             <div style={styles.formRow}>
                                 <div style={styles.formGroup}>
                                     <label style={styles.label}>Link ảnh</label>
@@ -443,25 +415,20 @@ const ManageLevelTestQuestions = () => {
                                 <div style={styles.formGroup}>
                                     <label style={styles.label}>Độ rộng ảnh</label>
                                     <select value={passageData.image_width || '100%'} onChange={(e) => setPassageData({ ...passageData, image_width: e.target.value })} style={styles.input}>
-                                        <option value="25%">25%</option>
-                                        <option value="50%">50%</option>
-                                        <option value="75%">75%</option>
-                                        <option value="100%">100%</option>
+                                        <option value="25%">25%</option><option value="50%">50%</option><option value="75%">75%</option><option value="100%">100%</option>
                                     </select>
                                 </div>
                             </div>
 
-                            {/* NGUỒN */}
                             <div style={styles.formGroup}>
                                 <label style={styles.label}>Nguồn (chữ nhỏ)</label>
                                 <input type="text" value={passageData.source || ''} onChange={(e) => setPassageData({ ...passageData, source: e.target.value })} style={styles.input} placeholder="VD: Adapted from BBC News" />
                             </div>
 
-                            {/* PHẦN CÂU HỎI KÈM BÀI ĐỌC */}
                             <div style={styles.passageQuestionsSection}>
                                 <div style={styles.passageQuestionsHeader}>
                                     <label style={styles.label}>Câu hỏi cho bài đọc ({(passageData.questions || []).length})</label>
-                                    <button type="button" onClick={() => setPassageData({ ...passageData, questions: [...(passageData.questions || []), { question_group: 'reading_comprehension', section: 'SECTION A', content: '', prefix: '', suffix: '', options: ['', '', '', ''], correct_answer: 'A', explanation: '', score: 1 }] })} style={styles.addSmallButton}>+ Thêm câu hỏi</button>
+                                    <button type="button" onClick={() => setPassageData({ ...passageData, questions: [...(passageData.questions || []), createEmptyQuestion()] })} style={styles.addSmallButton}>+ Thêm câu hỏi</button>
                                 </div>
                                 {(passageData.questions || []).map((q, qIndex) => (
                                     <div key={qIndex} style={styles.passageQuestionCard}>
@@ -487,28 +454,16 @@ const ManageLevelTestQuestions = () => {
                                                 <div style={styles.formGroup}><label style={styles.label}>Hậu tố</label><input type="text" value={q.suffix} onChange={(e) => { const nQ = [...passageData.questions]; nQ[qIndex].suffix = e.target.value; setPassageData({ ...passageData, questions: nQ }); }} style={styles.input} /></div>
                                             </div>
                                         )}
-
-                                        {/* ĐÃ SỬA LỖI: Dùng ReactQuill cho Lựa chọn ở form bài đọc */}
                                         {isMultipleChoiceGroup(q.question_group) && (
-                                            <div style={styles.formGroup}>
-                                                <label style={styles.label}>Các lựa chọn (A/B/C/D) - Có thể gạch chân âm tiết</label>
-                                                <div style={styles.optionsGrid}>
-                                                    {['A', 'B', 'C', 'D'].map((label, optIdx) => (
-                                                        <div key={optIdx} style={{ marginBottom: '10px' }}>
-                                                            <span style={styles.optionLabel}>{label}.</span>
-                                                            <ReactQuill
-                                                                theme="snow"
-                                                                value={(q.options || ['', '', '', ''])[optIdx] || ''}
-                                                                onChange={(val) => { const nQ = [...passageData.questions]; const newOpts = [...(nQ[qIndex].options || ['', '', '', ''])]; newOpts[optIdx] = val; nQ[qIndex].options = newOpts; setPassageData({ ...passageData, questions: nQ }); }}
-                                                                modules={{ toolbar: [['underline', 'clean']] }}
-                                                                style={{ backgroundColor: 'white', height: '80px', marginTop: '4px' }}
-                                                            />
-                                                        </div>
-                                                    ))}
-                                                </div>
+                                            <div style={styles.optionsGrid}>
+                                                {['A', 'B', 'C', 'D'].map((l, oi) => (
+                                                    <div key={oi} style={{ marginBottom: '10px' }}>
+                                                        <span style={styles.optionLabel}>{l}.</span>
+                                                        <ReactQuill theme="snow" value={q.options[oi]} onChange={(val) => { const nQ = [...passageData.questions]; const newOpts = [...(nQ[qIndex].options || ['', '', '', ''])]; newOpts[oi] = val; nQ[qIndex].options = newOpts; setPassageData({ ...passageData, questions: nQ }); }} modules={{ toolbar: [['underline', 'clean']] }} style={{ backgroundColor: 'white', height: '80px', marginTop: '4px' }} />
+                                                    </div>
+                                                ))}
                                             </div>
                                         )}
-
                                         <div style={styles.formGroup}>
                                             <label style={styles.label}>Đáp án đúng</label>
                                             {isMultipleChoiceGroup(q.question_group) ? (
@@ -568,7 +523,6 @@ const styles = {
     textarea: { padding: '10px 14px', border: '1px solid #CED4DA', borderRadius: '8px', fontSize: '14px', outline: 'none', backgroundColor: 'white', fontFamily: 'inherit', resize: 'vertical', width: '100%', boxSizing: 'border-box' },
     quill: { backgroundColor: 'white', borderRadius: '8px', marginBottom: '8px', minHeight: '100px' },
     optionsGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '6px' },
-    optionItem: { display: 'flex', alignItems: 'center', gap: '6px' },
     optionLabel: { fontWeight: '700', color: '#0D6EFD', width: '20px' },
     submitButton: { padding: '12px', backgroundColor: '#28A745', color: 'white', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '600', cursor: 'pointer' },
     passageList: { display: 'flex', flexDirection: 'column', gap: '12px' },

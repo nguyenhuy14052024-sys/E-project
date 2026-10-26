@@ -15,7 +15,8 @@ app.use(helmet());
 const corsOptions = {
   origin: [
     'http://localhost:5173',
-    /\.trycloudflare\.com$/ // Dùng Regex để chấp nhận mọi subdomain của trycloudflare.com
+    /\.trycloudflare\.com$/,
+    /\.ngrok-free\.dev$/ // Dùng Regex để chấp nhận mọi subdomain của trycloudflare.com
   ],
   credentials: true,
 };

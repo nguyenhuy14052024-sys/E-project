@@ -100,9 +100,11 @@ const ProfilePage = () => {
                     </div>
                 </div>
 
-                {/* BIỂU ĐỒ TIẾN ĐỘ THEO TRÌNH ĐỘ */}
+                {/* BIỂU ĐỒ TIẾN ĐỘ THEO TRÌNH ĐỘ - SỬA LỖI CỨNG B2 */}
                 <div style={styles.levelProgressSection}>
-                    <h3 style={styles.sectionTitle}>Tiến độ trình độ {user.level || 'B2'}</h3>
+                    <h3 style={styles.sectionTitle}>
+                        Tiến độ của bạn {stats.userLevel || 'theo trình độ đang học'}
+                    </h3>
                     <div style={styles.progressCard}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
                             <span style={{ fontWeight: '600', color: '#212529' }}>
@@ -165,235 +167,38 @@ const ProfilePage = () => {
 };
 
 const styles = {
-    page: {
-        minHeight: '100vh',
-        backgroundColor: '#F6F9FE',
-        fontFamily: "'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-        position: 'relative',
-        overflow: 'hidden',
-        width: '100%',
-        maxWidth: '100vw',
-        boxSizing: 'border-box'
-    },
-    bgShape1: {
-        position: 'fixed',
-        top: '-120px',
-        right: '-120px',
-        width: '460px',
-        height: '460px',
-        borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(13, 110, 253, 0.12) 0%, rgba(13, 110, 253, 0) 70%)',
-        pointerEvents: 'none',
-        zIndex: 0
-    },
-    bgShape2: {
-        position: 'fixed',
-        bottom: '-160px',
-        left: '-100px',
-        width: '520px',
-        height: '520px',
-        borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(13, 110, 253, 0.08) 0%, rgba(13, 110, 253, 0) 70%)',
-        pointerEvents: 'none',
-        zIndex: 0
-    },
-    container: {
-        maxWidth: '1000px',
-        width: '100%',
-        margin: '0 auto',
-        padding: '40px 20px',
-        position: 'relative',
-        zIndex: 1,
-        boxSizing: 'border-box'
-    },
-    header: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '24px',
-        flexWrap: 'wrap',
-        gap: '12px'
-    },
-    pageTitle: {
-        fontSize: 'clamp(22px, 5vw, 28px)',
-        fontWeight: '700',
-        color: '#212529',
-        margin: 0
-    },
-    backButton: {
-        padding: '10px 20px',
-        backgroundColor: '#6C757D',
-        color: 'white',
-        border: 'none',
-        borderRadius: '8px',
-        cursor: 'pointer',
-        fontSize: '14px',
-        fontWeight: '500',
-        boxShadow: '0 2px 6px rgba(108, 117, 125, 0.25)'
-    },
-    profileCard: {
-        display: 'flex',
-        gap: '24px',
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        padding: '28px',
-        borderRadius: '12px',
-        border: '2px solid #DCE8F5',
-        boxShadow: '0 2px 12px rgba(13, 110, 253, 0.06)',
-        marginBottom: '24px',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        boxSizing: 'border-box'
-    },
-    avatar: {
-        width: '80px',
-        height: '80px',
-        borderRadius: '50%',
-        backgroundColor: '#0D6EFD',
-        color: 'white',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontSize: '36px',
-        fontWeight: 'bold',
-        boxShadow: '0 4px 12px rgba(13, 110, 253, 0.35)',
-        flexShrink: 0
-    },
-    userInfo: {
-        flex: 1,
-        minWidth: '200px'
-    },
-    username: {
-        fontSize: 'clamp(20px, 4vw, 24px)',
-        fontWeight: '700',
-        color: '#212529',
-        margin: '0 0 6px 0',
-        wordBreak: 'break-word'
-    },
-    email: {
-        color: '#6C757D',
-        marginBottom: '12px',
-        fontSize: '14px',
-        wordBreak: 'break-word'
-    },
-    rankContainer: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
-        marginBottom: '10px',
-        flexWrap: 'wrap'
-    },
-    rankBadge: {
-        padding: '5px 15px',
-        borderRadius: '20px',
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: '14px'
-    },
-    points: {
-        fontSize: '16px',
-        fontWeight: 'bold',
-        color: '#0D6EFD'
-    },
-    progressBar: {
-        height: '10px',
-        backgroundColor: '#DCE8F5',
-        borderRadius: '5px',
-        overflow: 'hidden',
-        marginBottom: '10px',
-        width: '100%'
-    },
-    progressFill: {
-        height: '100%',
-        backgroundColor: '#0D6EFD',
-        transition: 'width 0.5s'
-    },
-    streak: {
-        fontSize: '14px',
-        color: '#FD7E14',
-        fontWeight: '500'
-    },
-    levelProgressSection: {
-        marginBottom: '24px'
-    },
-    progressCard: {
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        padding: '20px',
-        borderRadius: '12px',
-        border: '2px solid #DCE8F5',
-        boxShadow: '0 2px 12px rgba(13, 110, 253, 0.06)'
-    },
-    statsSection: {
-        marginBottom: '24px'
-    },
-    sectionTitle: {
-        fontSize: 'clamp(18px, 4vw, 20px)',
-        fontWeight: '700',
-        color: '#212529',
-        marginBottom: '16px'
-    },
-    statsGrid: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-        gap: '12px'
-    },
-    statCard: {
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        padding: '20px',
-        borderRadius: '12px',
-        border: '2px solid #DCE8F5',
-        boxShadow: '0 2px 12px rgba(13, 110, 253, 0.06)',
-        textAlign: 'center',
-        boxSizing: 'border-box'
-    },
-    statValue: {
-        fontSize: 'clamp(22px, 5vw, 28px)',
-        fontWeight: 'bold',
-        color: '#0D6EFD',
-        marginBottom: '5px'
-    },
-    statLabel: {
-        fontSize: '13px',
-        color: '#6C757D'
-    },
-    certSection: {
-        marginTop: '20px'
-    },
-    certGrid: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-        gap: '16px',
-        marginTop: '15px'
-    },
-    emptyState: {
-        textAlign: 'center',
-        padding: '40px 24px',
-        color: '#6C757D',
-        backgroundColor: 'rgba(255, 255, 255, 0.85)',
-        borderRadius: '12px',
-        border: '2px dashed #DCE8F5'
-    },
-    loadingWrapper: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '80px 20px',
-        gap: '20px'
-    },
-    spinner: {
-        width: '48px',
-        height: '48px',
-        border: '4px solid #DCE8F5',
-        borderTop: '4px solid #0D6EFD',
-        borderRadius: '50%',
-        animation: 'spin 0.8s linear infinite'
-    },
-    loadingText: {
-        color: '#6C757D',
-        fontSize: '15px',
-        fontWeight: '500',
-        margin: 0
-    }
+    page: { minHeight: '100vh', backgroundColor: '#F6F9FE', fontFamily: "'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", position: 'relative', overflow: 'hidden', width: '100%', maxWidth: '100vw', boxSizing: 'border-box' },
+    bgShape1: { position: 'fixed', top: '-120px', right: '-120px', width: '460px', height: '460px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(13, 110, 253, 0.12) 0%, rgba(13, 110, 253, 0) 70%)', pointerEvents: 'none', zIndex: 0 },
+    bgShape2: { position: 'fixed', bottom: '-160px', left: '-100px', width: '520px', height: '520px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(13, 110, 253, 0.08) 0%, rgba(13, 110, 253, 0) 70%)', pointerEvents: 'none', zIndex: 0 },
+    container: { maxWidth: '1000px', width: '100%', margin: '0 auto', padding: '40px 20px', position: 'relative', zIndex: 1, boxSizing: 'border-box' },
+    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' },
+    pageTitle: { fontSize: 'clamp(22px, 5vw, 28px)', fontWeight: '700', color: '#212529', margin: 0 },
+    backButton: { padding: '10px 20px', backgroundColor: '#6C757D', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: '500', boxShadow: '0 2px 6px rgba(108, 117, 125, 0.25)' },
+    profileCard: { display: 'flex', gap: '24px', backgroundColor: 'rgba(255, 255, 255, 0.95)', padding: '28px', borderRadius: '12px', border: '2px solid #DCE8F5', boxShadow: '0 2px 12px rgba(13, 110, 253, 0.06)', marginBottom: '24px', alignItems: 'center', flexWrap: 'wrap', boxSizing: 'border-box' },
+    avatar: { width: '80px', height: '80px', borderRadius: '50%', backgroundColor: '#0D6EFD', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '36px', fontWeight: 'bold', boxShadow: '0 4px 12px rgba(13, 110, 253, 0.35)', flexShrink: 0 },
+    userInfo: { flex: 1, minWidth: '200px' },
+    username: { fontSize: 'clamp(20px, 4vw, 24px)', fontWeight: '700', color: '#212529', margin: '0 0 6px 0', wordBreak: 'break-word' },
+    email: { color: '#6C757D', marginBottom: '12px', fontSize: '14px', wordBreak: 'break-word' },
+    rankContainer: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px', flexWrap: 'wrap' },
+    rankBadge: { padding: '5px 15px', borderRadius: '20px', color: 'white', fontWeight: 'bold', fontSize: '14px' },
+    points: { fontSize: '16px', fontWeight: 'bold', color: '#0D6EFD' },
+    progressBar: { height: '10px', backgroundColor: '#DCE8F5', borderRadius: '5px', overflow: 'hidden', marginBottom: '10px', width: '100%' },
+    progressFill: { height: '100%', backgroundColor: '#0D6EFD', transition: 'width 0.5s' },
+    streak: { fontSize: '14px', color: '#FD7E14', fontWeight: '500' },
+    levelProgressSection: { marginBottom: '24px' },
+    progressCard: { backgroundColor: 'rgba(255, 255, 255, 0.95)', padding: '20px', borderRadius: '12px', border: '2px solid #DCE8F5', boxShadow: '0 2px 12px rgba(13, 110, 253, 0.06)' },
+    statsSection: { marginBottom: '24px' },
+    sectionTitle: { fontSize: 'clamp(18px, 4vw, 20px)', fontWeight: '700', color: '#212529', marginBottom: '16px' },
+    statsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' },
+    statCard: { backgroundColor: 'rgba(255, 255, 255, 0.95)', padding: '20px', borderRadius: '12px', border: '2px solid #DCE8F5', boxShadow: '0 2px 12px rgba(13, 110, 253, 0.06)', textAlign: 'center', boxSizing: 'border-box' },
+    statValue: { fontSize: 'clamp(22px, 5vw, 28px)', fontWeight: 'bold', color: '#0D6EFD', marginBottom: '5px' },
+    statLabel: { fontSize: '13px', color: '#6C757D' },
+    certSection: { marginTop: '20px' },
+    certGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px', marginTop: '15px' },
+    emptyState: { textAlign: 'center', padding: '40px 24px', color: '#6C757D', backgroundColor: 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: '2px dashed #DCE8F5' },
+    loadingWrapper: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 20px', gap: '20px' },
+    spinner: { width: '48px', height: '48px', border: '4px solid #DCE8F5', borderTop: '4px solid #0D6EFD', borderRadius: '50%', animation: 'spin 0.8s linear infinite' },
+    loadingText: { color: '#6C757D', fontSize: '15px', fontWeight: '500', margin: 0 }
 };
 
 if (typeof document !== 'undefined') {

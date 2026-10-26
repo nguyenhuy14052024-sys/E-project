@@ -1,5 +1,5 @@
 # DỰ ÁN E-LEARNING B2-C1 - TRẠNG THÁI HIỆN TẠI
-*Cập nhật lần cuối: 25/10/2026*
+*Cập nhật lần cuối: 26/10/2026*
 
 ## 1. CÔNG NGHỆ
 - Backend: Node.js + Express + PostgreSQL + Sequelize
@@ -14,7 +14,7 @@
 - Quên mật khẩu + Reset password qua email (Resend)
 - Xác thực email (API đã có)
 - Unit: Xem danh sách, chi tiết theo trình độ (A1-C1)
-- **Bài tập văn bản (Text-based Exercise):** Admin có thể soạn bài tập tự luận/trắc nghiệm dạng văn bản (Rich Text) ngay trong Unit. Hiển thị ở trang làm bài. (MỚI)
+- **Bài tập văn bản (Text-based Exercise):** Admin có thể soạn bài tập tự luận/trắc nghiệm dạng văn bản (Rich Text) ngay trong Unit. Hiển thị ở trang làm bài.
 - Quiz: 6 loại câu hỏi, random, hoán vị, lọc theo loại
 - Mini Test: Random từ nhiều Unit
 - Error Log: Xem và ôn lại câu sai
@@ -44,13 +44,13 @@
 - Level Test: Admin có thể tự do đặt tên Section và đổi thứ tự câu hỏi (nút lên/xuống)
 - Level Test: Sửa câu hỏi ngay tại chỗ (Inline Editing)
 - Level Test: Admin quản lý bài test + câu hỏi + bài đọc (hỗ trợ Link ảnh, Độ rộng ảnh, Nguồn)
-- Level Test: Chứng nhận theo điểm (≥90% Xuất sắc, ≥80% Giỏi)
+- **Level Test: Chứng nhận theo điểm (≥85% Hoàn thành trình độ) — Tự động cấp chứng nhận các trình độ thấp hơn nếu chưa có (Học vượt)**
 - Level Test: Lịch sử làm bài (LevelTestAttempt)
 - Level Test: Hiển thị kết quả chi tiết từng câu (đúng/sai + giải thích)
 - Level Test: Cho phép nộp bài trống (tính 0 điểm) — có popup xác nhận
 - Level Test: Hiển thị passage phía trên câu hỏi liên kết khi làm bài
 - Level Test: Định dạng văn bản (gạch chân âm tiết) cho câu hỏi Phát âm / Trọng âm
-- Profile: Biểu đồ tiến độ theo trình độ (VD: Đã hoàn thành 3/12 bài)
+- Profile: Biểu đồ tiến độ theo trình độ (VD: Đã hoàn thành 3/12 bài) — **Đã sửa lỗi hiển thị cứng B2, giờ lấy đúng level của user**
 - **Feedback: Hộp thư Góp ý (Nút lơ lửng 💡 gửi góp ý, Admin xem trong Admin Panel)**
 - **Onboarding: Form phỏng vấn người dùng (Giao diện Mascot, 5 câu hỏi, lưu vào DB)**
 - Biểu tượng con mắt ẩn/hiện mật khẩu
@@ -59,6 +59,12 @@
 - Admin cố định (tạo qua script createAdmin.js)
 - Xóa nút Đổi Role khỏi giao diện Admin
 - Sửa lỗi tràn giao diện trên mobile cho tất cả các trang
+- **Sửa lỗi bảng bị tràn (thêm thanh cuộn ngang) trong Quản lý Unit**
+- **Sửa lỗi nút "Sửa" không hoạt động trong Quản lý Level Test**
+- **Đã cấu hình Axios Interceptor bắt lỗi 401 -> tự động đăng xuất**
+- **Đã thêm trang 404 (NotFound)**
+- **Đã tắt `alter: true`, cấu hình CORS cho phép Ngrok/Cloudflare**
+- **Đã dọn dẹp `console.log` rác trong Backend**
 
 ## 3. GIAO DIỆN ĐÃ NÂNG CẤP VÀ RESPONSIVE
 - Home, Login, Register, ForgotPassword, ResetPassword
@@ -69,6 +75,7 @@
 - AdminDashboard, ManageUnits, ManageQuestions, ManageUsers
 - ManageLevelTests, ManageLevelTestQuestions
 - ManageFeedbacks
+- **NotFound (404)**
 
 ## 4. GIAO DIỆN CHƯA NÂNG CẤP
 - (Tất cả đã nâng cấp và responsive)
@@ -81,11 +88,10 @@
 - Hoàn thiện xác thực email khi đăng ký
 - Nút báo cáo lỗi (User report câu hỏi sai)
 - Premium / Thanh toán
-- Deploy lên VPS
-- Soạn nội dung thật A1-C1 (Đang tiến hành)
+- **Deploy lên VPS (Đang tiến hành)**
+- Soạn nội dung thật A1-C1 (Đang tiến hành, đã có 6 bài A2)
 - Loading component (icon nhảy) — tạm skip
 - Từ điển: nghĩa Anh-Việt, phiên âm, audio
-- Xử lý Token hết hạn (Axios Interceptor bắt lỗi 401 -> tự động đăng xuất)
 - Tăng thời hạn JWT (7d lên 30d)
 
 ## 6. CẤU TRÚC CHÍNH (CẬP NHẬT MỚI)
@@ -96,7 +102,7 @@
 - backend/src/routes/ (auth, unit, quiz, flashcard, admin, dictionary, profile, levelTest, feedback, onboarding)
 - backend/src/middlewares/ (authMiddleware, isAdmin)
 - backend/src/services/ (dictionaryService)
-- frontend/src/pages/ (17 trang + 7 trang Admin + Onboarding)
+- frontend/src/pages/ (17 trang + 7 trang Admin + Onboarding + NotFound)
 - frontend/src/services/ (api, auth, unit, flashcard, admin, dictionary, profile, levelTest, feedback, onboarding)
 - frontend/src/components/ (DictionaryPopup, CertificateBadge, CertificateNotification, FeedbackPopup)
 - data_migration/raw_data/demo.json
@@ -137,12 +143,14 @@
 - Frontend `handleSubmit`: thêm `window.confirm` cảnh báo nếu `answerList.length === 0`
 - Kết quả: user được phép nộp trống, tính 0 điểm.
 
-### 9.5. Chống trùng chứng nhận
+### 9.5. Chống trùng chứng nhận & Học vượt
 - Hàm `issueCertificate` trong `profileController.js`: Kiểm tra `user_id`, `type`, `title` trước khi tạo mới. Nếu đã tồn tại, trả về `null`.
+- **Logic Học vượt (Level Test):** Đạt ≥85% -> Cấp chứng nhận "Hoàn thành trình độ X". Tự động cấp các chứng nhận "Hoàn thành trình độ" cho các level thấp hơn nếu chưa có.
+- **Đã xóa logic cấp chứng nhận khi làm bài Practice/Mini Test (chỉ cộng điểm và cập nhật Progress).**
 
 ### 9.6. Biểu đồ tiến độ
 - Backend: Tính toán `totalUnitsInLevel` và `completedUnitsInLevel` dựa vào `book_level` của user.
-- Frontend: Hiển thị thanh Progress Bar trong `ProfilePage.jsx`.
+- Frontend: Hiển thị thanh Progress Bar trong `ProfilePage.jsx`. Đã sửa lỗi hiển thị cứng "B2", giờ hiển thị đúng level của user.
 
 ### 9.7. Hộp thư Góp ý (Feedback)
 - Tạo bảng `feedbacks` (id, user_id, content, page_url, status).

@@ -27,16 +27,19 @@ import ManageLevelTestQuestions from './pages/Admin/ManageLevelTestQuestions';
 import LevelTestList from './pages/LevelTestList';
 import FeedbackPopup from './components/FeedbackPopup';
 import Onboarding from './pages/Onboarding';
+import NotFound from './pages/NotFound'; // <-- THÊM IMPORT 404
 
 if (typeof document !== 'undefined') {
     const globalStyle = document.createElement('style');
     globalStyle.textContent = `
         * { box-sizing: border-box; margin: 0; padding: 0; }
-                html, body {
-            overflow-x: clip; /* Đổi hidden thành clip để không phá sticky */
+        html, body {
+            overflow-x: clip;
             max-width: 100vw;
             width: 100%;
-            /* ... */
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
         #root { overflow-x: clip; max-width: 100vw; width: 100%; }
         img { max-width: 100%; height: auto; }
@@ -66,6 +69,7 @@ function App() {
         <Router>
             <FeedbackPopup />
             <Routes>
+                {/* Route cho Onboarding (Đặt lên đầu) */}
                 <Route path="/onboarding" element={<PrivateRoute><Onboarding /></PrivateRoute>} />
                 
                 <Route path="/" element={<Home />} />
@@ -95,6 +99,9 @@ function App() {
                 <Route path="/admin/level-tests" element={<PrivateRoute><ManageLevelTests /></PrivateRoute>} />
                 <Route path="/admin/level-tests/:testId" element={<PrivateRoute><ManageLevelTestQuestions /></PrivateRoute>} />
                 <Route path="/admin/feedbacks" element={<PrivateRoute><ManageFeedbacks /></PrivateRoute>} />
+                
+                {/* ROUTE 404 - PHẢI ĐẶT CUỐI CÙNG */}
+                <Route path="*" element={<NotFound />} />
             </Routes>
         </Router>
     );

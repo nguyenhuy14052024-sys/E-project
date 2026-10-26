@@ -1,6 +1,5 @@
-const { Question, UserAnswer, Unit, Progress, Certificate } = require('../models');
-const sequelize = require('../../config/db');
-const { updatePoints, issueCertificate } = require('./profileController');
+const { Question, UserAnswer, Unit, Progress } = require('../models');
+const { updatePoints } = require('./profileController');
 
 // Lấy câu hỏi của 1 Unit (ẩn đáp án)
 const getQuestions = async (req, res) => {
@@ -8,12 +7,8 @@ const getQuestions = async (req, res) => {
         const { unitId } = req.params;
         const { type } = req.query;
 
-        console.log('🔍 unitId:', unitId);
-        console.log('🔍 type:', type);
-
         const unit = await Unit.findByPk(unitId);
         if (!unit) {
-            console.log('❌ Unit not found');
             return res.status(404).json({ message: 'Không tìm thấy Unit' });
         }
 
@@ -22,14 +17,10 @@ const getQuestions = async (req, res) => {
             whereClause.question_type = type;
         }
 
-        console.log('🔍 whereClause:', whereClause);
-
         const questions = await Question.findAll({
             where: whereClause,
             attributes: { exclude: ['correct_answer', 'explanation'] }
         });
-
-        console.log('✅ Questions found:', questions.length);
 
         const finalQuestions = questions
             .map(q => q.toJSON())
@@ -58,8 +49,7 @@ const getQuestions = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('❌ Get questions error DETAIL:', error);
-        console.error('❌ Stack:', error.stack);
+        console.error('Get questions error:', error);
         res.status(500).json({ 
             message: 'Lỗi lấy câu hỏi',
             error: error.message 
@@ -67,7 +57,7 @@ const getQuestions = async (req, res) => {
     }
 };
 
-// Nộp bài và chấm điểm (ĐÃ XÓA CẤP CHỨNG NHẬN)
+// Nộp bài và chấm điểm (Không cấp chứng nhận)
 const submitQuiz = async (req, res) => {
     try {
         const { userId } = req.user;
@@ -111,11 +101,9 @@ const submitQuiz = async (req, res) => {
         const totalQuestions = questions.length;
         const score = (correctCount / totalQuestions) * 100;
 
-        // Cộng điểm cho user
         const pointsEarned = correctCount * 1;
         await updatePoints(userId, pointsEarned);
 
-        // Cập nhật Progress
         const progress = await Progress.findOne({
             where: { user_id: userId, unit_id: unitId }
         });
@@ -141,15 +129,13 @@ const submitQuiz = async (req, res) => {
             });
         }
 
-        // ĐÃ XÓA TOÀN BỘ LOGIC CẤP CHỨNG NHẬN UNIT/MINI TEST/COURSE Ở ĐÂY
-
         res.status(200).json({
             message: 'Nộp bài thành công',
             score: Math.round(score * 100) / 100,
             correctCount,
             totalQuestions,
             pointsEarned,
-            newCertificate: null, // Luôn trả về null
+            newCertificate: null,
             results
         });
 

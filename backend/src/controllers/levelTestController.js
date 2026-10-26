@@ -1,5 +1,4 @@
-const { LevelTest, LevelTestQuestion, ReadingPassage, LevelTestAttempt, User } = require('../models');
-const { Op } = require('sequelize');
+const { LevelTest, LevelTestQuestion, ReadingPassage, LevelTestAttempt } = require('../models');
 const { issueCertificate } = require('./profileController');
 
 // ==================== ADMIN: QUẢN LÝ LEVEL TEST ====================
@@ -339,7 +338,6 @@ const submitTest = async (req, res) => {
 
         let newCertificate = null;
         
-        // Logic chứng nhận mới: >= 85% + Học vượt
         if (score >= 85) {
             newCertificate = await issueCertificate(
                 userId,

@@ -13,7 +13,10 @@ const PORT = process.env.PORT || 5000;
 app.use(helmet());
 // Cho phép tất cả trong lúc dev, nhưng nếu muốn bảo mật thì giới hạn lại:
 const corsOptions = {
-  origin: ['http://localhost:5173', 'https://*.trycloudflare.com'], // Link Cloudflare nếu cần
+  origin: [
+    'http://localhost:5173',
+    /\.trycloudflare\.com$/ // Dùng Regex để chấp nhận mọi subdomain của trycloudflare.com
+  ],
   credentials: true,
 };
 app.use(cors(corsOptions));

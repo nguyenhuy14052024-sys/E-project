@@ -163,14 +163,14 @@ const GrammarSection = () => {
 };
 
 const styles = {
-    page: { minHeight: '100vh', fontFamily: "'Inter', 'Roboto', sans-serif", padding: '32px 24px' },
+    page: { minHeight: '100vh', fontFamily: "'Inter', 'Roboto', sans-serif", padding: 'clamp(16px, 4vw, 32px) clamp(12px, 3vw, 24px)' },
     container: { maxWidth: '820px', margin: '0 auto' },
     header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' },
     headerRight: { display: 'flex', gap: '8px', alignItems: 'center' },
     backButton: { padding: '8px 16px', backgroundColor: 'rgba(255,255,255,0.9)', color: '#495057', border: '1px solid #DCE8F5', borderRadius: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: '500', transition: 'all 0.2s ease' },
     levelBadge: { padding: '6px 14px', backgroundColor: 'rgba(255,255,255,0.9)', borderRadius: '20px', fontSize: '12px', fontWeight: '700', color: '#495057', border: '1px solid #DCE8F5', letterSpacing: '0.5px' },
     difficultyBadge: { padding: '6px 14px', backgroundColor: 'rgba(255,255,255,0.9)', borderRadius: '20px', fontSize: '12px', fontWeight: '600', color: '#6C757D', border: '1px solid #DCE8F5' },
-    book: { backgroundColor: 'rgba(255, 255, 255, 0.98)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', padding: '56px 64px', borderRadius: '16px', boxShadow: '0 8px 40px rgba(0,0,0,0.08)', lineHeight: '1.9', position: 'relative' },
+    book: { backgroundColor: 'rgba(255, 255, 255, 0.98)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', padding: 'clamp(20px, 5vw, 56px) clamp(16px, 5vw, 64px)', borderRadius: '16px', boxShadow: '0 8px 40px rgba(0,0,0,0.08)', lineHeight: '1.9', position: 'relative' },
     bookHeader: { marginBottom: '40px', textAlign: 'center' },
     bookChapter: { fontSize: '12px', fontWeight: '700', color: '#6C757D', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '12px' },
     bookTitle: { fontSize: '36px', fontWeight: '800', marginBottom: '12px', lineHeight: '1.2' },
@@ -185,8 +185,8 @@ const styles = {
     partHeader: { display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' },
     partNumber: { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', borderRadius: '10px', color: '#FFFFFF', fontSize: '14px', fontWeight: '700', letterSpacing: '0.5px', flexShrink: 0 },
     partTitle: { fontSize: '22px', fontWeight: '700', margin: 0, lineHeight: '1.3' },
-    partContent: { fontSize: '16px', color: '#343A40', lineHeight: '1.9', paddingLeft: '56px' },
-    partDivider: { height: '1px', backgroundColor: '#E9ECEF', marginTop: '40px', marginLeft: '56px' },
+    partContent: { fontSize: '16px', color: '#343A40', lineHeight: '1.9', paddingLeft: 'clamp(0px, 3vw, 56px)' },
+    partDivider: { height: '1px', backgroundColor: '#E9ECEF', marginTop: '40px', marginLeft: 'clamp(0px, 3vw, 56px)' },
     ctaWrapper: { marginTop: '56px', paddingTop: '32px', borderTop: '1px solid #E9ECEF' },
     button: { padding: '16px 32px', color: 'white', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: '600', cursor: 'pointer', width: '100%', boxShadow: '0 6px 20px rgba(0,0,0,0.15)', transition: 'all 0.25s ease', letterSpacing: '0.3px' },
     loadingContainer: { minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', color: '#6C757D', fontFamily: "'Inter', 'Roboto', sans-serif" }

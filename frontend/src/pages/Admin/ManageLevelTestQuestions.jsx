@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 import {
     getLevelTestById,
     createQuestion,
@@ -122,7 +122,7 @@ const InlineQuestionForm = ({ initialData, onSave, onCancel }) => {
                         {['A', 'B', 'C', 'D'].map((label, idx) => (
                             <div key={idx} style={{ marginBottom: '10px' }}>
                                 <span style={styles.optionLabel}>{label}.</span>
-                                <ReactQuill theme="snow" value={formData.options[idx] || ''} onChange={(val) => { const newOpts = [...formData.options]; newOpts[idx] = val; setFormData({ ...formData, options: newOpts }); }} modules={{ toolbar: [['underline', 'clean']] }} style={{ backgroundColor: 'white', height: '80px', marginTop: '4px' }} />
+                                <ReactQuill theme="snow" value={formData.options[idx] || ''} onChange={(val) => { const newOpts = [...formData.options]; newOpts[idx] = val; setFormData({ ...formData, options: newOpts }); }} modules={{ toolbar: [['underline', 'clean']] }} style={{ backgroundColor: 'white', minHeight: '80px', marginTop: '4px' }} />
                             </div>
                         ))}
                     </div>
@@ -334,7 +334,7 @@ const ManageLevelTestQuestions = () => {
                                         {['A', 'B', 'C', 'D'].map((label, idx) => (
                                             <div key={idx} style={{ marginBottom: '10px' }}>
                                                 <span style={styles.optionLabel}>{label}.</span>
-                                                <ReactQuill theme="snow" value={questionData.options[idx]} onChange={(val) => { const o = [...questionData.options]; o[idx] = val; setQuestionData({ ...questionData, options: o }); }} modules={{ toolbar: [['underline', 'clean']] }} style={{ backgroundColor: 'white', height: '80px', marginTop: '4px' }} />
+                                                <ReactQuill theme="snow" value={questionData.options[idx]} onChange={(val) => { const o = [...questionData.options]; o[idx] = val; setQuestionData({ ...questionData, options: o }); }} modules={{ toolbar: [['underline', 'clean']] }} style={{ backgroundColor: 'white', minHeight: '80px', marginTop: '4px' }} />
                                             </div>
                                         ))}
                                     </div>
@@ -459,7 +459,7 @@ const ManageLevelTestQuestions = () => {
                                                 {['A', 'B', 'C', 'D'].map((l, oi) => (
                                                     <div key={oi} style={{ marginBottom: '10px' }}>
                                                         <span style={styles.optionLabel}>{l}.</span>
-                                                        <ReactQuill theme="snow" value={q.options[oi]} onChange={(val) => { const nQ = [...passageData.questions]; const newOpts = [...(nQ[qIndex].options || ['', '', '', ''])]; newOpts[oi] = val; nQ[qIndex].options = newOpts; setPassageData({ ...passageData, questions: nQ }); }} modules={{ toolbar: [['underline', 'clean']] }} style={{ backgroundColor: 'white', height: '80px', marginTop: '4px' }} />
+                                                        <ReactQuill theme="snow" value={q.options[oi]} onChange={(val) => { const nQ = [...passageData.questions]; const newOpts = [...(nQ[qIndex].options || ['', '', '', ''])]; newOpts[oi] = val; nQ[qIndex].options = newOpts; setPassageData({ ...passageData, questions: nQ }); }} modules={{ toolbar: [['underline', 'clean']] }} style={{ backgroundColor: 'white', minHeight: '80px', marginTop: '4px' }} />
                                                     </div>
                                                 ))}
                                             </div>

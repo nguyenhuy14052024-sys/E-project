@@ -1,13 +1,14 @@
 # DỰ ÁN E-LEARNING B2-C1 - TRẠNG THÁI HIỆN TẠI
-*Cập nhật lần cuối: 26/10/2026*
+*Cập nhật lần cuối: 05/11/2026*
 
 ## 1. CÔNG NGHỆ
 - Backend: Node.js + Express + PostgreSQL + Sequelize
 - Frontend: React + Vite + React Router + Axios
 - Auth: JWT
 - Email: Resend API
-- Editor: React Quill (Rich Text Editor)
+- Editor: React Quill (đã chuyển sang `react-quill-new` để tương thích React 19)
 - Cache: Redis (tạm tắt)
+- **Database: Đã chuyển từ Render PostgreSQL sang Neon PostgreSQL (version 18)**
 
 ## 2. TÍNH NĂNG ĐÃ HOÀN THÀNH
 - Auth: Đăng ký, đăng nhập, JWT
@@ -65,6 +66,10 @@
 - **Đã thêm trang 404 (NotFound)**
 - **Đã tắt `alter: true`, cấu hình CORS cho phép Ngrok/Cloudflare**
 - **Đã dọn dẹp `console.log` rác trong Backend**
+- **Sửa lỗi responsive lề bị thụt quá nhiều trên mobile trong trang nội dung bài học (GrammarSection) — dùng `clamp()` cho padding**
+- **Chuyển database từ Render PostgreSQL sang Neon PostgreSQL (version 18) để tránh giới hạn 30 ngày của Render Free**
+- **Cập nhật biến môi trường `DB_*` trên Render Backend để trỏ đến Neon**
+- **Đã backup database Neon thành công (`backup_neon_20261105.bak`)**
 
 ## 3. GIAO DIỆN ĐÃ NÂNG CẤP VÀ RESPONSIVE
 - Home, Login, Register, ForgotPassword, ResetPassword
@@ -93,6 +98,10 @@
 - Loading component (icon nhảy) — tạm skip
 - Từ điển: nghĩa Anh-Việt, phiên âm, audio
 - Tăng thời hạn JWT (7d lên 30d)
+- **Chỉnh sửa hồ sơ người dùng: đổi tên hiển thị, ảnh đại diện (tạm hoãn sau cuộc thi)**
+- **Chatbox một chiều từ Admin đến User (tạm hoãn sau cuộc thi)**
+- **Tích hợp thuật toán Personalized Forgetting Engine (PFE) — hướng phát triển sau cuộc thi**
+- **Tích hợp AI: hộp thoại, chấm bài viết, rewrite, từ điển thông minh — hướng phát triển sau cuộc thi**
 
 ## 6. CẤU TRÚC CHÍNH (CẬP NHẬT MỚI)
 - backend/config/ (db, redis, email, passport)
@@ -118,6 +127,7 @@
 - Backend: cd backend && node app.js
 - Frontend: cd frontend && npm run dev
 - Tạo admin: cd backend && node scripts/createAdmin.js
+- **Lưu ý: Database hiện tại là Neon, không phải Render. Biến môi trường `DB_*` trong backend/.env (localhost) và trên Render Dashboard đã được cập nhật để trỏ đến Neon.**
 
 ## 9. GHI CHÚ KỸ THUẬT — LEVEL TEST & PROFILE & ONBOARDING
 
@@ -166,6 +176,18 @@
 - Thêm trường `exercise_parts` (JSON) vào bảng `units`.
 - Admin soạn bài tập dạng Rich Text (giống hệt `parts` của nội dung).
 - Trang User (`PracticeZone.jsx`): Nếu `unit.exercise_parts` có dữ liệu, hiển thị giao diện văn bản thay vì câu hỏi trắc nghiệm. Nếu không, hiển thị trắc nghiệm cũ.
+
+### 9.10. Chuyển đổi Database sang Neon (MỚI)
+- **Lý do:** Render PostgreSQL Free tự động xóa database sau 30 ngày. Neon Free không có giới hạn thời gian, chỉ chặn ghi nếu vượt 1GB storage.
+- **Quy trình đã thực hiện:**
+  1. Tạo project trên Neon với PostgreSQL version 18 (giống Render).
+  2. Tạo database `english_db_8fkd` trên Neon.
+  3. Export dữ liệu từ Render bằng `pg_dump` phiên bản 18 (phải cài PostgreSQL Client 18 vì server Render là 18, `pg_dump` 16 không tương thích).
+  4. Import vào Neon bằng `pg_restore` với cờ `--no-owner --no-acl`.
+  5. Cập nhật biến môi trường `DB_*` trên Render Backend để trỏ đến Neon.
+  6. Backup database Neon thành công (`backup_neon_20261105.bak`).
+- **Lưu ý:** Database Render cũ vẫn để yên, sẽ tự hết hạn và bị xóa theo chính sách của Render. Không cần xóa thủ công.
+- **Cảnh báo:** Neon Free có thể tạm nghỉ compute sau 5 phút không hoạt động. Lần truy cập đầu tiên sau đó sẽ chậm vài giây (cold start). Điều này bình thường.
 
 ## 14. CHIẾN LƯỢC KINH DOANH (FREEMIUM)
 - **Gói Free (Miễn phí):** Truy cập toàn bộ Unit, Practice, Mini Test. Giới hạn 100 Flashcard. Có quảng cáo nhỏ. Chứng nhận có watermark.

@@ -26,6 +26,16 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Route gốc
+app.get('/', (req, res) => {
+    res.json({ message: '🚀 English B2-C1 API is running!' });
+});
+
+// Xử lý HEAD request cho uptime monitor (UptimeRobot)
+app.head('/', (req, res) => {
+    res.status(200).end();
+});
+
 // Routes
 const authRoutes = require('./src/routes/authRoutes');
 const unitRoutes = require('./src/routes/unitRoutes');
@@ -60,11 +70,6 @@ app.use('/api/onboarding', onboardingRoutes);
         console.error('❌ PostgreSQL connection error:', error);
     }
 })();
-
-// Route gốc
-app.get('/', (req, res) => {
-    res.json({ message: '🚀 English B2-C1 API is running!' });
-});
 
 // Middleware xử lý lỗi
 app.use((err, req, res, next) => {
